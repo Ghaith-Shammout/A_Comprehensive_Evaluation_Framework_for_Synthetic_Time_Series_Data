@@ -42,7 +42,7 @@ def save_data(train_dataset, test_dataset, train_path, test_path):
     train_dataset.to_csv(train_path, index=False)
     test_dataset.to_csv(test_path, index=False)
 
-def initialize_synthesizer(metadata_path, epochs=60, cuda=True, verbose=True):
+def initialize_synthesizer(metadata_path, context_columns, epochs=60, cuda=True, verbose=True):
     """
     Initialize the PARSynthesizer with the provided metadata and configuration.
 
@@ -61,7 +61,7 @@ def initialize_synthesizer(metadata_path, epochs=60, cuda=True, verbose=True):
         enforce_min_max_values=True,   # Ensure synthetic data respects real data min/max boundaries
         enforce_rounding=False,        # Maintain the same decimal precision as the real data
         locales=['en_US'],             # Define locales for PII columns
-        context_columns=['harsh_event'], # Define columns that should remain constant in sequences
+        context_columns=context_columns, # Define columns that should remain constant in sequences
         epochs=epochs,                 # Set the number of training epochs
         cuda=cuda,                     # Enable GPU usage for faster training
         verbose=verbose                # Print training progress
