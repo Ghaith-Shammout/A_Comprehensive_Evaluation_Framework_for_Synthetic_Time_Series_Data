@@ -68,19 +68,3 @@ def process_csv_files_from_directory(input_dir, output_file, window_size=50, ste
     # Print a message indicating the processing is complete
     print(f"Sliding windows processed and saved to {output_file}")
 
-
-def merge_csv_files(directory, output_file):
-    # Create a pattern to match CSV files
-    csv_pattern = os.path.join(directory, '*.csv')
-    
-    # Read all CSV files into a list of DataFrames
-    csv_files = glob.glob(csv_pattern)
-    dataframes = [pd.read_csv(file) for file in csv_files]
-    
-    # Merge all DataFrames into one
-    merged_data = pd.concat(dataframes, ignore_index=True)
-    
-    # Save the merged DataFrame to a new CSV file
-    merged_data.to_csv(output_file, index=False)
-    print(f"Merged {len(csv_files)} files into {output_file}")
-
