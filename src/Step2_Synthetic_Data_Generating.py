@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sdv.metadata import Metadata
 from sdv.sequential import PARSynthesizer
 
@@ -59,30 +58,66 @@ def define_metadata(dataset, seq_key, seq_index):
 def initialize_synthesizer(metadata_path, context_columns, epochs=60, sample_size=1, cuda=True, verbose=True):
     """
     Initialize the PARSynthesizer with the provided metadata and configuration.
-
-    :param metadata_path: Path to the metadata JSON file.
-    :param epochs: Number of training epochs for the synthesizer.
-    :param cuda: Whether to use GPU for training.
-    :param verbose: Whether to print training progress.
-    :return: An instance of the PARSynthesizer.
+    
+    Args:
+        metadata_path (str): Path to the metadata JSON file.
+        context_columns (list): List of columns to remain constant in sequences.
+        epochs (int, optional): Number of training epochs for the synthesizer (default is 60).
+        sample_size (int, optional): The number of samples to choose from before returning a sample (default is 1).
+        cuda (bool, optional): Whether to use GPU for training (default is True).
+        verbose (bool, optional): Whether to print training progress (default is True).
+        
+    Returns:
+        PARSynthesizer: An instance of the PARSynthesizer initialized with the given parameters.
+        
+    Raises:
+        FileNotFoundError: If the metadata file at `metadata_path` is not found.
+        ValueError: If there is an issue with the provided metadata or configuration.
+        TypeError: If the input parameters are of incorrect types.
+        Exception: For any other unexpected errors.
     """
-    # Load metadata from JSON file
-    metadata = Metadata.load_from_json(metadata_path)
-    
-    # Initialize the PARSynthesizer
-    synthesizer = PARSynthesizer(
-        metadata,
-        enforce_min_max_values=True,   # Ensure synthetic data respects real data min/max boundaries
-        enforce_rounding=False,        # Maintain the same decimal precision as the real data
-        locales=['en_US'],             # Define locales for PII columns
-        context_columns=context_columns, # Define columns that should remain constant in sequences
-        epochs=epochs,                 # Set the number of training epochs
-        sample_size=sample_size,       # The number of times to sample before choosing and returning a sample. 
-        cuda=cuda,                     # Enable GPU usage for faster training
-        verbose=verbose                # Print training progress
-    )
-    
-    return synthesizer
+    try:
+        # Ensure metadata_path is a string and context_columns is a list
+        if not isinstance(metadata_path, str):
+            raise TypeError("The metadata path should be a string.")
+        if not isinstance(context_columns, list):
+            raise TypeError("The context_columns should be a list.")
+        
+        # Load metadata from JSON file
+        metadata = Metadata.load_from_json(metadata_path)  # Attempt to load metadata
+        
+        # Validate that metadata is loaded correctly
+        if not metadata:
+            raise ValueError(f"Failed to load metadata from the file: {metadata_path}")
+        
+        # Initialize the PARSynthesizer with the provided parameters
+        synthesizer = PARSynthesizer(
+            metadata=metadata,
+            enforce_min_max_values=True,  # Ensure synthetic data respects real data min/max boundaries
+            enforce_rounding=False,       # Maintain the same decimal precision as the real data
+            locales=['en_US'],            # Define locales for PII columns (Personally Identifiable Information)
+            context_columns=context_columns,  # Columns that should remain constant in sequences
+            epochs=epochs,                # Set the number of training epochs
+            sample_size=sample_size,      # The number of samples to select before choosing a result
+            cuda=cuda,                    # Whether to use GPU for faster training
+            verbose=verbose               # Whether to print training progress
+        )
+        
+        return synthesizer  # Return the initialized synthesizer
+
+    except FileNotFoundError:
+        # Handle file not found error if metadata_path is incorrect
+        raise FileNotFoundError(f"The metadata file at {metadata_path} was not found.")
+    except ValueError as e:
+        # Handle value errors that may arise from invalid metadata or parameter issues
+        raise ValueError(f"Error with metadata or configuration: {e}")
+    except TypeError as e:
+        # Handle type errors (invalid parameter types)
+        raise TypeError(f"Invalid parameter type: {e}")
+    except Exception as e:
+        # Catch all other exceptions and provide context
+        raise Exception(f"An unexpected error occurred during synthesizer initialization: {e}")
+
 
 def train_synthesizer(synthesizer, train_dataset, save_path='Synthesizer.pkl'):
     """
@@ -92,14 +127,15 @@ def train_synthesizer(synthesizer, train_dataset, save_path='Synthesizer.pkl'):
     :param train_dataset: The dataset used to train the synthesizer.
     :param save_path: Path to save the trained synthesizer model.
     """
-    # Train the synthesizer on the real training dataset
+     # Train the synthesizer on the real training dataset
     synthesizer.fit(train_dataset)
+    print("[+] Training complete.")
     
     # Save the trained synthesizer model
     synthesizer.save(filepath=save_path)
-    print(f"Synthesizer model saved to {save_path}")
+    print(f"[+] Synthesizer model saved to {save_path}")
 
-def generate_synthetic_data(synthesizer, num_sequences=55, sequence_length=5600, output_path='synthetic_data.csv'):
+def generate_synthetic_data(synthesizer, num_sequences=1457, sequence_length=96, output_path='synthetic_data.csv'):
     """
     Generate synthetic data using the trained synthesizer and save it to a CSV file.
 
@@ -111,9 +147,10 @@ def generate_synthetic_data(synthesizer, num_sequences=55, sequence_length=5600,
     """
     # Generate synthetic data
     synthetic_data = synthesizer.sample(num_sequences=num_sequences, sequence_length=sequence_length)
+    print("[+] Synthetic data successfully generated.")
     
     # Save the synthetic data to CSV
     synthetic_data.to_csv(output_path, index=False)
-    print(f"Synthetic data saved to {output_path}")
+    print(f"[+] Synthetic data saved to {output_path}")
     
     return synthetic_data
