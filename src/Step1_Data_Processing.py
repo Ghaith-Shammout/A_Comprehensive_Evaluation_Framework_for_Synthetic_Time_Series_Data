@@ -1,6 +1,4 @@
 import pandas as pd
-import glob
-import os
 
 def remove_unwanted_columns(input_file, output_file, columns_to_remove):
     """
