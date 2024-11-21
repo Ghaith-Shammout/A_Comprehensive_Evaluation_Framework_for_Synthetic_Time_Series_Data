@@ -2,6 +2,35 @@ import pandas as pd
 import glob
 import os
 
+import pandas as pd
+
+def enforce_date_format(file_path, output_path=file_path):
+    """
+    Ensures all values in the 'date' column follow the format 'dd/MM/yyyy HH:mm'.
+    :param file_path: Path to the input CSV file.
+    :param output_path: Path to save the updated CSV file.
+    """
+    # Load the dataset
+    df = pd.read_csv(file_path)
+
+    # Ensure the 'date' column exists
+    if 'date' not in df.columns:
+        raise ValueError("The 'date' column is not found in the dataset.")
+
+    # Parse the 'date' column and reformat it
+    try:
+        df['date'] = pd.to_datetime(df['date'], format='%d/%m/%Y %H:%M')  # Parse the dates
+    except ValueError as e:
+        raise ValueError(f"Error parsing dates: {e}. Please check your data.")
+
+    # Format the 'date' column to the desired format
+    df['date'] = df['date'].dt.strftime('%d/%m/%Y %H:%M')
+
+    # Save the updated DataFrame to a new CSV
+    df.to_csv(output_path, index=False)
+    print(f"Date format standardized and saved to '{output_path}'.")
+
+
 def sliding_window(df, window_size=50, step_size=1):
     """
     Generates sliding windows from the DataFrame.
