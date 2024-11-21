@@ -4,45 +4,59 @@ from sklearn.model_selection import train_test_split
 from sdv.metadata import Metadata
 from sdv.sequential import PARSynthesizer
 
-def load_and_split_data(real_data_path, test_size=0.2, random_state=0):
+def define_metadata(dataset, seq_key, seq_index):
     """
-    Load real data from a CSV file and split it into training and test sets.
-
-    :param real_data_path: Path to the CSV file containing the real data.
-    :param test_size: Proportion of the data to be used for testing.
-    :param random_state: Random seed for reproducibility of splits.
-    :return: Tuple containing the training and test datasets.
+    Defines and returns metadata for a given dataset.
+    
+    Args:
+        dataset (DataFrame): The dataset (assumed to be a pandas DataFrame) to extract metadata from.
+        seq_key (str): The name of the column that identifies a sequence within the dataset.
+        seq_index (str): The name of the column that determines the spacing between rows in a sequence.
+        
+    Returns:
+        Metadata: An object that contains metadata, including sequence key and index information.
+        
+    Raises:
+        ValueError: If the dataset does not contain the provided `seq_key` or `seq_index` columns.
+        TypeError: If the dataset is not a valid DataFrame.
+        AttributeError: If the `Metadata.detect_from_dataframes` method is not available or fails.
     """
-    # Load real data from CSV file
-    real_data = pd.read_csv(real_data_path)
-    
-    # Separate features and target variable
-    x = real_data.iloc[:, :-1]
-    y = real_data.iloc[:, -1]
-    
-    # Split the data into training and test sets
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=random_state)
-    
-    # Combine features and target into train and test DataFrames
-    train_dataset = pd.concat([x_train, y_train], axis=1)
-    test_dataset = pd.concat([x_test, y_test], axis=1)
-    
-    return train_dataset, test_dataset
+    try:
+        # Ensure the dataset is a DataFrame
+        if not hasattr(dataset, 'columns'):
+            raise TypeError("The provided dataset is not a valid DataFrame.")
+        
+        # Attempt to detect metadata from the dataset
+        metadata = Metadata.detect_from_dataframes(dataset)
+        
+        # Ensure the detected metadata object has the necessary methods
+        if not hasattr(metadata, 'set_sequence_key') or not hasattr(metadata, 'set_sequence_index'):
+            raise AttributeError("Detected metadata object does not have expected methods.")
+        
+        # Set the sequence key in the metadata
+        metadata.set_sequence_key(column_name=seq_key)  # column that identifies a sequence in the dataset
+        
+        # Set the sequence index in the metadata
+        metadata.set_sequence_index(column_name=seq_index)  # column that determines the spacing between rows in a sequence.
+        
+        return metadata
 
-def save_data(train_dataset, test_dataset, train_path, test_path):
-    """
-    Save the train and test datasets to CSV files.
+    except ValueError as e:
+        # Handle case where the sequence columns are not found
+        raise ValueError(f"Error with the provided column names: {e}")
+    except TypeError as e:
+        # Handle invalid dataset input
+        raise TypeError(f"Dataset error: {e}")
+    except AttributeError as e:
+        # Handle issues with the metadata detection or methods
+        raise AttributeError(f"Metadata detection error: {e}")
+    except Exception as e:
+        # Catch all other exceptions
+        raise Exception(f"An unexpected error occurred: {e}")
 
-    :param train_dataset: The training dataset to save.
-    :param test_dataset: The test dataset to save.
-    :param train_path: Path where the training dataset will be saved.
-    :param test_path: Path where the test dataset will be saved.
-    """
-    # Save the datasets to CSV files
-    train_dataset.to_csv(train_path, index=False)
-    test_dataset.to_csv(test_path, index=False)
+    
 
-def initialize_synthesizer(metadata_path, context_columns, epochs=60, cuda=True, verbose=True):
+def initialize_synthesizer(metadata_path, context_columns, epochs=60, sample_size=1, cuda=True, verbose=True):
     """
     Initialize the PARSynthesizer with the provided metadata and configuration.
 
@@ -63,6 +77,7 @@ def initialize_synthesizer(metadata_path, context_columns, epochs=60, cuda=True,
         locales=['en_US'],             # Define locales for PII columns
         context_columns=context_columns, # Define columns that should remain constant in sequences
         epochs=epochs,                 # Set the number of training epochs
+        sample_size=sample_size,       # The number of times to sample before choosing and returning a sample. 
         cuda=cuda,                     # Enable GPU usage for faster training
         verbose=verbose                # Print training progress
     )
