@@ -8,7 +8,7 @@ def enforce_date_format(file_path, output_path=file_path):
     """
     Ensures all values in the 'date' column follow the format 'dd/MM/yyyy HH:mm'.
     :param file_path: Path to the input CSV file.
-    :param output_path: Path to save the updated CSV file.
+    :param output_path: Path to save the updated CSV file, overwrite original file by defualt.
     """
     # Load the dataset
     df = pd.read_csv(file_path)
