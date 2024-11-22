@@ -1,0 +1,19 @@
+data:
+  input_path: "data/real_data.csv"
+  output_path: "data/synthetic_data.csv"
+  metadata_path: "data/metadata.json"
+  preprocessing:
+    remove_columns: ["NSM", "Day_of_Week"]
+
+synthesizer:
+  context_columns: ["Load_Type", "WeekStatus"]
+  epochs: 60
+  cuda: true
+
+generation:
+  num_sequences: 55
+  sequence_length: 5600
+
+logging:
+  log_file: "logs/pipeline.log"
+  level: "INFO"
