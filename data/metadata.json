@@ -1,6 +1,6 @@
 {
     "tables": {
-        "Real_table": {
+        "Steel_industry_table": {
             "columns": {
                 "date": {
                     "sdtype": "datetime",
