@@ -12,8 +12,8 @@ synthesizer:
   cuda: true
 
 generation:
-  num_sequences: 55
-  sequence_length: 5600
+  num_sequences: 1457
+  sequence_length: 96
 
 evaluation:
   metrics: ["population_fidelity", "classification_utility"]
