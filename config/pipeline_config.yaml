@@ -4,6 +4,7 @@ data:
   metadata_path: "data/metadata.json"
   preprocessing:
     remove_columns: ["NSM", "Day_of_Week"]
+    normalization: "minmax"  # Options: minmax, standard
 
 synthesizer:
   context_columns: ["Load_Type", "WeekStatus"]
@@ -13,6 +14,9 @@ synthesizer:
 generation:
   num_sequences: 55
   sequence_length: 5600
+
+evaluation:
+  metrics: ["population_fidelity", "classification_utility"]
 
 logging:
   log_file: "logs/pipeline.log"
