@@ -1,15 +1,33 @@
 data:
-  input_path: "data/real_data.csv"
-  output_path: "data/synthetic_data.csv"
-  metadata_path: "data/metadata.json"
-  preprocessing:
-    remove_columns: ["NSM", "Day_of_Week"]
-    normalization: "minmax"  # Options: minmax, standard
+  input_path: "./data/real_data.csv"
+  output_path: "./data/synthetic_data.csv"
+  
+preprocessing:
+  input_file: "data/real_data.csv"  # Path to the input file
+  output_file: "data/preprocessed_dataset.csv"  # Path to the output file
+  unwanted_columns:  # List of columns to drop
+    - "NSM"
+    - "Day_of_week"
+  date_column: "date"  # The name of the date column
+  categorical_columns:  # List of categorical columns
+    - "WeekStatus"
+    - "Load_Type"
+  window_size: 96  # Size of the sliding window
+  step_size: 24    # Step size for the sliding window
+  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
+
+metadata:
+  seq_key: "SID"
+  seq_index: "date"
+  date_format: "%d/%m/%Y %H:%M"
+  metadata_path: "./data/metadata.json"
 
 synthesizer:
-  context_columns: ["Load_Type", "WeekStatus"]
-  epochs: 60
+  context_columns: []
+  epochs: 5
+  verbose: true
   cuda: true
+  model_output: './synthesizer.pkl'
 
 generation:
   num_sequences: 1457

@@ -1,4 +1,40 @@
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
+
+# Define the preprocessing pipeline
+def preprocess_data(input_file, output_file, unwanted_columns, date_column, categorical_columns, window_size, step_size, normalization_method='minmax'):
+    """
+    A complete preprocessing pipeline for time series data.
+
+    Parameters:
+    - input_file (str): Path to the input CSV file.
+    - output_file (str): Path to save the preprocessed CSV file.
+    - unwanted_columns (list): List of columns to remove.
+    - date_column (str): Name of the column containing date values.
+    - categorical_columns (list): List of categorical columns to encode.
+    - window_size (int): Size of the sliding window.
+    - step_size (int): Step size for the sliding window.
+    - normalization_method (str, optional): Method for normalizing numerical columns ('minmax' or 'zscore').
+    """
+    
+    # Step 1: Remove unwanted columns
+    remove_unwanted_columns(input_file, 'step1_removed_columns.csv', unwanted_columns)
+
+    # Step 2: Enforce date format
+    enforce_date_format('step1_removed_columns.csv', date_column, 'step2_date_formatted.csv')
+
+    # Step 3: Normalize numerical data
+    normalize_data('step2_date_formatted.csv', 'step3_normalized.csv', method=normalization_method)
+
+    # Step 4: Label encode categorical columns
+    df = pd.read_csv('step3_normalized.csv')
+    df, label_encoders = label_encode_and_save(df, categorical_columns, 'step4_encoded.csv')
+
+    # Step 5: Apply sliding window
+    windowed_df = sliding_window(df, window_size, step_size, output_file)
+    windowed_df.to_csv(output_file, index=False)
+    print(f"[+] Final preprocessed data saved to {output_file}.")
+
 
 def remove_unwanted_columns(input_file, output_file, columns_to_remove):
     """
@@ -23,7 +59,7 @@ def remove_unwanted_columns(input_file, output_file, columns_to_remove):
     df.to_csv(output_file, index=False)
     
     # Print a message indicating which columns were removed and where the output was saved
-    print(f"Columns {columns_to_remove} removed. Output saved to {output_file}.")
+    print(f"[+] Columns {columns_to_remove} removed. Output saved to {output_file}.")
 
 
 def enforce_date_format(file_path, date_column, output_path=None, date_format="%d/%m/%Y %H:%M"):
@@ -52,7 +88,7 @@ def enforce_date_format(file_path, date_column, output_path=None, date_format="%
         df[date_column] = pd.to_datetime(df[date_column], format=date_format)  # Parse the dates
     except ValueError as e:
         # Raise an error if the date format doesn't match the specified format
-        raise ValueError(f"Error parsing dates: {e}. Please check your data.")
+        raise ValueError(f"[-] Error parsing dates: {e}. Please check your data.")
 
     # Reformat the 'date_column' to the desired date format
     df[date_column] = df[date_column].dt.strftime(date_format)
@@ -60,9 +96,9 @@ def enforce_date_format(file_path, date_column, output_path=None, date_format="%
     # If output_path is provided, save the updated DataFrame to a new CSV file
     if output_path:
         df.to_csv(output_path, index=False)
-        print(f"Date format standardized and saved to '{output_path}'.")
+        print(f"[+] Date format standardized and saved to '{output_path}'.")
     else:
-        print("Date format standardized. No output file path provided, so data was not saved.")
+        print("[-] Date format standardized. No output file path provided, so data was not saved.")
 
 def normalize_data(input_file, output_file, method='minmax'):
     """
@@ -81,8 +117,7 @@ def normalize_data(input_file, output_file, method='minmax'):
         'Leading_Current_Reactive_Power_kVarh',
         'CO2(tCO2)', 
         'Lagging_Current_Power_Factor', 
-        'Leading_Current_Power_Factor', 
-        'NSM'
+        'Leading_Current_Power_Factor'
     ]
 
     # Select the normalization method
@@ -91,14 +126,14 @@ def normalize_data(input_file, output_file, method='minmax'):
     elif method == 'zscore':
         scaler = StandardScaler()
     else:
-        raise ValueError("Unsupported normalization method. Use 'minmax' or 'zscore'.")
+        raise ValueError("[-] Unsupported normalization method. Use 'minmax' or 'zscore'.")
 
     # Normalize numerical columns
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
 
     # Save the normalized dataset
     df.to_csv(output_file, index=False)
-    print(f"Normalized data saved to '{output_file}'.")
+    print(f"[+] Normalized data saved to '{output_file}'.")
 
 
 def label_encode_and_save(df, categorical_columns, output_file):
@@ -127,23 +162,30 @@ def label_encode_and_save(df, categorical_columns, output_file):
         label_encoders[column] = label_encoder
 
         # Optionally, display mapping for reference
-        print(f"Encoding mapping for '{column}': {dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))}")
+        print(f"[+] Encoding mapping for '{column}': {dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))}")
     
     # Save the updated DataFrame to a file
     df.to_csv(output_file, index=False)
-    print(f"Updated DataFrame saved to {output_file}")
+    print(f"[+] Updated DataFrame saved to {output_file}")
     
     return df, label_encoders
 
 
-def sliding_window(data, window_size, step_size):
+import pandas as pd
+
+def sliding_window(data, window_size, step_size, output_file):
     """
     Applies the sliding window technique to a dataset.
+    
     :param data: Pandas DataFrame containing the time series data.
     :param window_size: Size of each window (number of data points).
     :param step_size: Step size to slide the window.
+    :param output_file: Path to save the sliding window data.
     :return: DataFrame containing the sliced windows with unique SIDs.
     """
+    if len(data) < window_size:
+        raise ValueError("The window size is larger than the dataset. Adjust the window size.")
+    
     # Initialize a list to store windowed data
     windowed_data = []
     sid = 1  # Start the sequence identifier from 1
@@ -156,5 +198,15 @@ def sliding_window(data, window_size, step_size):
         windowed_data.append(window)
         sid += 1  # Increment the sequence identifier
 
+    print(f"[+] Sliding window successfully performed, with number of windows {len(windowed_data)}")
+
     # Combine all windows into a single DataFrame
-    return pd.concat(windowed_data, axis=0)
+    slided_data = pd.concat(windowed_data, axis=0)
+
+    # Save the sliding window dataset
+    slided_data.to_csv(output_file, index=False)
+    print(f"[+] Sliding window data saved to '{output_file}'.")
+    
+    return slided_data
+
+
