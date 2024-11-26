@@ -3,8 +3,8 @@ data:
   output_path: "./data/synthetic_data.csv"
   
 preprocessing:
-  input_file: "data/real_data.csv"  # Path to the input file
-  output_file: "data/preprocessed_dataset.csv"  # Path to the output file
+  input_file: "./data/real_data.csv"  # Path to the input file
+  output_file: "./data/preprocessed_dataset.csv"  # Path to the output file
   unwanted_columns:  # List of columns to drop
     - "NSM"
     - "Day_of_week"
@@ -27,14 +27,17 @@ synthesizer:
   epochs: 5
   verbose: true
   cuda: true
-  model_output: './synthesizer.pkl'
+  model_output: './outputs/Models/synthesizer.pkl'
 
 generation:
   num_sequences: 1457
   sequence_length: 96
 
 evaluation:
-  metrics: ["population_fidelity", "classification_utility"]
+  synth_folder: './outputs/Synthetic Data/'
+  columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh',
+            'Leading_Current_Reactive_Power_kVarh', 'CO2(tCO2)',
+            'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
 
 logging:
   log_file: "logs/pipeline.log"

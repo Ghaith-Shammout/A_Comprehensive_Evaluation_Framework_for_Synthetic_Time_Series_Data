@@ -1,11 +1,10 @@
 import logging
 import yaml
-import pandas as pd
 from preprocessing import preprocess_data
 from metadata import define_metadata
 from training import initialize_synthesizer, train_synthesizer
 from generation import generate_synthetic_data
-from evaluation import evaluate_synthetic_data
+from evaluation import population_fidelity_measure
 
 def setup_logging(log_file, level):
     """
@@ -77,7 +76,7 @@ def main():
         logging.info("Phase 3 completed successfully.")
         """
         
-        for epochs in range(5000, 5001, 500):
+        for epochs in range(100, 600, 100):
             logging.info(f"Starting pipeline run with {epochs} epochs.")
 
             # Update the number of epochs in the configuration dynamically
@@ -104,20 +103,19 @@ def main():
                 synthesizer=synthesizer,
                 num_sequences=config['generation']['num_sequences'],
                 sequence_length=config['generation']['sequence_length'],
-                output_path=f"outputs/Synthetic Data/synth_{epochs}_epochs.csv"
+                output_path=f"outputs/Synth_Data/synth_{epochs}_epochs.csv"
             )
             logging.info(f"Generating synthetic data with {epochs} completed.")
 
-        '''
+        
         # Phase 5: Analysis and Evaluation
         logging.info("Phase 5: Analysis and Evaluation started.")
-        evaluate_synthetic_data(
-            real_data_path=config['data']['input_path'],
-            synthetic_data_path=config['data']['output_path'],
-            metrics=config['evaluation']['metrics']
+        population_fidelity_measure(
+            real_file=config['preprocessing']['output_file'],
+            synth_folder=config['evaluation']['synth_folder'],
         )
         logging.info("Phase 5 completed successfully.")
-        '''
+        
 
         logging.info("Pipeline execution completed successfully.")
 

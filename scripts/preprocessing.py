@@ -18,25 +18,24 @@ def preprocess_data(input_file, output_file, unwanted_columns, date_column, cate
     """
     
     # Step 1: Remove unwanted columns
-    remove_unwanted_columns(input_file, 'step1_removed_columns.csv', unwanted_columns)
+    remove_unwanted_columns(file_path=input_file, output_file=output_file, columns_to_remove=unwanted_columns)
 
     # Step 2: Enforce date format
-    enforce_date_format('step1_removed_columns.csv', date_column, 'step2_date_formatted.csv')
+    enforce_date_format(file_path=output_file, date_column=date_column, output_path=output_file)
 
     # Step 3: Normalize numerical data
-    normalize_data('step2_date_formatted.csv', 'step3_normalized.csv', method=normalization_method)
+    normalize_data(file_path=output_file, output_file=output_file, method=normalization_method)
 
     # Step 4: Label encode categorical columns
-    df = pd.read_csv('step3_normalized.csv')
-    df, label_encoders = label_encode_and_save(df, categorical_columns, 'step4_encoded.csv')
+    label_encode_and_save(file_path=output_file, categorical_columns=categorical_columns, output_file=output_file)
 
     # Step 5: Apply sliding window
-    windowed_df = sliding_window(df, window_size, step_size, output_file)
-    windowed_df.to_csv(output_file, index=False)
+    sliding_window(file_path=output_file, window_size=window_size, step_size=step_size, output_file=output_file)
+    
     print(f"[+] Final preprocessed data saved to {output_file}.")
 
 
-def remove_unwanted_columns(input_file, output_file, columns_to_remove):
+def remove_unwanted_columns(file_path, output_file, columns_to_remove):
     """
     Removes specified columns from a CSV file and saves the updated DataFrame to a new CSV file.
 
@@ -50,7 +49,7 @@ def remove_unwanted_columns(input_file, output_file, columns_to_remove):
     """
     
     # Read the input CSV file into a pandas DataFrame
-    df = pd.read_csv(input_file)
+    df = pd.read_csv(file_path)
     
     # Drop the columns specified in the columns_to_remove list
     df.drop(columns=columns_to_remove, inplace=True)
@@ -95,12 +94,12 @@ def enforce_date_format(file_path, date_column, output_path=None, date_format="%
 
     # If output_path is provided, save the updated DataFrame to a new CSV file
     if output_path:
-        df.to_csv(output_path, index=False)
+        #df.to_csv(output_path, index=False)
         print(f"[+] Date format standardized and saved to '{output_path}'.")
     else:
         print("[-] Date format standardized. No output file path provided, so data was not saved.")
 
-def normalize_data(input_file, output_file, method='minmax'):
+def normalize_data(file_path, output_file, method='minmax'):
     """
     Normalizes all numerical columns in a dataset.
     :param input_file: Path to the input CSV file.
@@ -108,7 +107,7 @@ def normalize_data(input_file, output_file, method='minmax'):
     :param method: Normalization method ('minmax' or 'zscore').
     """
     # Load the dataset
-    df = pd.read_csv(input_file)
+    df = pd.read_csv(file_path)
 
     # Identify numerical columns
     numerical_cols = [
@@ -132,11 +131,11 @@ def normalize_data(input_file, output_file, method='minmax'):
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
 
     # Save the normalized dataset
-    df.to_csv(output_file, index=False)
+    #df.to_csv(output_file, index=False)
     print(f"[+] Normalized data saved to '{output_file}'.")
 
 
-def label_encode_and_save(df, categorical_columns, output_file):
+def label_encode_and_save(file_path, categorical_columns, output_file):
     """
     Function to label-encode categorical columns in a DataFrame and save the updated DataFrame to a file.
     
@@ -148,6 +147,9 @@ def label_encode_and_save(df, categorical_columns, output_file):
     Returns:
         pd.DataFrame: Updated DataFrame with encoded categorical columns.
     """
+    # Read file content 
+    df = pd.read_csv(file_path)
+
     # Create a dictionary to store mappings for each column
     label_encoders = {}
     
@@ -165,15 +167,15 @@ def label_encode_and_save(df, categorical_columns, output_file):
         print(f"[+] Encoding mapping for '{column}': {dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))}")
     
     # Save the updated DataFrame to a file
-    df.to_csv(output_file, index=False)
+    #df.to_csv(output_file, index=False)
     print(f"[+] Updated DataFrame saved to {output_file}")
     
     return df, label_encoders
 
 
-import pandas as pd
 
-def sliding_window(data, window_size, step_size, output_file):
+
+def sliding_window(file_path, window_size, step_size, output_file):
     """
     Applies the sliding window technique to a dataset.
     
@@ -183,6 +185,8 @@ def sliding_window(data, window_size, step_size, output_file):
     :param output_file: Path to save the sliding window data.
     :return: DataFrame containing the sliced windows with unique SIDs.
     """
+
+    data = pd.read_csv(file_path)
     if len(data) < window_size:
         raise ValueError("The window size is larger than the dataset. Adjust the window size.")
     
@@ -205,8 +209,9 @@ def sliding_window(data, window_size, step_size, output_file):
 
     # Save the sliding window dataset
     slided_data.to_csv(output_file, index=False)
+    
     print(f"[+] Sliding window data saved to '{output_file}'.")
     
-    return slided_data
+    
 
 

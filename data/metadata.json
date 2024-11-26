@@ -1,0 +1,43 @@
+{
+    "tables": {
+        "table": {
+            "columns": {
+                "date": {
+                    "sdtype": "datetime",
+                    "datetime_format": "%d/%m/%Y %H:%M"
+                },
+                "Usage_kWh": {
+                    "sdtype": "numerical"
+                },
+                "Lagging_Current_Reactive.Power_kVarh": {
+                    "sdtype": "numerical"
+                },
+                "Leading_Current_Reactive_Power_kVarh": {
+                    "sdtype": "numerical"
+                },
+                "CO2(tCO2)": {
+                    "sdtype": "numerical"
+                },
+                "Lagging_Current_Power_Factor": {
+                    "sdtype": "numerical"
+                },
+                "Leading_Current_Power_Factor": {
+                    "sdtype": "numerical"
+                },
+                "WeekStatus": {
+                    "sdtype": "categorical"
+                },
+                "Load_Type": {
+                    "sdtype": "categorical"
+                },
+                "SID": {
+                    "sdtype": "id"
+                }
+            },
+            "sequence_key": "SID",
+            "sequence_index": "date"
+        }
+    },
+    "relationships": [],
+    "METADATA_SPEC_VERSION": "V1"
+}
