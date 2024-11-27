@@ -94,7 +94,7 @@ def enforce_date_format(file_path, date_column, output_path=None, date_format="%
 
     # If output_path is provided, save the updated DataFrame to a new CSV file
     if output_path:
-        #df.to_csv(output_path, index=False)
+        df.to_csv(output_path, index=False)
         print(f"[+] Date format standardized and saved to '{output_path}'.")
     else:
         print("[-] Date format standardized. No output file path provided, so data was not saved.")
@@ -131,7 +131,7 @@ def normalize_data(file_path, output_file, method='minmax'):
     df[numerical_cols] = scaler.fit_transform(df[numerical_cols])
 
     # Save the normalized dataset
-    #df.to_csv(output_file, index=False)
+    df.to_csv(output_file, index=False)
     print(f"[+] Normalized data saved to '{output_file}'.")
 
 
@@ -167,7 +167,7 @@ def label_encode_and_save(file_path, categorical_columns, output_file):
         print(f"[+] Encoding mapping for '{column}': {dict(zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)))}")
     
     # Save the updated DataFrame to a file
-    #df.to_csv(output_file, index=False)
+    df.to_csv(output_file, index=False)
     print(f"[+] Updated DataFrame saved to {output_file}")
     
     return df, label_encoders
