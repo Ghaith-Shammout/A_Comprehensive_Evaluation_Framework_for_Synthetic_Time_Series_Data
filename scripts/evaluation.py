@@ -352,7 +352,7 @@ def awd(real_file, synth_data):
     # Show the plot
     #plt.show()
 
-    output_dir = './outputs/Evaluation/'
+    output_dir = './outputs/Plots/'
     os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
     plt.savefig(os.path.join(output_dir, 'awd.png'), bbox_inches='tight')
 
