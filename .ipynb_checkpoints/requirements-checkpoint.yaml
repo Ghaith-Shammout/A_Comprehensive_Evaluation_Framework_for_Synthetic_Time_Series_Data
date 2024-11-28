@@ -1,4 +1,7 @@
-name: DVAE11
+name: main
+channels:
+  - defaults  # Use the default Conda channel (you can add conda-forge if needed)
+  - conda-forge  # Optional: Add conda-forge for more package options
 dependencies:
   - python=3.9  # Specify the Python version you're using
   - pip  # Ensures pip is available for installing packages
@@ -11,3 +14,8 @@ dependencies:
       - matplotlib>=3.4.0
       - seaborn>=0.11.0
       - jupyter
+  - pytorch  # Default to CPU version of PyTorch
+  - torchvision  # Install torchvision for image processing
+  - torchaudio  # Optional, if you're working with audio data
+  # Uncomment the next line if you want to install PyTorch with GPU support (e.g., CUDA 11.3)
+  # - cudatoolkit=11.3  # Install CUDA toolkit (use the version that matches your environment's CUDA setup)

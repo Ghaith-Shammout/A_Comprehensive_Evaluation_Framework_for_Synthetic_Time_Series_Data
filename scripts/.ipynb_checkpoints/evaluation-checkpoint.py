@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
-import argparse
 from scipy.stats import ks_2samp
 from scipy.stats import wasserstein_distance as wd
+import os
+import argparse
 
 # Define the preprocessing pipeline
 def population_fidelity_measure(real_file, synth_folder):
@@ -129,6 +129,7 @@ def calculate_msas(real_df, synth_df):
     synth_stats = calculate_sequence_statistics(synth_sequences)
     
     # Get the column names excluding 'SID' and 'date' (which are not part of the data to be analyzed).
+    # TODO: in case you make columns customizable change column_names as well
     column_names = real_df.columns[:-2]  # Excludes 'SID' and 'date' columns
     msas_results = {}  # Dictionary to store MSAS results for each column
     
@@ -214,7 +215,7 @@ def plot_msas_grouped(msas_results, synth_name, save_path='./'):
         
         # Save the figure to the given path
         plt.savefig(save_path, bbox_inches='tight')  
-        print(f"Plot saved as {save_path}")
+        print(f"[+] Plot saved as {save_path}")
     
     # Display the plot.
     #plt.show()
@@ -268,16 +269,16 @@ def run_msas_for_synthetic_datasets(real_df, synth_dir):
         write_msas_results_to_file(msas_results, synth_file, output_file)
 
 def msas(real_file, synth_folder):
+    print("[+] Calculating Multi-Sequence Aggregate Similarity (MSAS)")
     # Load the real dataset
     real_data = pd.read_csv(real_file)
 
-    # Columns 
-    columns = [
-        'Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh',
-        'Leading_Current_Reactive_Power_kVarh', 'CO2(tCO2)',
-        'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor', 'SID', 'date'
-    ]
-    
+    # Columns needed to calculate MSAS
+    # TODO: Make columns input customizable
+    columns = ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh','Leading_Current_Reactive_Power_kVarh',
+               'CO2(tCO2)','Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor', 'SID', 'date' ]
+
+    # Define read dataframe with needed columns
     real_df = real_data[columns]
 
     # Define the directory containing synthetic datasets
@@ -285,13 +286,16 @@ def msas(real_file, synth_folder):
 
     # Run MSAS for all synthetic datasets in the directory
     run_msas_for_synthetic_datasets(real_df, synth_dir)
-    print(f"[+] MSAS Completed")
+    print("[+] MSAS Calculation Completed")
 
 
 def awd(real_file, synth_data):
     """
     Calculate the Average Wasserstein Distance between Real data and Synthetic datasets
     """
+    # TODO: Split AWD into multiple sub-functions
+    # TODO: Chnage to frequency domain
+    # TODO: order processed files before calculation 
     print("[+] Calculating Average Wasserstein Distance (AWD)")
 
     # Read the real dataset
@@ -362,7 +366,7 @@ def awd(real_file, synth_data):
 if __name__ == "__main__":
     # Parse arguments
     parser = argparse.ArgumentParser(description="Run evaluation metrics for synthetic data.")
-    parser.add_argument("--real_data", required=True, help="Path to the real data CSV file.")
+    parser.add_argument("--real_file", required=True, help="Path to the real data CSV file.")
     parser.add_argument("--synth_folder", required=True, help="Path to the folder containing synthetic data CSV files.")
     args = parser.parse_args()
 

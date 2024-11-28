@@ -24,7 +24,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: 5
+  epochs: [500, 1000, 2500, 5000]
   verbose: true
   cuda: true
   model_output: './outputs/Models/synthesizer.pkl'

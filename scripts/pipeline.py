@@ -76,26 +76,26 @@ def main():
         logging.info("Phase 3 completed successfully.")
         """
         
-        for epochs in range(100, 600, 100):
-            logging.info(f"Starting pipeline run with {epochs} epochs.")
+        for epoch in config['synthesizer']['epochs']:
+            logging.info(f"Starting pipeline run with {epoch} epochs.")
 
             # Update the number of epochs in the configuration dynamically
-            config['synthesizer']['epochs'] = epochs
+            #config['synthesizer']['epochs'] = epochs
 
             # Train the synthesizer
             synthesizer = initialize_synthesizer(
                 metadata_path=config['metadata']['metadata_path'],
                 context_columns=config['synthesizer']['context_columns'],
-                epochs=config['synthesizer']['epochs'],
+                epochs=epoch,
                 verbose=config['synthesizer']['verbose'],
                 cuda=config['synthesizer']['cuda']
             )
             train_synthesizer(
                 synthesizer=synthesizer,
                 train_dataset=config['preprocessing']['output_file'],  # Ensure DataFrame is passed
-                save_path=f"outputs/Models/synthesizer_{epochs}_epochs.pkl"
+                save_path=f"outputs/Models/synthesizer_{epoch}_epochs.pkl"
             )
-            logging.info(f"Training a model with {epochs} epochs completed.")
+            logging.info(f"Training a model with {epoch} epochs completed.")
 
             # Phase 4: Synthetic Data Generation
             logging.info("Phase 4: Synthetic Data Generation started.")
@@ -103,9 +103,9 @@ def main():
                 synthesizer=synthesizer,
                 num_sequences=config['generation']['num_sequences'],
                 sequence_length=config['generation']['sequence_length'],
-                output_path=f"outputs/Synth_Data/synth_{epochs}_epochs.csv"
+                output_path=f"outputs/Synth_Data/synth_{epoch}_epochs.csv"
             )
-            logging.info(f"Generating synthetic data with {epochs} completed.")
+            logging.info(f"Generating synthetic data with {epoch} completed.")
 
         
         # Phase 5: Analysis and Evaluation
