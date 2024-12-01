@@ -1,3 +1,9 @@
+
+def classification():
+
+    return
+    
+"""
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from sktime.classification.interval_based import TimeSeriesForestClassifier
@@ -39,3 +45,4 @@ print("\nModel Performance Comparison:")
 print(f"TimeSeriesForestClassifier F1-Score: {tsf_f1:.2f}")
 print(f"ShapeletTransformClassifier F1-Score: {shapelet_f1:.2f}")
 print(f"HybridIntervalTree (HIVECOTE) F1-Score: {hivecote_f1:.2f}")
+"""

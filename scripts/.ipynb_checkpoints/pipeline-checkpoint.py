@@ -1,10 +1,10 @@
 import logging
 import yaml
 from preprocessing import preprocess_data
-from metadata import define_metadata
-from training import initialize_synthesizer, train_synthesizer
-from generation import generate_synthetic_data
+from generating import SyntheticDataGenerator
 from evaluation import population_fidelity_measure
+#from classification import classification
+#from corrleation_analysis import corrleation_analysis
 
 def setup_logging(log_file, level):
     """
@@ -32,9 +32,12 @@ def main():
     setup_logging(config['logging']['log_file'], config['logging']['level'])
     logging.info("Pipeline execution started.")
 
+    # Initialize a generator
+    generator = SyntheticDataGenerator()
+
     try:
         # Phase 1: Data Preprocessing
-        logging.info("Phase 1: Data Preprocessing started.")
+        logging.info("Phase 1: Data Preprocessing Started.")
         preprocess_data(
             input_file=config['preprocessing']['input_file'],
             output_file=config['preprocessing']['output_file'],
@@ -45,78 +48,86 @@ def main():
             step_size=config['preprocessing']['step_size'],
             normalization_method=config['preprocessing']['normalization_method']
         )
-        logging.info("Phase 1 completed successfully.")
+        logging.info("Phase 1 Completed Successfully.")
 
-        # Phase 2: Metadata Definition
-        logging.info("Phase 2: Metadata Definition started.")
-        metadata = define_metadata(
+        # Phase 2: Synthetic Data Generation 
+        logging.info("Phase 2: Synthetic Data Generation Process Started.")
+        
+        logging.info("Phase 2.1: Metadata Definition started.")
+        metadata = generator.define_metadata(
             dataset=config['preprocessing']['output_file'],
             seq_key=config['metadata']['seq_key'],  # Sequence key
             seq_index=config['metadata']['seq_index'],      # Sequence index
-            date_format=config['metadata']['date_format']
+            date_format=config['metadata']['date_format'],
+            metadata_path=config['metadata']['metadata_path']
         )
-        metadata.save_to_json(config['metadata']['metadata_path'])
-        logging.info("Phase 2 completed successfully.")
+        logging.info("Phase 2.1: Metadata Definition Completed Successfully.")
 
-        """
-        # Phase 3: Model Training
-        logging.info("Phase 3: Model Training started.")
-        synthesizer = initialize_synthesizer(
-            metadata_path=config['metadata']['metadata_path'],
-            context_columns=config['synthesizer']['context_columns'],
-            epochs=config['synthesizer']['epochs'],
-            verbose=config['synthesizer']['verbose'],
-            cuda=config['synthesizer']['cuda']
-        )
-        train_synthesizer(
-            synthesizer=synthesizer,
-            train_dataset=config['preprocessing']['output_file'],
-            save_path=config['synthesizer']['model_output']
-        )
-        logging.info("Phase 3 completed successfully.")
-        """
         
         for epoch in config['synthesizer']['epochs']:
             logging.info(f"Starting pipeline run with {epoch} epochs.")
 
             # Update the number of epochs in the configuration dynamically
             #config['synthesizer']['epochs'] = epochs
-
+            logging.info(f"Phase 2.2: Synthesizer Initializing with {epoch} epochs Started.")
             # Train the synthesizer
-            synthesizer = initialize_synthesizer(
+            synthesizer = generator.initialize_synthesizer(
                 metadata_path=config['metadata']['metadata_path'],
                 context_columns=config['synthesizer']['context_columns'],
                 epochs=epoch,
                 verbose=config['synthesizer']['verbose'],
                 cuda=config['synthesizer']['cuda']
             )
-            train_synthesizer(
-                synthesizer=synthesizer,
+            logging.info(f"Phase 2.2: Synthesizer Initializing with {epoch} epochs Successfully Completed.")
+
+            # Phase 2.3: Synthesizer Training
+            logging.info(f"Phase 2.3: Synthesizer Training with {epoch} epochs Started.")
+            generator.train_synthesizer(
+                #synthesizer=synthesizer,
                 train_dataset=config['preprocessing']['output_file'],  # Ensure DataFrame is passed
                 save_path=f"outputs/Models/synthesizer_{epoch}_epochs.pkl"
             )
-            logging.info(f"Training a model with {epoch} epochs completed.")
+            logging.info(f"Phase 2.3: Synthesizer Training with {epoch} epochs Completed.")
 
-            # Phase 4: Synthetic Data Generation
+            # Phase 2.4: Synthetic Data Generation
+            logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Started.")
             logging.info("Phase 4: Synthetic Data Generation started.")
-            generate_synthetic_data(
+            generator.generate_synthetic_data(
                 synthesizer=synthesizer,
                 num_sequences=config['generation']['num_sequences'],
                 sequence_length=config['generation']['sequence_length'],
+                # TODO: make output path customizable
                 output_path=f"outputs/Synth_Data/synth_{epoch}_epochs.csv"
             )
-            logging.info(f"Generating synthetic data with {epoch} completed.")
+            logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
 
         
-        # Phase 5: Analysis and Evaluation
-        logging.info("Phase 5: Analysis and Evaluation started.")
+        # Phase 3: Synthetic Data Evaluation
+        logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
         population_fidelity_measure(
             real_file=config['preprocessing']['output_file'],
             synth_folder=config['evaluation']['synth_folder'],
         )
-        logging.info("Phase 5 completed successfully.")
-        
+        logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 
+        """
+        # Phase 4: Classification Process
+        logging.info(f"Phase 4: Classification Process Started.")
+        classification(
+            real_file=config['preprocessing']['output_file'],
+            synth_folder=config['evaluation']['synth_folder'],
+        )
+        logging.info(f"Phase 4: Classification Process Completed.")
+
+        # Phase 5: Correlation Analysis
+        logging.info(f"Phase 5: Correlation Analysis Started.")
+        corrleation_analysis(
+            real_file=config['preprocessing']['output_file'],
+            synth_folder=config['evaluation']['synth_folder'],
+        )
+        logging.info(f"Phase 5: Correlation Analysis Completed.")
+        """
+        
         logging.info("Pipeline execution completed successfully.")
 
     except Exception as e:
