@@ -2,7 +2,7 @@ import logging
 import yaml
 from preprocessing import preprocess_data
 from generating import SyntheticDataGenerator
-from evaluation import population_fidelity_measure
+from evaluation import PopulationFidelity
 #from classification import classification
 #from corrleation_analysis import corrleation_analysis
 
@@ -30,10 +30,7 @@ def main():
     # Load configuration
     config = load_config("config/pipeline_config.yaml")
     setup_logging(config['logging']['log_file'], config['logging']['level'])
-    logging.info("Pipeline execution started.")
-
-    # Initialize a generator
-    generator = SyntheticDataGenerator()
+    logging.info("Pipeline execution started.")    
 
     try:
         # Phase 1: Data Preprocessing
@@ -50,8 +47,12 @@ def main():
         )
         logging.info("Phase 1 Completed Successfully.")
 
+
         # Phase 2: Synthetic Data Generation 
         logging.info("Phase 2: Synthetic Data Generation Process Started.")
+        
+        # Define a generator
+        generator = SyntheticDataGenerator()
         
         logging.info("Phase 2.1: Metadata Definition started.")
         metadata = generator.define_metadata(
@@ -63,7 +64,6 @@ def main():
         )
         logging.info("Phase 2.1: Metadata Definition Completed Successfully.")
 
-        
         for epoch in config['synthesizer']['epochs']:
             logging.info(f"Starting pipeline run with {epoch} epochs.")
 
@@ -93,21 +93,26 @@ def main():
             logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Started.")
             logging.info("Phase 4: Synthetic Data Generation started.")
             generator.generate_synthetic_data(
-                synthesizer=synthesizer,
+                #synthesizer=synthesizer,
                 num_sequences=config['generation']['num_sequences'],
                 sequence_length=config['generation']['sequence_length'],
                 # TODO: make output path customizable
-                output_path=f"outputs/Synth_Data/synth_{epoch}_epochs.csv"
+                output_path=f"outputs/Synth_Data/{epoch}.csv"
             )
             logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
-
         
         # Phase 3: Synthetic Data Evaluation
         logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
-        population_fidelity_measure(
-            real_file=config['preprocessing']['output_file'],
-            synth_folder=config['evaluation']['synth_folder'],
-        )
+        
+        # Define an evaluator
+        real_data_path = config['preprocessing']['output_file']
+        synth_folder = config['evaluation']['synth_folder']
+        output_csv = config['evaluation']['PF_results']
+        sequence_length = 96
+        evaluator = PopulationFidelity(real_data_path, synth_folder, output_csv, sequence_length)
+
+        evaluator.msas()
+        evaluator.awd()
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 
         """

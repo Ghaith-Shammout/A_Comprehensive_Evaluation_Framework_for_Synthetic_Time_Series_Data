@@ -1,7 +1,6 @@
 {
     "tables": {
         "table": {
-            "sequence_index": "date",
             "sequence_key": "SID",
             "columns": {
                 "date": {
@@ -35,7 +34,8 @@
                 "SID": {
                     "sdtype": "id"
                 }
-            }
+            },
+            "sequence_index": "date"
         }
     },
     "relationships": [],

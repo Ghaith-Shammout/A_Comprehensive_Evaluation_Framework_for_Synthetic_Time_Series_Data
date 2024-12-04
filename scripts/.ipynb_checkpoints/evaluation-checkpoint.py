@@ -1,374 +1,254 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import ks_2samp
-from scipy.stats import wasserstein_distance as wd
+from scipy.stats import ks_2samp, wasserstein_distance
 import os
-import argparse
-
-# Define the preprocessing pipeline
-def population_fidelity_measure(real_file, synth_folder):
-    """
-    A complete evaluation measurmeents time series data.
-
-    Parameters:
-    - input_file (str): Path to the input CSV file.
-    - output_file (str): Path to save the preprocessed CSV file.
-    - columns (list): 
-    """
-    # Metric 1: 
-    #metric(real_data, synth_folder, columns)
-
-    # Metric 2: MSAS
-    msas(real_file, synth_folder)
-
-    # Metric 3: Average Wasserstien Distance
-    awd(real_file, synth_folder)
-
-    # Metric 4: Average Jehnsson-Shannon Distance
-    #ajsd(real_data, synth_folder, columns)
-
-    # Metric 5: Average Jehnsson-Shannon Distance
-    #metric(real_data, synth_folder, columns)
-
-    print(f"[+] Population Fidelity Completed")
+import glob
 
 
-def extract_sequences(df, date_column='date', seq_id='SID'):
-    # Convert the 'date_column' to datetime format, specifying the exact format for conversion.
-    # This ensures that the dates are in a standardized datetime object for further sorting.
-    df[date_column] = pd.to_datetime(df[date_column], format='%d/%m/%Y %H:%M')
-    
-    # Initialize an empty list to store the sequences of values for each 'SID' group.
-    sequences = []
-    
-    # Group the DataFrame by sequence id (seq_id), iterating over each unique group.
-    # 'SID' could represent an identifier for different sequences, e.g., a user or entity.
-    for _, group in df.groupby(seq_id):
-        # Sort each group by the 'date_column' so that we can process the data in chronological order.
-        group_sorted = group.sort_values(by=date_column)
-        
-        # Drop the 'date_column' as it's no longer needed after sorting, we only need the sequence of values.
-        group_sorted = group_sorted.drop(columns=[date_column])
-        
-        # Append the values of the sorted group (as a numpy array) to the 'sequences' list.
-        # This stores each group as a sequence of rows.
-        sequences.append(group_sorted.values)
-    
-    # Return the list of sequences where each entry corresponds to a sorted sequence for a particular 'SID'.
-    return sequences
+class PopulationFidelity:
+    def __init__(self, real_data_path, synth_folder, output_csv, sequence_length=96):
+        """
+        Initializes the Evaluation class.
 
-def calculate_sequence_statistics(sequences):
-    # Initialize a dictionary to store the statistics for each sequence.
-    # Keys: 'length', 'mean', 'median', 'std', 'inter_row_diff' correspond to different statistics.
-    stats = {'length': [], 'mean': [], 'median': [], 'std': [], 'inter_row_diff': []}
-    
-    # Loop through each sequence in the list of sequences.
-    for seq in sequences:
-        # Calculate and store the length (number of rows) of the sequence.
-        stats['length'].append(len(seq))
-        
-        # Calculate and store the mean of each column (axis=0 means column-wise mean).
-        stats['mean'].append(np.mean(seq, axis=0))
-        
-        # Calculate and store the median of each column (axis=0 means column-wise median).
-        stats['median'].append(np.median(seq, axis=0))
-        
-        # Calculate and store the standard deviation of each column (axis=0 means column-wise std).
-        stats['std'].append(np.std(seq, axis=0))
-        
-        # Initialize a list to store the "inter-row differences" for each column.
-        inter_row_diffs = []
-        
-        # For each column in the sequence, calculate the difference between values
-        # that are 24 rows apart (lag of 24).
-        for col in range(seq.shape[1]):  # Iterate over all columns
-            col_vals = seq[:, col]  # Extract values of the current column
+        Parameters:
+        - real_data_path (str): Path to the real data CSV file.
+        - synth_data_dir (str): Directory containing the synthetic data CSV files.
+        - sequence_length (int): Number of data points per sequence (default is 96).
+        """
+        try:
+            # Load the real data
+            self.real_data = pd.read_csv(real_data_path)
             
-            # If the sequence has more than 24 rows, calculate the average absolute difference
-            # between each value and the value 24 rows later (lag of 24).
-            # If the sequence has less than 24 rows, set the difference to NaN.
-            diff = np.mean([abs(col_vals[i] - col_vals[i + 24]) for i in range(len(col_vals) - 24)]) if len(col_vals) > 24 else np.nan
-            inter_row_diffs.append(diff)
+            # Sort real dataset by 'SID' and 'date' column, then drop unnecessary columns
+            self.real_data = self.real_data.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+        except Exception as e:
+            print(f"Error loading real data from {real_data_path}: {e}")
+            raise
         
-        # Store the list of inter-row differences for the current sequence.
-        stats['inter_row_diff'].append(inter_row_diffs)
-    
-    # Return the dictionary containing all the statistics for each sequence.
-    return stats
+        try:
+            # Get the list of synthetic CSV files in the directory
+            self.synth_data_files = glob.glob(synth_folder + '/*.csv')  # Adjust path as necessary
+        except Exception as e:
+            print(f"Error reading synthetic data files from {synth_folder}: {e}")
+            raise
+        
+        self.sequence_length = sequence_length
+        self.output_csv = output_csv
 
-def ks_test_between_columns(real_column_stats, synth_column_stats):
-    # Initialize a dictionary to store the KS test results for each statistic (mean, median, std, inter-row diff).
-    # The values will be lists of tuples (KS statistic, p-value) for each statistic.
-    ks_results = {'mean': [], 'median': [], 'std': [], 'inter_row_diff': []}
-    
-    # Loop through each statistic name in the keys of the ks_results dictionary.
-    for stat_name in ks_results.keys():
-        # Retrieve the corresponding statistics for the real and synthetic columns.
-        real_stat = real_column_stats[stat_name]  # Statistics from the real column
-        synth_stat = synth_column_stats[stat_name]  # Statistics from the synthetic column
-        
-        # Perform the Kolmogorov-Smirnov (KS) two-sample test between the real and synthetic statistics.
-        # ks_2samp returns the KS statistic and the p-value.
-        ks_stat, p_value = ks_2samp(real_stat, synth_stat)
-        
-        # Store the results (KS statistic and p-value) for the current statistic name.
-        ks_results[stat_name].append((ks_stat, p_value))
-    
-    # Return the dictionary containing the KS test results for each statistic.
-    return ks_results
+    @staticmethod
+    def compute_inter_row_dependency(sequence, lag=1):
+        """
+        Computes the average difference between a value in row n and the value `lag` steps after it in a sequence.
+        """
+        return np.mean(np.abs(sequence[:-lag] - sequence[lag:]))
 
-def calculate_msas(real_df, synth_df):
-    # Extract sequences from both the real and synthetic dataframes.
-    # These sequences will be used to compute statistics (e.g., mean, median, etc.).
-    real_sequences = extract_sequences(real_df)
-    synth_sequences = extract_sequences(synth_df)
-    
-    # Calculate statistics (mean, median, std, inter-row diff) for the real and synthetic sequences.
-    real_stats = calculate_sequence_statistics(real_sequences)
-    synth_stats = calculate_sequence_statistics(synth_sequences)
-    
-    # Get the column names excluding 'SID' and 'date' (which are not part of the data to be analyzed).
-    # TODO: in case you make columns customizable change column_names as well
-    column_names = real_df.columns[:-2]  # Excludes 'SID' and 'date' columns
-    msas_results = {}  # Dictionary to store MSAS results for each column
-    
-    # Loop through each column (excluding 'SID' and 'date') to perform the KS test and calculate MSAS results.
-    for col_idx, col_name in enumerate(column_names):
-        # Prepare the statistics for the real column at the current index.
-        # Extract statistics (mean, median, std, inter-row diff) for the current column (col_idx).
-        real_col_stats = {
-            'mean': [real_stats['mean'][i][col_idx] for i in range(len(real_stats['mean']))],
-            'median': [real_stats['median'][i][col_idx] for i in range(len(real_stats['median']))],
-            'std': [real_stats['std'][i][col_idx] for i in range(len(real_stats['std']))],
-            'inter_row_diff': [real_stats['inter_row_diff'][i][col_idx] for i in range(len(real_stats['inter_row_diff']))]
-        }
-
-        # Prepare the statistics for the synthetic column at the current index.
-        synth_col_stats = {
-            'mean': [synth_stats['mean'][i][col_idx] for i in range(len(synth_stats['mean']))],
-            'median': [synth_stats['median'][i][col_idx] for i in range(len(synth_stats['median']))],
-            'std': [synth_stats['std'][i][col_idx] for i in range(len(synth_stats['std']))],
-            'inter_row_diff': [synth_stats['inter_row_diff'][i][col_idx] for i in range(len(synth_stats['inter_row_diff']))]
-        }
-
-        # Perform the Kolmogorov-Smirnov test between the real and synthetic statistics for the current column.
-        ks_results = ks_test_between_columns(real_col_stats, synth_col_stats)
+    @staticmethod
+    def compute_statistics(df, window_size=96):
+        """
+        Computes statistics for fixed-size windows across the dataset.
+        Parameters:
+            df (pd.DataFrame): Input DataFrame containing the time series data.
+            window_size (int): Size of each window in data points.
+            exclude_cols (list): Columns to exclude from statistical computation.
+        Returns:
+            pd.DataFrame: DataFrame containing statistics for each window.
+        """
+        stats = []
+        columns = [col for col in df.columns]
         
-        # Calculate the MSAS (Mean Statistical Agreement Score) for each statistic.
-        # This is done by averaging the KS statistics (the first value in each tuple from the KS test results).
-        msas_results[col_name] = {
-            stat: np.mean([result[0] for result in ks_results[stat]]) for stat in ks_results
-        }
-        
-    # Return the MSAS results for all columns.
-    return msas_results
-
-def plot_msas_grouped(msas_results, synth_name, save_path='./'):
-    # Get the list of column names from the MSAS results (keys of the dictionary).
-    columns = list(msas_results.keys())
-    
-    # Define the statistics to be plotted (mean, median, std, and inter_row_diff).
-    statistics = ['mean', 'median', 'std', 'inter_row_diff']
-    
-    # Create a new figure and axis object for the plot with a specified size (12x8 inches).
-    fig, ax = plt.subplots(figsize=(12, 8))
-    
-    # Loop through each statistic type (mean, median, std, inter_row_diff).
-    for i, stat in enumerate(statistics):
-        # Extract the KS statistic values for the current statistic (mean, median, etc.) for all columns.
-        ks_values = [msas_results[col][stat] for col in columns]
-        
-        # Create a bar plot for the current statistic (mean, median, std, or inter-row difference).
-        # Each statistic will have its bars slightly offset to avoid overlapping.
-        # The offset is determined by `i * 0.2` to ensure bars for different statistics are grouped but not overlapping.
-        ax.bar(np.arange(len(columns)) + i * 0.2, ks_values, 0.2, label=stat)
-    
-    # Set the x-axis label (representing the column names).
-    ax.set_xlabel('Columns')
-    
-    # Set the y-axis label (representing the KS Statistic value).
-    ax.set_ylabel('KS Statistic')
-    
-    # Set the title of the plot, which includes the name of the synthetic dataset (synth_name).
-    ax.set_title(f'MSAS Results: KS Statistic for {synth_name}')
-    
-    # Set the x-ticks to correspond to the positions of the columns on the x-axis.
-    # The x-tick positions are adjusted to ensure that the bars for each statistic are grouped correctly.
-    ax.set_xticks(np.arange(len(columns)) + (len(statistics) - 1) * 0.1)
-    
-    # Set the x-tick labels to the actual column names, rotating them by 45 degrees for better readability.
-    ax.set_xticklabels(columns, rotation=45, ha="right")
-    
-    # Add a legend to the plot to indicate what each color bar represents (mean, median, std, inter-row_diff).
-    ax.legend(title='Statistic Type', bbox_to_anchor=(1.05, 1), loc='upper left')
-    
-    # Adjust the layout to prevent clipping of axis labels and the legend.
-    plt.tight_layout()
-    
-     # If a save_path is provided, ensure the directory exists and then save the plot as a file.
-    if save_path:
-        # Ensure the directory exists
-        save_dir = os.path.dirname(save_path)
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        
-        # Save the figure to the given path
-        plt.savefig(save_path, bbox_inches='tight')  
-        print(f"[+] Plot saved as {save_path}")
-    
-    # Display the plot.
-    #plt.show()
-
-def write_msas_results_to_file(msas_results, synth_file, output_file):
-    # Open the output file in write mode
-    with open(output_file, 'w') as file:
-        # Write the MSAS results for the current synthetic dataset
-        file.write(f"MSAS results for synthetic dataset: {synth_file}\n")
-        
-        # Loop through the results for each column in the MSAS output
-        for column, ks_stats in msas_results.items():
-            file.write(f"  - {column}:\n")  # Write the column name
+        num_windows = len(df) // window_size  # Number of full windows
+        for i in range(num_windows):
+            window_start = i * window_size
+            window_end = window_start + window_size
+            window_data = df.iloc[window_start:window_end]
             
-            # Loop through each statistic type (mean, median, std, inter_row_diff)
-            # and write the KS statistic value for that statistic
-            for stat, ks_stat in ks_stats.items():
-                file.write(f"    {stat}: KS Statistic = {ks_stat:.4f}\n")
+            window_stats = {'Window': i + 1}
+            window_stats['length'] = len(window_data)
+            
+            for col in columns:
+                data = window_data[col].values
+                window_stats[f'{col}_mean'] = np.mean(data)
+                window_stats[f'{col}_median'] = np.median(data)
+                window_stats[f'{col}_std'] = np.std(data)
+                window_stats[f'{col}_inter_row_dep'] = PopulationFidelity.compute_inter_row_dependency(data, lag=1)
+            
+            stats.append(window_stats)
         
-        # Write a separator to distinguish between results of different datasets
-        file.write("\n" + "-"*50 + "\n")
-    print(f"[+] MSAS results saved to {output_file}")
+        return pd.DataFrame(stats)
 
-def run_msas_for_synthetic_datasets(real_df, synth_dir):
-    # Get a list of all CSV files in the given synthetic data directory
-    # The list comprehension filters only files that end with '.csv'
-    synthetic_files = [f for f in os.listdir(synth_dir) if f.endswith('.csv')]
+    @staticmethod
+    def compute_msas(real_stats, synthetic_stats):
+        """
+        Computes the MSAS score by averaging the Kolmogorov-Smirnov test results for all columns.
+        """
+        scores = []
+        for column in real_stats.columns:
+            if column == 'SID':  # Skip the sequence identifier column
+                continue
+            real_values = real_stats[column].dropna()
+            synthetic_values = synthetic_stats[column].dropna()
+            ks_stat, _ = ks_2samp(real_values, synthetic_values)
+            scores.append(1 - ks_stat)  # Convert KS statistic to a similarity score
+        return np.mean(scores)
+
+    @staticmethod
+    def extract_epoch_number(filename):
+        """
+        Extracts the epoch number from the filename. Assumes the filename contains the word 'epoch' followed by a number.
+        Example: synthetic_data_epoch1.csv -> epoch1
+        """
+        base_name = os.path.splitext(filename)[0]
+        epoch_part = [part for part in base_name.split('_') if 'epoch' in part]
+        return epoch_part[0] if epoch_part else base_name
+
+    def msas(self):
+        """
+        Executes the MSAS algorithm for the real and synthetic datasets, returning results as a DataFrame.
+        """
+        real_stats = self.compute_statistics(self.real_data, window_size=self.sequence_length)
+        print("[+] Computed statistics for the real dataset.")
     
-    # Loop through each synthetic dataset file in the directory
-    for synth_file in synthetic_files:
-        # Read the synthetic dataset CSV file into a DataFrame
-        synth_df = pd.read_csv(os.path.join(synth_dir, synth_file))
-        
-        # Run the MSAS (Mean Statistical Agreement Score) analysis on the real and synthetic data
-        msas_results = calculate_msas(real_df, synth_df)
-        
-        # Plot MSAS results for the current synthetic dataset
-        plot_msas_grouped(msas_results, synth_file, f'./outputs/Plots/{synth_file}.png')  # Plot the KS statistics for each column
-        
-        
-        # Example of usage
-        output_file = './outputs/Evaluation/msas_results.txt'  # Specify the output file path
-        
-        # If a save_path is provided, ensure the directory exists and then save the plot as a file.
-        if output_file:
-            # Ensure the directory exists
-            save_dir = os.path.dirname(output_file)
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-        
-        write_msas_results_to_file(msas_results, synth_file, output_file)
-
-def msas(real_file, synth_folder):
-    print("[+] Calculating Multi-Sequence Aggregate Similarity (MSAS)")
-    # Load the real dataset
-    real_data = pd.read_csv(real_file)
-
-    # Columns needed to calculate MSAS
-    # TODO: Make columns input customizable
-    columns = ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh','Leading_Current_Reactive_Power_kVarh',
-               'CO2(tCO2)','Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor', 'SID', 'date' ]
-
-    # Define read dataframe with needed columns
-    real_df = real_data[columns]
-
-    # Define the directory containing synthetic datasets
-    synth_dir = synth_folder
-
-    # Run MSAS for all synthetic datasets in the directory
-    run_msas_for_synthetic_datasets(real_df, synth_dir)
-    print("[+] MSAS Calculation Completed")
-
-
-def awd(real_file, synth_data):
-    """
-    Calculate the Average Wasserstein Distance between Real data and Synthetic datasets
-    """
-    # TODO: Split AWD into multiple sub-functions
-    # TODO: Chnage to frequency domain
-    # TODO: order processed files before calculation 
-    print("[+] Calculating Average Wasserstein Distance (AWD)")
-
-    # Read the real dataset
-    real = pd.read_csv(real_file)
-
-    # List of columns to compare
-    columns = ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh',
-               'Leading_Current_Reactive_Power_kVarh', 'CO2(tCO2)',
-               'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
-
-
-    # Initialize a dictionary to store lists of WD values for each column
-    wd_values_dict = {column: [] for column in columns}
-
-    # Path to the directory containing synthetic data files
-    synth_data_dir = synth_data
-
-    # Get a list of synthetic data files (assuming they are CSV files)
-    synth_files = [f for f in os.listdir(synth_data_dir) if f.endswith('.csv')]
-
-    # Loop through each synthetic dataset
-    for synth_file in synth_files:
-        # Read the synthetic data
-        synth = pd.read_csv(os.path.join(synth_data_dir, synth_file))
-
-        # Loop through each column and calculate the Wasserstein distance
-        for column in columns:
-            wd_value = wd(real[column], synth[column])
-            wd_values_dict[column].append(wd_value)
-
-    # Plotting the Wasserstein distance for each column over different synthetic datasets
-    plt.figure(figsize=(14, 8))
-
-    # Color palette for distinct lines
-    colors = plt.cm.viridis(np.linspace(0, 1, len(columns)))
-
-    # Plot each column's WD values over synthetic datasets
-    for idx, (column, wd_values) in enumerate(wd_values_dict.items()):
-        plt.plot(range(len(wd_values)), wd_values, marker='o', label=column, color=colors[idx], markersize=6, linewidth=2)
-
-    # Set plot labels and title
-    plt.xlabel('Index of Synthetic Dataset', fontsize=12)
-    plt.ylabel('Wasserstein Distance (WD)', fontsize=12)
-    plt.title('Evolution of Wasserstein Distance between Real and Synthetic Data for Different Columns', fontsize=14)
-
-    # Add a grid for better readability
-    plt.grid(True, linestyle='--', alpha=0.7)
-
-    # Set the x-ticks to be the indices of synthetic datasets
-    plt.xticks(range(len(synth_files)), synth_files, rotation=45, ha='right', fontsize=10)
-
-    # Display legend with more clarity
-    plt.legend(title="Columns", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
-
-    # Tight layout to prevent clipping of labels
-    plt.tight_layout()
-
-    # Show the plot
-    #plt.show()
-
-    output_dir = './outputs/Plots/'
-    os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
-    plt.savefig(os.path.join(output_dir, 'awd.png'), bbox_inches='tight')
-
-    print(f"[+] Average Wasserstein Distance Completed")
+        msas_scores = []
     
+        for synth_file in self.synth_data_files:
+            try:
+                print(f"[+] Processing file: {synth_file}")
+    
+                synthetic_df = pd.read_csv(synth_file)
+                synthetic_df = synthetic_df.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+    
+                synthetic_stats = self.compute_statistics(synthetic_df, window_size=self.sequence_length)
+                msas_score = self.compute_msas(real_stats, synthetic_stats)
+    
+                epoch = self.extract_epoch_number(os.path.basename(synth_file))
+                msas_scores.append({'Epoch': epoch, 'MSAS': msas_score})
+    
+                print(f"[+] Computed MSAS score for {epoch}: {msas_score:.4f}")
+            except Exception as e:
+                print(f"[-] Error processing {synth_file}: {e}")
+    
+        return pd.DataFrame(msas_scores)
+
+
+
+    def get_most_likely_period(self, data):
+        """
+        Calculates the most likely period using FFT for a given data sequence.
+
+        Parameters:
+        - data (numpy array): Data sequence to process.
+
+        Returns:
+        - float: The most likely period.
+        """
+        try:
+            n = len(data)
+            fft_result = np.fft.fft(data)
+            fft_amplitude = np.abs(fft_result)[:n // 2]  # Use only positive frequencies
+            freqs = np.fft.fftfreq(n, d=1)[:n // 2]
+            peak_freq = freqs[np.argmax(fft_amplitude)]  # Get the frequency with max amplitude
+            return 1 / peak_freq if peak_freq != 0 else np.inf  # Return the period
+        except Exception as e:
+            print(f"[-] Error calculating the most likely period: {e}")
+            raise
+
+    def compare_amplitudes(self, real_data, synth_data):
+        """
+        Compares the FFT amplitudes using Wasserstein distance between real and synthetic data.
+
+        Parameters:
+        - real_data (numpy array): Real data sequence.
+        - synth_data (numpy array): Synthetic data sequence.
+
+        Returns:
+        - float: The Wasserstein distance between the amplitudes.
+        """
+        try:
+            real_amplitudes = np.abs(np.fft.fft(real_data))[:len(real_data) // 2]
+            synth_amplitudes = np.abs(np.fft.fft(synth_data))[:len(synth_data) // 2]
+            return wasserstein_distance(real_amplitudes, synth_amplitudes)
+        except Exception as e:
+            print(f"[-] Error comparing amplitudes: {e}")
+            raise
+
+    def awd(self):
+        """
+        Executes the AWD algorithm for the real and synthetic datasets, returning results as a DataFrame.
+        """
+        sequence_results = []
+    
+        for synth_file in self.synth_data_files:
+            print(f"[+] Processing file: {synth_file}")
+            try:
+                synth_data = pd.read_csv(synth_file)
+                synth_data = synth_data.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+    
+                file_wd_scores = []
+                for i in range(0, len(self.real_data), self.sequence_length):
+                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
+                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
+    
+                    if real_sequence.shape[0] == 96 and synth_sequence.shape[0] == 96:
+                        wd_scores = [
+                            self.compare_amplitudes(real_sequence[:, i], synth_sequence[:, i])
+                            for i in range(real_sequence.shape[1])
+                        ]
+                        avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan
+                        file_wd_scores.append(avg_wd_score)
+    
+                if file_wd_scores:
+                    file_avg_wd_score = np.mean(file_wd_scores)
+                    epoch = self.extract_epoch_number(os.path.basename(synth_file))
+                    sequence_results.append({'Epoch': epoch, 'AWD': file_avg_wd_score})
+            except Exception as e:
+                print(f"[-] Error processing {synth_file}: {e}")
+    
+        return pd.DataFrame(sequence_results)
+
+    def save_combined_results(self):
+        """
+        Combines MSAS and AWD results and saves them to a single CSV file.
+        """
+        msas_df = self.msas()
+        awd_df = self.awd()
+    
+        combined_df = pd.merge(msas_df, awd_df, on="Epoch", how="outer").sort_values(by="Epoch")
+        combined_df.to_csv(self.output_csv, index=False)
+    
+        print(f"[+] Combined MSAS and AWD results saved to {self.output_csv}")
+
+    @staticmethod
+    def plot_awd(wd_values_dict, synth_files):
+        """
+        Plot the Wasserstein Distance for each column over different synthetic datasets.
+        """
+        plt.figure(figsize=(14, 8))
+        colors = plt.cm.viridis(np.linspace(0, 1, len(wd_values_dict)))
+
+        for idx, (column, wd_values) in enumerate(wd_values_dict.items()):
+            plt.plot(range(len(wd_values)), wd_values, marker='o', label=column, color=colors[idx], markersize=6, linewidth=2)
+
+        plt.xlabel('Index of Synthetic Dataset', fontsize=12)
+        plt.ylabel('Wasserstein Distance (WD)', fontsize=12)
+        plt.title('Evolution of Wasserstein Distance for Different Columns', fontsize=14)
+        plt.grid(True, linestyle='--', alpha=0.7)
+        plt.xticks(range(len(synth_files)), synth_files, rotation=45, ha='right', fontsize=10)
+        plt.legend(title="Columns", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+        plt.tight_layout()
+
+        output_dir = './outputs/Plots/'
+        os.makedirs(output_dir, exist_ok=True)
+        plt.savefig(os.path.join(output_dir, 'awd.png'), bbox_inches='tight')
 
 if __name__ == "__main__":
-    # Parse arguments
+    import argparse
+
     parser = argparse.ArgumentParser(description="Run evaluation metrics for synthetic data.")
     parser.add_argument("--real_file", required=True, help="Path to the real data CSV file.")
     parser.add_argument("--synth_folder", required=True, help="Path to the folder containing synthetic data CSV files.")
+    parser.add_argument("--output_csv", required=True, help="Path to save the combined results CSV file.")
     args = parser.parse_args()
 
-    # Run the evaluation
-    population_fidelity_measure(args.real_data, args.synth_folder)
+    fidelity = PopulationFidelity(args.real_file, args.synth_folder, args.output_csv)
+    fidelity.save_combined_results()

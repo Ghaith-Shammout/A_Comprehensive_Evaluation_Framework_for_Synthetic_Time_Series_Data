@@ -24,7 +24,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [500, 1000, 2500, 5000]
+  epochs: [1, 1000, 2500, 5000]
   verbose: true
   cuda: true
   model_output: './outputs/Models/synthesizer.pkl'
@@ -34,10 +34,13 @@ generation:
   sequence_length: 96
 
 evaluation:
+  PF_results: './outputs/Evaluation/MSAS.csv'
   synth_folder: './outputs/Synth_Data/'
   columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh',
             'Leading_Current_Reactive_Power_kVarh', 'CO2(tCO2)',
             'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
+  sid_col: 'SID'
+  exclude_cols: ['WeekStatus', 'Load_Type', 'SID']
 
 logging:
   log_file: "logs/pipeline.log"
