@@ -3,7 +3,7 @@ import yaml
 from preprocessing import preprocess_data
 from generating import SyntheticDataGenerator
 from evaluation import PopulationFidelity
-#from classification import classification
+from classification import Classifier
 from correlation_analysis import CorrelationAnalysis
 
 
@@ -103,7 +103,7 @@ def main():
                 seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
             )
             logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
-        """
+     
         
         # Phase 3: Synthetic Data Evaluation
         logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
@@ -122,25 +122,28 @@ def main():
         evaluator.awd(awd_output)
         
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-
         """
+    
         # Phase 4: Classification Process
         logging.info(f"Phase 4: Classification Process Started.")
-        classification(
-            real_file=config['preprocessing']['output_file'],
-            synth_folder=config['evaluation']['synth_folder'],
-        )
+        classifier = Classifier()
+
+        real_dataset_path = config['preprocessing']['output_file']
+        synthetic_folder_path = config['evaluation']['synth_folder']
+        seq_index_col = config['classification']['seq_index_col']
+        target_col =  config['classification']['target_col']
+        metric=config['classification']['metric']
+        param_grid = config['classification']['param_grid']
+        test_size = config['classification']['test_size']
+        random_state = config['classification']['random_state']
+        
+        classifier.classify(real_dataset_path, synthetic_folder_path,
+                           seq_index_col, target_col, metric, param_grid,
+                           test_size, random_state)
+        
         logging.info(f"Phase 4: Classification Process Completed.")
-
-        # Phase 5: Correlation Analysis
-        logging.info(f"Phase 5: Correlation Analysis Started.")
-        corrleation_analysis(
-            real_file=config['preprocessing']['output_file'],
-            synth_folder=config['evaluation']['synth_folder'],
-        )
-        logging.info(f"Phase 5: Correlation Analysis Completed.")
+        
         """
-
         # Phase 5: Correlation Analysis
         logging.info(f"Phase 5: Correlation Analysis Started.")
        
@@ -169,7 +172,7 @@ def main():
             print("Correlation analysis failed. Skipping plot generation.")
 
         logging.info(f"Phase 5: Correlation Analysis Completed.")
-        
+        """
         
         logging.info("Pipeline execution completed successfully.")
 

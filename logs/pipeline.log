@@ -3428,3 +3428,70 @@ Metadata Save:
 2024-12-05 13:50:52,143 - INFO - Phase 3: Synthetic Data Evaluation Completed.
 2024-12-05 13:50:52,143 - INFO - Phase 5: Correlation Analysis Started.
 2024-12-05 13:50:52,144 - ERROR - Pipeline execution failed: name 'pd' is not defined
+2024-12-05 15:20:42,018 - INFO - Pipeline execution started.
+2024-12-05 15:20:42,018 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:20:42,018 - ERROR - Pipeline execution failed: 'Classifier' object has no attribute 'clssify'
+2024-12-05 15:21:04,118 - INFO - Pipeline execution started.
+2024-12-05 15:21:04,118 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:21:04,118 - ERROR - Pipeline execution failed: name 'classifier' is not defined
+2024-12-05 15:23:09,763 - INFO - Pipeline execution started.
+2024-12-05 15:23:09,763 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:23:09,763 - ERROR - Pipeline execution failed: name 'classifier' is not defined
+2024-12-05 15:24:13,489 - INFO - Pipeline execution started.
+2024-12-05 15:24:13,489 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:24:13,489 - ERROR - Pipeline execution failed: name 'classifier' is not defined
+2024-12-05 15:27:59,929 - INFO - Pipeline execution started.
+2024-12-05 15:27:59,929 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:28:00,051 - ERROR - Pipeline execution failed: cannot unpack non-iterable NoneType object
+2024-12-05 15:28:23,813 - INFO - Pipeline execution started.
+2024-12-05 15:28:23,813 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:28:23,935 - ERROR - Pipeline execution failed: cannot unpack non-iterable NoneType object
+2024-12-05 15:28:56,297 - INFO - Pipeline execution started.
+2024-12-05 15:28:56,297 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:28:56,297 - ERROR - Pipeline execution failed: name 'load_and_process_data' is not defined
+2024-12-05 15:40:16,118 - INFO - Pipeline execution started.
+2024-12-05 15:40:16,118 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:40:16,118 - ERROR - Pipeline execution failed: name 'load_and_process_data' is not defined
+2024-12-05 15:40:57,892 - INFO - Pipeline execution started.
+2024-12-05 15:40:57,892 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:40:58,014 - ERROR - Pipeline execution failed: cannot unpack non-iterable NoneType object
+2024-12-05 15:41:53,377 - INFO - Pipeline execution started.
+2024-12-05 15:41:53,378 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:41:53,378 - ERROR - Pipeline execution failed: load_and_process_data() takes from 2 to 4 positional arguments but 5 were given
+2024-12-05 15:42:29,415 - INFO - Pipeline execution started.
+2024-12-05 15:42:29,415 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:42:29,537 - ERROR - Pipeline execution failed: cannot unpack non-iterable NoneType object
+2024-12-05 15:43:35,110 - INFO - Pipeline execution started.
+2024-12-05 15:43:35,110 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:43:35,232 - ERROR - Pipeline execution failed: cannot unpack non-iterable NoneType object
+2024-12-05 15:45:30,310 - INFO - Pipeline execution started.
+2024-12-05 15:45:30,310 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:45:30,431 - ERROR - Pipeline execution failed: name 'selftuning_classifier' is not defined
+2024-12-05 15:46:06,528 - INFO - Pipeline execution started.
+2024-12-05 15:46:06,528 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:46:08,333 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 15:46:08,333 - INFO - Pipeline execution completed successfully.
+2024-12-05 15:51:09,413 - INFO - Pipeline execution started.
+2024-12-05 15:51:09,413 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:51:11,181 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 15:51:11,181 - INFO - Pipeline execution completed successfully.
+2024-12-05 15:51:57,031 - INFO - Pipeline execution started.
+2024-12-05 15:51:57,031 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:55:31,884 - INFO - Pipeline execution started.
+2024-12-05 15:55:31,884 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:56:31,156 - INFO - Pipeline execution started.
+2024-12-05 15:56:31,156 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:57:14,798 - INFO - Pipeline execution started.
+2024-12-05 15:57:14,798 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:58:35,786 - INFO - Pipeline execution started.
+2024-12-05 15:58:35,786 - INFO - Phase 4: Classification Process Started.
+2024-12-05 15:58:37,612 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 15:58:37,612 - INFO - Pipeline execution completed successfully.
+2024-12-05 15:59:04,528 - INFO - Pipeline execution started.
+2024-12-05 15:59:04,528 - INFO - Phase 4: Classification Process Started.
+2024-12-05 16:05:53,025 - INFO - Pipeline execution started.
+2024-12-05 16:05:53,025 - INFO - Phase 4: Classification Process Started.
+2024-12-05 16:09:29,455 - INFO - Pipeline execution started.
+2024-12-05 16:09:29,455 - INFO - Phase 4: Classification Process Started.
+2024-12-05 16:10:06,415 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 16:10:06,415 - INFO - Pipeline execution completed successfully.
