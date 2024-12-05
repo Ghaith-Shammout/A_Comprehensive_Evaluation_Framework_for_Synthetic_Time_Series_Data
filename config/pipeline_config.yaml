@@ -7,10 +7,10 @@ preprocessing:
   output_file: "./data/preprocessed_dataset.csv"  # Path to the output file
   unwanted_columns:  # List of columns to drop
     - "NSM"
+    - "WeekStatus"
     - "Day_of_week"
   date_column: "date"  # The name of the date column
   categorical_columns:  # List of categorical columns
-    - "WeekStatus"
     - "Load_Type"
   window_size: 96  # Size of the sliding window
   step_size: 24    # Step size for the sliding window
@@ -40,7 +40,7 @@ evaluation:
             'Leading_Current_Reactive_Power_kVarh', 'CO2(tCO2)',
             'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
   sid_col: 'SID'
-  exclude_cols: ['WeekStatus', 'Load_Type', 'SID']
+  exclude_cols: ['Load_Type', 'SID']
 
 logging:
   log_file: "logs/pipeline.log"
