@@ -2,6 +2,7 @@
     "tables": {
         "table": {
             "sequence_key": "SID",
+            "sequence_index": "date",
             "columns": {
                 "date": {
                     "sdtype": "datetime",
@@ -25,17 +26,13 @@
                 "Leading_Current_Power_Factor": {
                     "sdtype": "numerical"
                 },
-                "WeekStatus": {
-                    "sdtype": "categorical"
-                },
                 "Load_Type": {
                     "sdtype": "categorical"
                 },
                 "SID": {
                     "sdtype": "id"
                 }
-            },
-            "sequence_index": "date"
+            }
         }
     },
     "relationships": [],

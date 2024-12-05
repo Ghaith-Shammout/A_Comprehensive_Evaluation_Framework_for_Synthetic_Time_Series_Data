@@ -7,34 +7,45 @@ import glob
 
 
 class PopulationFidelity:
-    def __init__(self, real_data_path, synth_folder, output_csv, sequence_length=96):
+    def __init__(self, real_data_path, synth_folder, exclude_cols, sequence_length=1):
         """
         Initializes the Evaluation class.
 
         Parameters:
         - real_data_path (str): Path to the real data CSV file.
         - synth_data_dir (str): Directory containing the synthetic data CSV files.
-        - sequence_length (int): Number of data points per sequence (default is 96).
+        - exclude_cols   (list): List excluded columns in calculating the evaluation measures.  
+        - sequence_length (int): Number of data points per sequence (default is 1).
         """
+        try:
+            self.exclude_cols = exclude_cols
+        except Exception as e:
+            print(f"[-] Error Identifying excluded columns {exclude_cols}: {e}")
+            raise
+            
         try:
             # Load the real data
             self.real_data = pd.read_csv(real_data_path)
-            
-            # Sort real dataset by 'SID' and 'date' column, then drop unnecessary columns
-            self.real_data = self.real_data.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+            # Drop unnecessary columns
+            self.real_data = self.real_data.drop(columns=exclude_cols)
         except Exception as e:
-            print(f"Error loading real data from {real_data_path}: {e}")
+            print(f"[-] Error loading real data from {real_data_path}: {e}")
             raise
         
         try:
             # Get the list of synthetic CSV files in the directory
             self.synth_data_files = glob.glob(synth_folder + '/*.csv')  # Adjust path as necessary
         except Exception as e:
-            print(f"Error reading synthetic data files from {synth_folder}: {e}")
+            print(f"[-] Error reading synthetic data files from {synth_folder}: {e}")
             raise
         
-        self.sequence_length = sequence_length
-        self.output_csv = output_csv
+
+        try:
+            self.sequence_length = sequence_length
+        except Exception as e:
+            print(f"[-] Error Identifying sequence length {sequence_length}: {e}")
+            raise
+        
 
     @staticmethod
     def compute_inter_row_dependency(sequence, lag=1):
@@ -102,13 +113,13 @@ class PopulationFidelity:
         epoch_part = [part for part in base_name.split('_') if 'epoch' in part]
         return epoch_part[0] if epoch_part else base_name
 
-    def msas(self):
+    def msas(self, output_msas_csv):
         """
-        Executes the MSAS algorithm for the real and synthetic datasets, returning results as a DataFrame.
+        Executes the MSAS algorithm for the real and synthetic datasets and saves results to a CSV file.
         """
         real_stats = self.compute_statistics(self.real_data, window_size=self.sequence_length)
-        print("[+] Computed statistics for the real dataset.")
-    
+        print(f"[+] Completed processing real dataset")
+        
         msas_scores = []
     
         for synth_file in self.synth_data_files:
@@ -116,19 +127,27 @@ class PopulationFidelity:
                 print(f"[+] Processing file: {synth_file}")
     
                 synthetic_df = pd.read_csv(synth_file)
-                synthetic_df = synthetic_df.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+                synthetic_df = synthetic_df.drop(columns=self.exclude_cols)
     
                 synthetic_stats = self.compute_statistics(synthetic_df, window_size=self.sequence_length)
                 msas_score = self.compute_msas(real_stats, synthetic_stats)
     
                 epoch = self.extract_epoch_number(os.path.basename(synth_file))
-                msas_scores.append({'Epoch': epoch, 'MSAS': msas_score})
+                msas_scores.append({'Epochs': epoch, 'MSAS': msas_score})
     
-                print(f"[+] Computed MSAS score for {epoch}: {msas_score:.4f}")
+                # print(f"[+] Computed MSAS score for {epoch}: {msas_score:.4f}")
             except Exception as e:
                 print(f"[-] Error processing {synth_file}: {e}")
     
-        return pd.DataFrame(msas_scores)
+        # Create DataFrame and sort by Epochs (convert 'Epochs' to numeric before sorting)
+        msas_df = pd.DataFrame(msas_scores)
+        msas_df['Epochs'] = pd.to_numeric(msas_df['Epochs'], errors='coerce')  # Convert 'Epochs' to numeric
+        msas_df = msas_df.sort_values(by="Epochs").reset_index(drop=True)
+
+        # Save the sorted DataFrame to CSV
+        msas_df.to_csv(output_msas_csv, index=False)
+        print(f"[+] MSAS results saved to {output_msas_csv}")
+        return msas_df
 
 
 
@@ -172,9 +191,9 @@ class PopulationFidelity:
             print(f"[-] Error comparing amplitudes: {e}")
             raise
 
-    def awd(self):
+    def awd(self, output_awd_csv):
         """
-        Executes the AWD algorithm for the real and synthetic datasets, returning results as a DataFrame.
+        Executes the AWD algorithm for the real and synthetic datasets and saves results to a CSV file.
         """
         sequence_results = []
     
@@ -182,14 +201,14 @@ class PopulationFidelity:
             print(f"[+] Processing file: {synth_file}")
             try:
                 synth_data = pd.read_csv(synth_file)
-                synth_data = synth_data.sort_values(by=['SID', 'date']).drop(columns=['date', 'WeekStatus', 'Load_Type', 'SID'])
+                synth_data = synth_data.drop(columns=self.exclude_cols)
     
                 file_wd_scores = []
                 for i in range(0, len(self.real_data), self.sequence_length):
                     real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
                     synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
     
-                    if real_sequence.shape[0] == 96 and synth_sequence.shape[0] == 96:
+                    if real_sequence.shape[0] == self.sequence_length and synth_sequence.shape[0] == self.sequence_length:
                         wd_scores = [
                             self.compare_amplitudes(real_sequence[:, i], synth_sequence[:, i])
                             for i in range(real_sequence.shape[1])
@@ -200,23 +219,20 @@ class PopulationFidelity:
                 if file_wd_scores:
                     file_avg_wd_score = np.mean(file_wd_scores)
                     epoch = self.extract_epoch_number(os.path.basename(synth_file))
-                    sequence_results.append({'Epoch': epoch, 'AWD': file_avg_wd_score})
+                    sequence_results.append({'Epochs': epoch, 'AWD': file_avg_wd_score})
             except Exception as e:
                 print(f"[-] Error processing {synth_file}: {e}")
-    
-        return pd.DataFrame(sequence_results)
 
-    def save_combined_results(self):
-        """
-        Combines MSAS and AWD results and saves them to a single CSV file.
-        """
-        msas_df = self.msas()
-        awd_df = self.awd()
-    
-        combined_df = pd.merge(msas_df, awd_df, on="Epoch", how="outer").sort_values(by="Epoch")
-        combined_df.to_csv(self.output_csv, index=False)
-    
-        print(f"[+] Combined MSAS and AWD results saved to {self.output_csv}")
+        # Create DataFrame and sort by Epochs (convert 'Epochs' to numeric before sorting)
+        awd_df = pd.DataFrame(sequence_results)
+        awd_df['Epochs'] = pd.to_numeric(awd_df['Epochs'], errors='coerce')  # Convert 'Epochs' to numeric
+        awd_df = awd_df.sort_values(by="Epochs").reset_index(drop=True)
+        
+        # Save the sorted DataFrame to CSV
+        awd_df.to_csv(output_awd_csv, index=False)
+        print(f"[+] AWD results saved to {output_awd_csv}")
+        
+        return awd_df
 
     @staticmethod
     def plot_awd(wd_values_dict, synth_files):
@@ -243,12 +259,11 @@ class PopulationFidelity:
 
 if __name__ == "__main__":
     import argparse
-
+    
     parser = argparse.ArgumentParser(description="Run evaluation metrics for synthetic data.")
-    parser.add_argument("--real_file", required=True, help="Path to the real data CSV file.")
+    parser.add_argument("--real_data_path", required=True, help="Path to the real data CSV file.")
     parser.add_argument("--synth_folder", required=True, help="Path to the folder containing synthetic data CSV files.")
-    parser.add_argument("--output_csv", required=True, help="Path to save the combined results CSV file.")
+    parser.add_argument("--exclude_cols", required=False, help="List of columns to exclude in calculating evaluation measures")
+    parser.add_argument("--seq_len", required=False, help="Length of every sequence (default = 1)")
     args = parser.parse_args()
 
-    fidelity = PopulationFidelity(args.real_file, args.synth_folder, args.output_csv)
-    fidelity.save_combined_results()

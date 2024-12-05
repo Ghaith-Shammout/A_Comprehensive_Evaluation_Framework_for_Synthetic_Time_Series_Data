@@ -34,6 +34,7 @@ def main():
     logging.info("Pipeline execution started.")    
 
     try:
+        """
         # Phase 1: Data Preprocessing
         logging.info("Phase 1: Data Preprocessing Started.")
         preprocess_data(
@@ -97,10 +98,12 @@ def main():
                 #synthesizer=synthesizer,
                 num_sequences=config['generation']['num_sequences'],
                 sequence_length=config['generation']['sequence_length'],
-                # TODO: make output path customizable
-                output_path=f"outputs/Synth_Data/{epoch}.csv"
+                output_path=f"outputs/Synth_Data/{epoch}.csv",
+                seq_key=config['metadata']['seq_key'],          # Sequence key used to sort by
+                seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
             )
             logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
+        """
         
         # Phase 3: Synthetic Data Evaluation
         logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
@@ -108,12 +111,16 @@ def main():
         # Define an evaluator
         real_data_path = config['preprocessing']['output_file']
         synth_folder = config['evaluation']['synth_folder']
-        output_csv = config['evaluation']['PF_results']
-        sequence_length = 96
-        evaluator = PopulationFidelity(real_data_path, synth_folder, output_csv, sequence_length)
+        exclude_cols = config['evaluation']['exclude_cols']
+        sequence_length = config['generation']['sequence_length']
+        evaluator = PopulationFidelity(real_data_path, synth_folder, exclude_cols, sequence_length)
 
-        evaluator.msas()
-        evaluator.awd()
+        msas_output = config['evaluation']['msas_output']
+        evaluator.msas(msas_output)
+
+        awd_output = config['evaluation']['awd_output']
+        evaluator.awd(awd_output)
+        
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 
         """

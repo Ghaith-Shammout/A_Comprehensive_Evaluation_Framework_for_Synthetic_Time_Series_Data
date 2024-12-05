@@ -93,22 +93,36 @@ class SyntheticDataGenerator:
             print(f"[-] Error training synthesizer: {str(e)}")
             raise
 
-    def generate_synthetic_data(self, num_sequences, sequence_length, output_path):
+    def generate_synthetic_data(self, num_sequences, sequence_length, output_path, seq_key, seq_index):
         """
         Generates synthetic data and saves it to a file.
-
+    
         Args:
             num_sequences (int): Number of synthetic sequences to generate.
             sequence_length (int): Length of each synthetic sequence.
             output_path (str): Path to save the generated synthetic data.
-
+            seq_key (str): The primary column to sort by.
+            seq_index (str): The secondary column to sort by.
+    
         Returns:
             None
         """
         try:
+            # Generate synthetic data
             synthetic_data = self.synthesizer.sample(num_sequences=num_sequences, sequence_length=sequence_length)
+    
+            # Sort the data by the provided columns
+            synthetic_data = synthetic_data.sort_values(by=[seq_key, seq_index], ascending=True)
+    
+            # Save the sorted data to a CSV file
             synthetic_data.to_csv(output_path, index=False)
-            print(f"[+] Synthetic data saved to {output_path}")
+            
+            # Print a message with the column names used for sorting
+            print(f"[+] Synthetic data sorted by {seq_key} and {seq_index} saved to {output_path}")
+            
         except Exception as e:
             print(f"[-] Error generating synthetic data: {str(e)}")
             raise
+
+
+        
