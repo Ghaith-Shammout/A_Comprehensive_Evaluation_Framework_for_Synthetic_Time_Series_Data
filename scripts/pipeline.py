@@ -4,7 +4,8 @@ from preprocessing import preprocess_data
 from generating import SyntheticDataGenerator
 from evaluation import PopulationFidelity
 #from classification import classification
-#from corrleation_analysis import corrleation_analysis
+from correlation_analysis import CorrelationAnalysis
+
 
 def setup_logging(log_file, level):
     """
@@ -132,6 +133,36 @@ def main():
         )
         logging.info(f"Phase 5: Correlation Analysis Completed.")
         """
+
+        # Phase 5: Correlation Analysis
+        logging.info(f"Phase 5: Correlation Analysis Started.")
+       
+        # Load paths from config
+        f1_ratios_path = config['evaluation']['f1_ratios_path']
+        metric_path = config['evaluation']['metric_file_path']
+        metric_column = config['evaluation']['metric_column']  # e.g., "AWD"
+        plot_output_path = config['evaluation']['plot_output_path']
+
+        # Read F1-ratios and metric file paths
+        f1_ratios_df = pd.read_csv(f1_ratios_path)
+        analysis = CorrelationAnalysis(f1_ratios_df, metric_path)
+
+        # Perform correlation analysis
+        correlation, p_value, merged_df = analysis.correlation_analysis()
+
+        if correlation is not None and p_value is not None:
+            print(f"Spearman correlation: {correlation}, p-value: {p_value}")
+            # Generate plot
+            analysis.plot_correlation(
+                X=merged_df['F1-ratio'], 
+                Y=merged_df[metric_column]
+            )
+            print(f"Correlation plot saved to {plot_output_path}")
+        else:
+            print("Correlation analysis failed. Skipping plot generation.")
+
+        logging.info(f"Phase 5: Correlation Analysis Completed.")
+        
         
         logging.info("Pipeline execution completed successfully.")
 
