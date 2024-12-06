@@ -3495,3 +3495,195 @@ Metadata Save:
 2024-12-05 16:09:29,455 - INFO - Phase 4: Classification Process Started.
 2024-12-05 16:10:06,415 - INFO - Phase 4: Classification Process Completed.
 2024-12-05 16:10:06,415 - INFO - Pipeline execution completed successfully.
+2024-12-05 18:00:26,289 - INFO - Pipeline execution started.
+2024-12-05 18:00:26,290 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:01:03,341 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 18:01:03,341 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 18:01:03,341 - ERROR - Pipeline execution failed: name 'f1_ratios_df' is not defined
+2024-12-05 18:01:51,310 - INFO - Pipeline execution started.
+2024-12-05 18:01:51,310 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:02:28,600 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 18:02:28,601 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 18:02:28,602 - ERROR - Pipeline execution failed: correlation_analysis() missing 1 required positional argument: 'metric_column'
+2024-12-05 18:04:16,137 - INFO - Pipeline execution started.
+2024-12-05 18:04:16,137 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:04:53,305 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 18:04:53,306 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 18:04:53,309 - ERROR - Pipeline execution failed: plot_correlation() got an unexpected keyword argument 'output_phath'
+2024-12-05 18:08:16,507 - INFO - Pipeline execution started.
+2024-12-05 18:08:16,507 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:08:53,458 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 18:08:53,458 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 18:08:53,676 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-05 18:08:53,676 - INFO - Pipeline execution completed successfully.
+2024-12-05 18:10:12,151 - INFO - Pipeline execution started.
+2024-12-05 18:10:12,151 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:10:49,098 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 18:10:49,098 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 18:10:49,310 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-05 18:10:49,310 - INFO - Pipeline execution completed successfully.
+2024-12-05 18:13:20,963 - INFO - Pipeline execution started.
+2024-12-05 18:13:20,963 - INFO - Phase 4: Classification Process Started.
+2024-12-05 18:16:09,368 - INFO - Pipeline execution started.
+2024-12-05 18:16:09,368 - INFO - Phase 4: Classification Process Started.
+2024-12-05 19:28:52,105 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 19:28:52,105 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 19:28:52,326 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-05 19:28:52,326 - INFO - Pipeline execution completed successfully.
+2024-12-05 19:42:25,066 - INFO - Pipeline execution started.
+2024-12-05 19:42:25,066 - INFO - Phase 4: Classification Process Started.
+2024-12-05 20:54:53,201 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 20:54:53,201 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 20:54:53,418 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-05 20:54:53,418 - INFO - Pipeline execution completed successfully.
+2024-12-05 20:59:29,616 - INFO - Pipeline execution started.
+2024-12-05 20:59:29,616 - INFO - Phase 4: Classification Process Started.
+2024-12-05 21:11:34,131 - INFO - Pipeline execution started.
+2024-12-05 21:11:34,131 - INFO - Phase 4: Classification Process Started.
+2024-12-05 21:20:16,191 - INFO - Phase 4: Classification Process Completed.
+2024-12-05 21:20:16,191 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-05 21:20:16,404 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-05 21:20:16,404 - INFO - Pipeline execution completed successfully.
+2024-12-05 21:24:44,093 - INFO - Pipeline execution started.
+2024-12-05 21:24:44,093 - INFO - Phase 4: Classification Process Started.
+2024-12-06 07:38:09,139 - INFO - Pipeline execution started.
+2024-12-06 07:38:09,139 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:38:09,139 - ERROR - Pipeline execution failed: [Errno 2] No such file or directory: './data/f1_ratios.csv'
+2024-12-06 07:40:52,082 - INFO - Pipeline execution started.
+2024-12-06 07:40:52,082 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:40:52,087 - ERROR - Pipeline execution failed: plot_correlation() got an unexpected keyword argument 'output_path'
+2024-12-06 07:41:28,780 - INFO - Pipeline execution started.
+2024-12-06 07:41:28,781 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:41:28,786 - ERROR - Pipeline execution failed: plot_correlation() got an unexpected keyword argument 'output_path'
+2024-12-06 07:42:01,672 - INFO - Pipeline execution started.
+2024-12-06 07:42:01,673 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:42:01,836 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 07:42:01,836 - INFO - Pipeline execution completed successfully.
+2024-12-06 07:45:23,467 - INFO - Pipeline execution started.
+2024-12-06 07:45:23,467 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:45:23,894 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 07:45:23,894 - INFO - Pipeline execution completed successfully.
+2024-12-06 07:45:54,401 - INFO - Pipeline execution started.
+2024-12-06 07:45:54,401 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 07:45:54,817 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 07:45:54,817 - INFO - Pipeline execution completed successfully.
+2024-12-06 08:01:15,187 - INFO - Pipeline execution started.
+2024-12-06 08:01:15,187 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:01:15,189 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 08:01:15,189 - INFO - Pipeline execution completed successfully.
+2024-12-06 08:05:21,248 - INFO - Pipeline execution started.
+2024-12-06 08:05:21,248 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:05:21,250 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 08:05:21,250 - INFO - Pipeline execution completed successfully.
+2024-12-06 08:08:22,801 - INFO - Pipeline execution started.
+2024-12-06 08:08:22,801 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:08:22,803 - ERROR - Pipeline execution failed: argument of type 'method' is not iterable
+2024-12-06 08:09:50,079 - INFO - Pipeline execution started.
+2024-12-06 08:09:50,079 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:09:50,081 - ERROR - Pipeline execution failed: argument of type 'method' is not iterable
+2024-12-06 08:30:10,037 - INFO - Pipeline execution started.
+2024-12-06 08:30:10,037 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:30:10,040 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 08:30:10,040 - INFO - Pipeline execution completed successfully.
+2024-12-06 08:36:07,381 - INFO - Pipeline execution started.
+2024-12-06 08:36:07,381 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:36:07,381 - ERROR - Pipeline execution failed: __init__() got an unexpected keyword argument 'f1_ratios_df'
+2024-12-06 08:36:27,162 - INFO - Pipeline execution started.
+2024-12-06 08:36:27,162 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:36:27,167 - ERROR - Pipeline execution failed: name 'analysis' is not defined
+2024-12-06 08:37:18,813 - INFO - Pipeline execution started.
+2024-12-06 08:37:18,814 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 08:37:19,238 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 08:37:19,239 - INFO - Pipeline execution completed successfully.
+2024-12-06 08:38:52,702 - INFO - Pipeline execution started.
+2024-12-06 08:38:52,702 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 08:38:54,616 - INFO - Phase 1 Completed Successfully.
+2024-12-06 08:38:54,616 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 08:38:54,616 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 08:38:54,809 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "datetime",
+            "datetime_format": "%m/%d/%Y %H:%M"
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 08:38:54,809 - INFO - 
+Metadata Save:
+  Timestamp: 2024-12-06 08:38:54.809958
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 9
+    Total number of relationships: 0
+2024-12-06 08:38:54,810 - INFO - Phase 2.1: Metadata Definition Completed Successfully.
+2024-12-06 08:38:54,810 - INFO - Starting pipeline run with 2 epochs.
+2024-12-06 08:38:54,810 - INFO - Phase 2.2: Synthesizer Initializing with 2 epochs Started.
+2024-12-06 08:38:54,816 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 54, 816911), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_ab44153619f44ff88e849996227560f4'}
+2024-12-06 08:38:54,820 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 54, 820011), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_607ad416c3b84167af515abd562153d7'}
+2024-12-06 08:38:54,820 - INFO - Phase 2.2: Synthesizer Initializing with 2 epochs Successfully Completed.
+2024-12-06 08:38:54,820 - INFO - Phase 2.3: Synthesizer Training with 2 epochs Started.
+2024-12-06 08:38:54,924 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 54, 924585), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_ab44153619f44ff88e849996227560f4', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 9}
+2024-12-06 08:38:55,411 - INFO - Fitting table  metadata
+2024-12-06 08:38:55,416 - INFO - Fitting formatters for table 
+2024-12-06 08:38:55,418 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 08:38:55,420 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 08:38:55,423 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 08:38:55,425 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 08:38:55,427 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:38:55,429 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:38:55,429 - INFO - Fitting constraints for table 
+2024-12-06 08:38:55,429 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 08:38:55,919 - INFO - Fitting table  metadata
+2024-12-06 08:38:55,922 - INFO - Fitting formatters for table 
+2024-12-06 08:38:55,924 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 08:38:55,927 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 08:38:55,929 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 08:38:55,931 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 08:38:55,933 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:38:55,935 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:38:55,935 - INFO - Fitting constraints for table 
+2024-12-06 08:38:55,935 - INFO - Fitting HyperTransformer for table 
+2024-12-06 08:38:56,419 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 56, 419048), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_ab44153619f44ff88e849996227560f4', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 10}
+2024-12-06 08:38:56,423 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 56, 423272), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_664bca5c4f374658b26d80b0f003579d'}
+2024-12-06 08:38:56,425 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 56, 425816), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_664bca5c4f374658b26d80b0f003579d', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 2}
+2024-12-06 08:38:56,427 - INFO - Fitting table  metadata
+2024-12-06 08:38:56,427 - INFO - Fitting formatters for table 
+2024-12-06 08:38:56,428 - INFO - Fitting constraints for table 
+2024-12-06 08:38:56,428 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 08:38:56,429 - INFO - Fitting HyperTransformer for table 
+2024-12-06 08:38:56,438 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 38, 56, 438143), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_664bca5c4f374658b26d80b0f003579d', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 1}
+2024-12-06 08:38:56,438 - INFO - Fitting GaussianMultivariate(distribution="{'date.context': <class 'copulas.univariate.beta.BetaUnivariate'>}")
+2024-12-06 08:38:56,509 - INFO - PARModel(epochs=2, sample_size=1,cuda='cpu', verbose=True) instance created
+2024-12-06 08:39:21,046 - INFO - {'EVENT': 'Save', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 39, 21, 46482), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_ab44153619f44ff88e849996227560f4'}
+2024-12-06 08:39:21,055 - INFO - Phase 2.3: Synthesizer Training with 2 epochs Completed.
+2024-12-06 08:39:21,055 - INFO - Phase 2.4: Synthetic Data Generation with 2 epochs Started.
+2024-12-06 08:39:21,055 - INFO - Phase 4: Synthetic Data Generation started.
+2024-12-06 08:47:12,183 - INFO - Phase 2.4: Synthetic Data Generation with 2 epochs Completed.
+2024-12-06 08:47:12,183 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-06 08:47:28,825 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-06 08:47:28,825 - INFO - Phase 4: Classification Process Started.

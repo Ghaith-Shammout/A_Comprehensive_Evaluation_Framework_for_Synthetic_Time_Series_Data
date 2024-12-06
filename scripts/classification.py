@@ -165,7 +165,7 @@ class Classifier:
                 f1_synthetic = self.tuning_classifier(X_synthetic, y_synthetic, param_grid, test_size, random_state, metric)
                 
                 # Compute the F1-ratio (real F1 / synthetic F1)
-                f1_ratio = real_f1 / f1_synthetic
+                f1_ratio = f1_synthetic / real_f1
 
                 # Extract epochs from the filename (remove '.csv' and convert to integer)
                 epochs = int(synthetic_file.replace('.csv', ''))  # Remove .csv and convert to int

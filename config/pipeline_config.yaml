@@ -24,7 +24,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [ 1 ]
+  epochs: [ 2 ]
   verbose: true
   cuda: true
   model_output: './outputs/Models/synthesizer.pkl'
@@ -37,14 +37,8 @@ evaluation:
   PF_results: './outputs/Evaluation/MSAS.csv'
   synth_folder: './outputs/Synth_Data/'
   awd_output: './outputs/Evaluation/AWD.csv'
-  msas_output: './outputs/Evaluation/MSAS.csv'
-
-  
+  msas_output: './outputs/Evaluation/MSAS.csv'  
   sid_col: 'SID'
-  f1_ratios_path: './outputs/Evaluation/f1_ratios.csv'
-  metric_file_path: './outputs/Evaluation/AWD.csv'
-  metric_column: 'AWD'
-  plot_output_path: './outputs/Plots/'
   exclude_cols: 
       - 'date'
       - 'Load_Type'
@@ -61,9 +55,25 @@ classification:
             - uniform
             - distance
           distance:
+            - dtw
+            - shape_dtw
+            - ddtw
+            - wdtw
+            - wddtw
+            - adtw
+            - erp
+            - edr
+            - msm
+            - twe
+            - lcss
             - euclidean
             - squared
             - manhattan
+            - minkowski
+            - sbd
+            - shift_scale
+            - soft_dtw
+            
     test_size: 0.25
     random_state: 0
     seq_index_col: 'SID' 
@@ -71,8 +81,16 @@ classification:
     metric: 'f1'
 
 
-
 correlation_analysis:
+    f1_ratios_path: './outputs/Evaluation/f1_ratios.csv'
+    plot_output_path: './outputs/Plots/Correlation Analysis/'
+    correlation_output_path: './outputs/Evaluation/correlation_results.csv'
+    metric_file_paths: 
+        MSAS: './outputs/Evaluation/MSAS.csv'
+        AWD: './outputs/Evaluation/AWD.csv'
+    metric_columns:
+        - MSAS
+        - AWD  
 
 
 logging:

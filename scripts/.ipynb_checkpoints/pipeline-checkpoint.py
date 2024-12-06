@@ -34,7 +34,7 @@ def main():
     logging.info("Pipeline execution started.")    
 
     try:
-        """
+
         # Phase 1: Data Preprocessing
         logging.info("Phase 1: Data Preprocessing Started.")
         preprocess_data(
@@ -122,7 +122,7 @@ def main():
         evaluator.awd(awd_output)
         
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-        """
+       
     
         # Phase 4: Classification Process
         logging.info(f"Phase 4: Classification Process Started.")
@@ -131,8 +131,8 @@ def main():
         real_dataset_path = config['preprocessing']['output_file']
         synthetic_folder_path = config['evaluation']['synth_folder']
         seq_index_col = config['classification']['seq_index_col']
-        target_col =  config['classification']['target_col']
-        metric=config['classification']['metric']
+        target_col = config['classification']['target_col']
+        metric = config['classification']['metric']
         param_grid = config['classification']['param_grid']
         test_size = config['classification']['test_size']
         random_state = config['classification']['random_state']
@@ -142,37 +142,33 @@ def main():
                            test_size, random_state)
         
         logging.info(f"Phase 4: Classification Process Completed.")
+
         
-        """
         # Phase 5: Correlation Analysis
         logging.info(f"Phase 5: Correlation Analysis Started.")
-       
+        
         # Load paths from config
-        f1_ratios_path = config['evaluation']['f1_ratios_path']
-        metric_path = config['evaluation']['metric_file_path']
-        metric_column = config['evaluation']['metric_column']  # e.g., "AWD"
-        plot_output_path = config['evaluation']['plot_output_path']
+        f1_ratios_path = config['correlation_analysis']['f1_ratios_path']
+        metric_file_paths = config['correlation_analysis']['metric_file_paths']
+        metric_columns = config['correlation_analysis']['metric_columns']  # List of metrics like ["MSAS", "AWD"]
+        plot_output_path = config['correlation_analysis']['plot_output_path']
+        correlation_output_path = './outputs/correlation_results.csv'  # Path to save the CSV with correlation results
+        
+        # Instantiate the CorrelationAnalysis class
+        analysis = CorrelationAnalysis()
+        
+        # Perform correlation analysis for all metrics and save results
+        analysis.correlation_analysis(
+            f1_ratios_path = f1_ratios_path,
+            metric_columns=metric_columns,
+            metric_file_paths=metric_file_paths,  # Pass the metric file paths dictionary
+            output_dir=plot_output_path,
+            correlation_output_path=correlation_output_path
+        )
 
-        # Read F1-ratios and metric file paths
-        f1_ratios_df = pd.read_csv(f1_ratios_path)
-        analysis = CorrelationAnalysis(f1_ratios_df, metric_path)
-
-        # Perform correlation analysis
-        correlation, p_value, merged_df = analysis.correlation_analysis()
-
-        if correlation is not None and p_value is not None:
-            print(f"Spearman correlation: {correlation}, p-value: {p_value}")
-            # Generate plot
-            analysis.plot_correlation(
-                X=merged_df['F1-ratio'], 
-                Y=merged_df[metric_column]
-            )
-            print(f"Correlation plot saved to {plot_output_path}")
-        else:
-            print("Correlation analysis failed. Skipping plot generation.")
 
         logging.info(f"Phase 5: Correlation Analysis Completed.")
-        """
+
         
         logging.info("Pipeline execution completed successfully.")
 
