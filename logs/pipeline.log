@@ -3687,3 +3687,411 @@ Metadata Save:
 2024-12-06 08:47:12,183 - INFO - Phase 3: Synthetic Data Evaluation Started.
 2024-12-06 08:47:28,825 - INFO - Phase 3: Synthetic Data Evaluation Completed.
 2024-12-06 08:47:28,825 - INFO - Phase 4: Classification Process Started.
+2024-12-06 08:57:58,238 - INFO - Pipeline execution started.
+2024-12-06 08:57:58,238 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 08:58:00,174 - INFO - Phase 1 Completed Successfully.
+2024-12-06 08:58:00,174 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 08:58:00,174 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 08:58:00,349 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "unknown",
+            "pii": true
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 08:58:00,349 - INFO - 
+Metadata Save:
+  Timestamp: 2024-12-06 08:58:00.349895
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 9
+    Total number of relationships: 0
+2024-12-06 08:58:00,350 - INFO - Phase 2.1: Metadata Definition Completed Successfully.
+2024-12-06 08:58:00,350 - INFO - Starting pipeline run with 2 epochs.
+2024-12-06 08:58:00,350 - INFO - Phase 2.2: Synthesizer Initializing with 2 epochs Started.
+2024-12-06 08:58:00,356 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 0, 356785), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_081ab1992b20410c8f204874c66c8b97'}
+2024-12-06 08:58:00,359 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 0, 359908), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_eeeeaca547574d51800f2151ba5c15f2'}
+2024-12-06 08:58:00,360 - INFO - Phase 2.2: Synthesizer Initializing with 2 epochs Successfully Completed.
+2024-12-06 08:58:00,360 - INFO - Phase 2.3: Synthesizer Training with 2 epochs Started.
+2024-12-06 08:58:00,463 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 0, 463380), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_081ab1992b20410c8f204874c66c8b97', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 9}
+2024-12-06 08:58:00,952 - INFO - Fitting table  metadata
+2024-12-06 08:58:00,956 - INFO - Fitting formatters for table 
+2024-12-06 08:58:00,959 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 08:58:00,961 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 08:58:00,963 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 08:58:00,966 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 08:58:00,968 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:58:00,970 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:58:00,970 - INFO - Fitting constraints for table 
+2024-12-06 08:58:00,970 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 08:58:01,463 - INFO - Fitting table  metadata
+2024-12-06 08:58:01,466 - INFO - Fitting formatters for table 
+2024-12-06 08:58:01,468 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 08:58:01,470 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 08:58:01,473 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 08:58:01,475 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 08:58:01,477 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:58:01,479 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 08:58:01,479 - INFO - Fitting constraints for table 
+2024-12-06 08:58:01,479 - INFO - Fitting HyperTransformer for table 
+2024-12-06 08:58:01,965 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 1, 965724), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_081ab1992b20410c8f204874c66c8b97', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 10}
+2024-12-06 08:58:01,970 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 1, 970038), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e4772480edb04071b062a8fcf307ec90'}
+2024-12-06 08:58:01,972 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 1, 972651), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e4772480edb04071b062a8fcf307ec90', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 2}
+2024-12-06 08:58:01,974 - INFO - Fitting table  metadata
+2024-12-06 08:58:01,974 - INFO - Fitting formatters for table 
+2024-12-06 08:58:01,975 - INFO - Fitting constraints for table 
+2024-12-06 08:58:01,975 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 08:58:01,976 - INFO - Fitting HyperTransformer for table 
+2024-12-06 08:58:01,985 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 1, 985250), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e4772480edb04071b062a8fcf307ec90', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 1}
+2024-12-06 08:58:01,985 - INFO - Fitting GaussianMultivariate(distribution="{'date.context': <class 'copulas.univariate.beta.BetaUnivariate'>}")
+2024-12-06 08:58:02,056 - INFO - PARModel(epochs=2, sample_size=1,cuda='cpu', verbose=True) instance created
+2024-12-06 08:58:27,299 - INFO - {'EVENT': 'Save', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 8, 58, 27, 299401), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_081ab1992b20410c8f204874c66c8b97'}
+2024-12-06 08:58:27,308 - INFO - Phase 2.3: Synthesizer Training with 2 epochs Completed.
+2024-12-06 08:58:27,308 - INFO - Phase 2.4: Synthetic Data Generation with 2 epochs Started.
+2024-12-06 08:58:27,308 - INFO - Phase 4: Synthetic Data Generation started.
+2024-12-06 09:06:24,564 - INFO - Phase 2.4: Synthetic Data Generation with 2 epochs Completed.
+2024-12-06 09:06:24,564 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-06 09:06:41,477 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-06 09:06:41,477 - INFO - Phase 4: Classification Process Started.
+2024-12-06 09:07:07,893 - INFO - Phase 4: Classification Process Completed.
+2024-12-06 09:07:07,893 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 09:07:08,311 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 09:07:08,311 - INFO - Pipeline execution completed successfully.
+2024-12-06 09:39:05,027 - INFO - Pipeline execution started.
+2024-12-06 09:39:05,027 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 09:39:06,997 - INFO - Phase 1 Completed Successfully.
+2024-12-06 09:39:06,997 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 09:39:06,997 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 09:39:07,194 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "datetime",
+            "datetime_format": "%m/%d/%Y %H:%M"
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 09:39:07,195 - INFO - 
+Metadata Save:
+  Timestamp: 2024-12-06 09:39:07.195037
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 9
+    Total number of relationships: 0
+2024-12-06 09:39:07,195 - INFO - Phase 2.1: Metadata Definition Completed Successfully.
+2024-12-06 09:39:07,195 - INFO - Starting pipeline run with 3 epochs.
+2024-12-06 09:39:07,195 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Started.
+2024-12-06 09:39:07,202 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 7, 201991), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_6eae664086ad4d26b99fbab219e8a972'}
+2024-12-06 09:39:07,205 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 7, 205201), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_4ff9fc734e344936a04f8678fb297ff8'}
+2024-12-06 09:39:07,205 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Successfully Completed.
+2024-12-06 09:39:07,205 - INFO - Phase 2.3: Synthesizer Training with 3 epochs Started.
+2024-12-06 09:39:07,310 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 7, 310430), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_6eae664086ad4d26b99fbab219e8a972', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 9}
+2024-12-06 09:39:07,784 - INFO - Fitting table  metadata
+2024-12-06 09:39:07,789 - INFO - Fitting formatters for table 
+2024-12-06 09:39:07,791 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 09:39:07,794 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 09:39:07,796 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 09:39:07,798 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 09:39:07,801 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:39:07,803 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:39:07,803 - INFO - Fitting constraints for table 
+2024-12-06 09:39:07,803 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 09:39:08,275 - INFO - Fitting table  metadata
+2024-12-06 09:39:08,279 - INFO - Fitting formatters for table 
+2024-12-06 09:39:08,281 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 09:39:08,283 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 09:39:08,286 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 09:39:08,288 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 09:39:08,290 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:39:08,292 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:39:08,292 - INFO - Fitting constraints for table 
+2024-12-06 09:39:08,292 - INFO - Fitting HyperTransformer for table 
+2024-12-06 09:39:08,787 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 8, 787947), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_6eae664086ad4d26b99fbab219e8a972', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 10}
+2024-12-06 09:39:08,792 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 8, 792140), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_850fb8550f634d6396eed68e31ac4416'}
+2024-12-06 09:39:08,794 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 8, 794734), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_850fb8550f634d6396eed68e31ac4416', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 2}
+2024-12-06 09:39:08,796 - INFO - Fitting table  metadata
+2024-12-06 09:39:08,796 - INFO - Fitting formatters for table 
+2024-12-06 09:39:08,797 - INFO - Fitting constraints for table 
+2024-12-06 09:39:08,797 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 09:39:08,798 - INFO - Fitting HyperTransformer for table 
+2024-12-06 09:39:08,807 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 8, 807067), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_850fb8550f634d6396eed68e31ac4416', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 1}
+2024-12-06 09:39:08,807 - INFO - Fitting GaussianMultivariate(distribution="{'date.context': <class 'copulas.univariate.beta.BetaUnivariate'>}")
+2024-12-06 09:39:08,877 - INFO - PARModel(epochs=3, sample_size=1,cuda='cpu', verbose=True) instance created
+2024-12-06 09:39:39,788 - INFO - {'EVENT': 'Save', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 39, 39, 788691), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_6eae664086ad4d26b99fbab219e8a972'}
+2024-12-06 09:39:39,797 - INFO - Phase 2.3: Synthesizer Training with 3 epochs Completed.
+2024-12-06 09:39:39,797 - INFO - Phase 2.4: Synthetic Data Generation with 3 epochs Started.
+2024-12-06 09:39:39,797 - INFO - Phase 4: Synthetic Data Generation started.
+2024-12-06 09:47:36,562 - INFO - Phase 2.4: Synthetic Data Generation with 3 epochs Completed.
+2024-12-06 09:47:36,562 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-06 09:47:54,677 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-06 09:47:54,677 - INFO - Phase 4: Classification Process Started.
+2024-12-06 09:47:55,463 - ERROR - Pipeline execution failed: name 'splitting' is not defined
+2024-12-06 09:48:56,944 - INFO - Pipeline execution started.
+2024-12-06 09:48:56,944 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 09:48:58,853 - INFO - Phase 1 Completed Successfully.
+2024-12-06 09:48:58,853 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 09:48:58,854 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 09:48:59,047 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "datetime",
+            "datetime_format": "%m/%d/%Y %H:%M"
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 09:48:59,048 - INFO - 
+Metadata Save:
+  Timestamp: 2024-12-06 09:48:59.048156
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 9
+    Total number of relationships: 0
+2024-12-06 09:48:59,048 - INFO - Phase 2.1: Metadata Definition Completed Successfully.
+2024-12-06 09:48:59,048 - INFO - Starting pipeline run with 3 epochs.
+2024-12-06 09:48:59,048 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Started.
+2024-12-06 09:48:59,055 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 48, 59, 55167), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_92680e49f1cc4d3c8ad258b1039cd33b'}
+2024-12-06 09:48:59,058 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 48, 59, 58326), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_7731eb0024d54b4b8fbf928bd81000f9'}
+2024-12-06 09:48:59,058 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Successfully Completed.
+2024-12-06 09:48:59,058 - INFO - Phase 2.3: Synthesizer Training with 3 epochs Started.
+2024-12-06 09:48:59,162 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 48, 59, 162920), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_92680e49f1cc4d3c8ad258b1039cd33b', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 9}
+2024-12-06 09:48:59,654 - INFO - Fitting table  metadata
+2024-12-06 09:48:59,659 - INFO - Fitting formatters for table 
+2024-12-06 09:48:59,661 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 09:48:59,664 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 09:48:59,666 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 09:48:59,668 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 09:48:59,670 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:48:59,672 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:48:59,672 - INFO - Fitting constraints for table 
+2024-12-06 09:48:59,672 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 09:49:00,163 - INFO - Fitting table  metadata
+2024-12-06 09:49:00,166 - INFO - Fitting formatters for table 
+2024-12-06 09:49:00,168 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 09:49:00,171 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 09:49:00,173 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 09:49:00,175 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 09:49:00,177 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:49:00,179 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 09:49:00,179 - INFO - Fitting constraints for table 
+2024-12-06 09:49:00,179 - INFO - Fitting HyperTransformer for table 
+2024-12-06 09:49:00,665 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 49, 0, 665840), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_92680e49f1cc4d3c8ad258b1039cd33b', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 10}
+2024-12-06 09:49:00,670 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 49, 0, 670088), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_c43119a1b38e494b9213241113172307'}
+2024-12-06 09:49:00,672 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 49, 0, 672695), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_c43119a1b38e494b9213241113172307', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 2}
+2024-12-06 09:49:00,674 - INFO - Fitting table  metadata
+2024-12-06 09:49:00,674 - INFO - Fitting formatters for table 
+2024-12-06 09:49:00,675 - INFO - Fitting constraints for table 
+2024-12-06 09:49:00,675 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 09:49:00,676 - INFO - Fitting HyperTransformer for table 
+2024-12-06 09:49:00,685 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 49, 0, 685105), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_c43119a1b38e494b9213241113172307', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 1}
+2024-12-06 09:49:00,685 - INFO - Fitting GaussianMultivariate(distribution="{'date.context': <class 'copulas.univariate.beta.BetaUnivariate'>}")
+2024-12-06 09:49:00,757 - INFO - PARModel(epochs=3, sample_size=1,cuda='cpu', verbose=True) instance created
+2024-12-06 09:49:32,696 - INFO - {'EVENT': 'Save', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 9, 49, 32, 696969), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_92680e49f1cc4d3c8ad258b1039cd33b'}
+2024-12-06 09:49:32,706 - INFO - Phase 2.3: Synthesizer Training with 3 epochs Completed.
+2024-12-06 09:49:32,706 - INFO - Phase 2.4: Synthetic Data Generation with 3 epochs Started.
+2024-12-06 09:49:32,706 - INFO - Phase 4: Synthetic Data Generation started.
+2024-12-06 09:57:40,697 - INFO - Phase 2.4: Synthetic Data Generation with 3 epochs Completed.
+2024-12-06 09:57:40,698 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-06 09:57:58,758 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-06 09:57:58,758 - INFO - Phase 4: Classification Process Started.
+2024-12-06 09:58:27,239 - INFO - Phase 4: Classification Process Completed.
+2024-12-06 09:58:27,239 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-06 09:58:27,643 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-06 09:58:27,643 - INFO - Pipeline execution completed successfully.
+2024-12-06 17:26:52,252 - INFO - Pipeline execution started.
+2024-12-06 17:26:52,252 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 17:26:54,210 - INFO - Phase 1 Completed Successfully.
+2024-12-06 17:26:54,211 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 17:26:54,211 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 17:26:54,391 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "unknown",
+            "pii": true
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 17:26:54,392 - ERROR - Pipeline execution failed: A file named 'metadata.json' already exists in this folder. Please specify a different filename.
+2024-12-06 17:27:02,594 - INFO - Pipeline execution started.
+2024-12-06 17:27:02,594 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-06 17:27:04,515 - INFO - Phase 1 Completed Successfully.
+2024-12-06 17:27:04,515 - INFO - Phase 2: Synthetic Data Generation Process Started.
+2024-12-06 17:27:04,516 - INFO - Phase 2.1: Metadata Definition started.
+2024-12-06 17:27:04,688 - INFO - Detected metadata:
+{
+    "columns": {
+        "date": {
+            "sdtype": "unknown",
+            "pii": true
+        },
+        "Usage_kWh": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Reactive.Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Reactive_Power_kVarh": {
+            "sdtype": "numerical"
+        },
+        "CO2(tCO2)": {
+            "sdtype": "numerical"
+        },
+        "Lagging_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Leading_Current_Power_Factor": {
+            "sdtype": "numerical"
+        },
+        "Load_Type": {
+            "sdtype": "categorical"
+        },
+        "SID": {
+            "sdtype": "numerical"
+        }
+    }
+}
+2024-12-06 17:27:04,689 - INFO - 
+Metadata Save:
+  Timestamp: 2024-12-06 17:27:04.689019
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 9
+    Total number of relationships: 0
+2024-12-06 17:27:04,689 - INFO - Phase 2.1: Metadata Definition Completed Successfully.
+2024-12-06 17:27:04,689 - INFO - Starting pipeline run with 3 epochs.
+2024-12-06 17:27:04,689 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Started.
+2024-12-06 17:27:04,696 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 4, 696036), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_29560bb7b17145949faf168ad07d1d4a'}
+2024-12-06 17:27:04,699 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 4, 699226), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_3548808673f548b6b3d65c0f9004e29d'}
+2024-12-06 17:27:04,699 - INFO - Phase 2.2: Synthesizer Initializing with 3 epochs Successfully Completed.
+2024-12-06 17:27:04,699 - INFO - Phase 2.3: Synthesizer Training with 3 epochs Started.
+2024-12-06 17:27:04,802 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 4, 802879), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_29560bb7b17145949faf168ad07d1d4a', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 9}
+2024-12-06 17:27:05,300 - INFO - Fitting table  metadata
+2024-12-06 17:27:05,304 - INFO - Fitting formatters for table 
+2024-12-06 17:27:05,307 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 17:27:05,309 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 17:27:05,311 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 17:27:05,313 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 17:27:05,316 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 17:27:05,318 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 17:27:05,318 - INFO - Fitting constraints for table 
+2024-12-06 17:27:05,318 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 17:27:05,821 - INFO - Fitting table  metadata
+2024-12-06 17:27:05,824 - INFO - Fitting formatters for table 
+2024-12-06 17:27:05,827 - INFO - No rounding scheme detected for column 'Usage_kWh'. Data will not be rounded.
+2024-12-06 17:27:05,829 - INFO - No rounding scheme detected for column 'Lagging_Current_Reactive.Power_kVarh'. Data will not be rounded.
+2024-12-06 17:27:05,831 - INFO - No rounding scheme detected for column 'Leading_Current_Reactive_Power_kVarh'. Data will not be rounded.
+2024-12-06 17:27:05,833 - INFO - No rounding scheme detected for column 'CO2(tCO2)'. Data will not be rounded.
+2024-12-06 17:27:05,835 - INFO - No rounding scheme detected for column 'Lagging_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 17:27:05,838 - INFO - No rounding scheme detected for column 'Leading_Current_Power_Factor'. Data will not be rounded.
+2024-12-06 17:27:05,838 - INFO - Fitting constraints for table 
+2024-12-06 17:27:05,838 - INFO - Fitting HyperTransformer for table 
+2024-12-06 17:27:06,327 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 6, 327891), 'SYNTHESIZER CLASS NAME': 'PARSynthesizer', 'SYNTHESIZER ID': 'PARSynthesizer_1.17.2_29560bb7b17145949faf168ad07d1d4a', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 139872, 'TOTAL NUMBER OF COLUMNS': 10}
+2024-12-06 17:27:06,332 - INFO - {'EVENT': 'Instance', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 6, 332113), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e20625c217a64d3db3b337d768e48d11'}
+2024-12-06 17:27:06,334 - INFO - {'EVENT': 'Fit', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 6, 334747), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e20625c217a64d3db3b337d768e48d11', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 2}
+2024-12-06 17:27:06,336 - INFO - Fitting table  metadata
+2024-12-06 17:27:06,336 - INFO - Fitting formatters for table 
+2024-12-06 17:27:06,337 - INFO - Fitting constraints for table 
+2024-12-06 17:27:06,337 - INFO - Setting the configuration for the ``HyperTransformer`` for table 
+2024-12-06 17:27:06,338 - INFO - Fitting HyperTransformer for table 
+2024-12-06 17:27:06,347 - INFO - {'EVENT': 'Fit processed data', 'TIMESTAMP': datetime.datetime(2024, 12, 6, 17, 27, 6, 347266), 'SYNTHESIZER CLASS NAME': 'GaussianCopulaSynthesizer', 'SYNTHESIZER ID': 'GaussianCopulaSynthesizer_1.17.2_e20625c217a64d3db3b337d768e48d11', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1457, 'TOTAL NUMBER OF COLUMNS': 1}
+2024-12-06 17:27:06,347 - INFO - Fitting GaussianMultivariate(distribution="{'date.context': <class 'copulas.univariate.beta.BetaUnivariate'>}")
+2024-12-06 17:27:06,416 - INFO - PARModel(epochs=3, sample_size=1,cuda='cpu', verbose=True) instance created

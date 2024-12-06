@@ -60,8 +60,21 @@ class Classifier:
         except Exception as e:
             print(f"An unexpected error occurred while loading the data: {e}")
             return None, None  # Explicitly return None for both X and y
+
+    def splitting(self, X, y, test_size, random_state):
+        try:
+            # Split the dataset into training and test sets
+            X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                                test_size=test_size,
+                                                                random_state=random_state)
+            return X_train, X_test, y_train, y_test
+        except Exception as e:
+            print(f"An unexpected error occurred splitting data: {e}")
+            return None, None, None, None,
             
-    def tuning_classifier(self, X, y, param_grid, test_size, random_state, metric='f1'):
+        
+            
+    def tuning_classifier(self, X_train, X_test, y_train, y_test, param_grid, metric='f1'):
         """
         Tune the KNeighborsTimeSeriesClassifier using GridSearchCV and return the specified evaluation metric score.
     
@@ -71,11 +84,6 @@ class Classifier:
         :return: The score for the best classifier found by GridSearchCV based on the specified metric.
         """
         try:
-            # Split the dataset into training and test sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                                test_size=test_size,
-                                                                random_state=random_state)
-            
             # Define the KNeighborsTimeSeriesClassifier
             classifier = KNeighborsTimeSeriesClassifier()
             
@@ -138,8 +146,9 @@ class Classifier:
             print("Real dataset could not be loaded.")
             return pd.DataFrame()
 
+        X_train_real, X_test_real, y_train_real, y_test_real = self.splitting(X_real, y_real, test_size, random_state)
         # Tune the classifier on the real dataset and get the F1-score
-        real_f1 = self.tuning_classifier(X_real, y_real, param_grid, test_size, random_state, metric)
+        real_f1 = self.tuning_classifier(X_train_real, X_test_real, y_train_real, y_test_real, param_grid,  metric)
         
         f1_ratios = []
 
@@ -155,6 +164,9 @@ class Classifier:
                 X_synthetic, y_synthetic = self.load_and_process_data(os.path.join(synthetic_folder_path, synthetic_file),
                                                                       seq_index_col,
                                                                       target_col)
+
+                X_train_synth, X_test_synth, y_train_synth, y_test_synth = self.splitting(X_synthetic, y_synthetic,
+                                                                                          test_size, random_state)
                 
                 # If loading synthetic dataset failed, skip it
                 if X_synthetic is None or y_synthetic is None:
@@ -162,7 +174,8 @@ class Classifier:
                     continue
 
                 # Tune the classifier on the synthetic dataset and get F1-score
-                f1_synthetic = self.tuning_classifier(X_synthetic, y_synthetic, param_grid, test_size, random_state, metric)
+                f1_synthetic = self.tuning_classifier(X_train_synth, X_test_real, y_train_synth, y_test_real,
+                                                      param_grid, metric)
                 
                 # Compute the F1-ratio (real F1 / synthetic F1)
                 f1_ratio = f1_synthetic / real_f1
