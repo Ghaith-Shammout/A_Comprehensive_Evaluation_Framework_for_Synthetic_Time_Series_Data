@@ -52,18 +52,6 @@ def main():
         preprocessor.label_encode_and_save(categorical_columns=config['preprocessing']['categorical_columns'])
         preprocessor.sliding_window(window_size=config['preprocessing']['window_size'],
                                     step_size=config['preprocessing']['step_size'])
-
-        """
-        preprocess_data(
-            input_file=config['preprocessing']['input_file'],
-            output_file=config['preprocessing']['output_file'],
-            unwanted_columns=config['preprocessing']['unwanted_columns'],
-            date_column=config['preprocessing']['date_column'],
-            categorical_columns=config['preprocessing']['categorical_columns'],
-            window_size=config['preprocessing']['window_size'],
-            step_size=config['preprocessing']['step_size'],
-            normalization_method=config['preprocessing']['normalization_method']
-        )
         logging.info("Phase 1 Completed Successfully.")
 
       
@@ -139,7 +127,6 @@ def main():
         evaluator.awd(awd_output)
         
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-       """
     
         # Phase 4: Classification Process
         logging.info(f"Phase 4: Classification Process Started.")
