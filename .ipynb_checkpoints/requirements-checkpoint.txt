@@ -1,1 +1,14 @@
-
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# platform: linux-64
+cudatoolkit=11.3.1=h2bc3f7f_2   # Only keep if you're using CUDA
+numpy
+pandas
+python
+pytorch
+scikit-learn
+scipy
+sdv
+matplotlib
+aeon
+seaborn

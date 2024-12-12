@@ -6,11 +6,14 @@ preprocessing:
     - "WeekStatus"
     - "Day_of_week"
   date_column: "date"  # The name of the date column
+  date_format: "%d/%m/%Y %H:%M"
+  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
+  normalize_columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
+                    'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
   categorical_columns:  # List of categorical columns
     - "Load_Type"
   window_size: 96  # Size of the sliding window
   step_size: 24    # Step size for the sliding window
-  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
 
 metadata:
   seq_key: "SID"
@@ -51,19 +54,19 @@ classification:
             - uniform
             - distance
           distance:
-            #- dtw
-            #- shape_dtw
-            #- ddtw
-            #- wdtw
-            #- wddtw
-            #- adtw
-            #- erp
+            - dtw # fast
+            #- shape_dtw # Takes too much time 
+            #- ddtw # fast & great result
+            - wdtw # fast & good result 
+            - wddtw
+            - adtw
+            - erp
             #- edr
             #- msm
             #- twe
             #- lcss
-            #- euclidean
-            - squared
+            #- euclidean 
+            #- squared
             #- manhattan
             #- minkowski
             #- sbd

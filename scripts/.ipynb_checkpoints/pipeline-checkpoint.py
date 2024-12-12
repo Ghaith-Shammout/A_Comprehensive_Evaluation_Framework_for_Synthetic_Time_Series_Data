@@ -1,6 +1,6 @@
 import logging
 import yaml
-from preprocessing import preprocess_data
+from preprocessing import Preprocessing
 from generating import SyntheticDataGenerator
 from evaluation import PopulationFidelity
 from classification import Classifier
@@ -37,6 +37,23 @@ def main():
 
         # Phase 1: Data Preprocessing
         logging.info("Phase 1: Data Preprocessing Started.")
+        # Create an instance of the Preprocessing class
+        preprocessor = Preprocessing(
+            input_file=config['preprocessing']['input_file'],
+            output_file=config['preprocessing']['output_file'],
+        )
+        
+        # running preprocessing steps with their respective arguments
+        preprocessor.remove_unwanted_columns(unwanted_columns=config['preprocessing']['unwanted_columns'])
+        preprocessor.enforce_date_format(date_column=config['preprocessing']['date_column'],
+                                         date_format=config['preprocessing']['date_format'])
+        preprocessor.normalize_data(method=config['preprocessing']['normalization_method'], 
+                                   normalize_columns=config['preprocessing']['normalize_columns'])
+        preprocessor.label_encode_and_save(categorical_columns=config['preprocessing']['categorical_columns'])
+        preprocessor.sliding_window(window_size=config['preprocessing']['window_size'],
+                                    step_size=config['preprocessing']['step_size'])
+
+        """
         preprocess_data(
             input_file=config['preprocessing']['input_file'],
             output_file=config['preprocessing']['output_file'],
@@ -49,7 +66,7 @@ def main():
         )
         logging.info("Phase 1 Completed Successfully.")
 
-
+      
         # Phase 2: Synthetic Data Generation 
         logging.info("Phase 2: Synthetic Data Generation Process Started.")
         
@@ -122,7 +139,7 @@ def main():
         evaluator.awd(awd_output)
         
         logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-       
+       """
     
         # Phase 4: Classification Process
         logging.info(f"Phase 4: Classification Process Started.")
