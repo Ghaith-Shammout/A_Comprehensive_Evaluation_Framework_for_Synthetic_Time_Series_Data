@@ -34,7 +34,6 @@ def main():
     logging.info("Pipeline execution started.")    
 
     try:
-
         # Phase 1: Data Preprocessing
         logging.info("Phase 1: Data Preprocessing Started.")
         # Create an instance of the Preprocessing class
@@ -108,8 +107,8 @@ def main():
                 seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
             )
             logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
-     
-        
+
+            
         # Phase 3: Synthetic Data Evaluation
         logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
         

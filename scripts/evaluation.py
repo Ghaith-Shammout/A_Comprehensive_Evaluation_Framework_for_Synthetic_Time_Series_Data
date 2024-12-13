@@ -7,7 +7,7 @@ import glob
 
 
 class PopulationFidelity:
-    def __init__(self, real_data_path, synth_folder, exclude_cols, sequence_length=1):
+    def __init__(self, real_data_path, synth_folder, exclude_cols, sequence_length):
         """
         Initializes the Evaluation class.
 
@@ -148,74 +148,39 @@ class PopulationFidelity:
         msas_df.to_csv(output_msas_csv, index=False)
         print(f"[+] MSAS results saved to {output_msas_csv}")
         return msas_df
-
-
-
-    def get_most_likely_period(self, data):
-        """
-        Calculates the most likely period using FFT for a given data sequence.
-
-        Parameters:
-        - data (numpy array): Data sequence to process.
-
-        Returns:
-        - float: The most likely period.
-        """
-        try:
-            n = len(data)
-            fft_result = np.fft.fft(data)
-            fft_amplitude = np.abs(fft_result)[:n // 2]  # Use only positive frequencies
-            freqs = np.fft.fftfreq(n, d=1)[:n // 2]
-            peak_freq = freqs[np.argmax(fft_amplitude)]  # Get the frequency with max amplitude
-            return 1 / peak_freq if peak_freq != 0 else np.inf  # Return the period
-        except Exception as e:
-            print(f"[-] Error calculating the most likely period: {e}")
-            raise
-
-    def compare_amplitudes(self, real_data, synth_data):
-        """
-        Compares the FFT amplitudes using Wasserstein distance between real and synthetic data.
-
-        Parameters:
-        - real_data (numpy array): Real data sequence.
-        - synth_data (numpy array): Synthetic data sequence.
-
-        Returns:
-        - float: The Wasserstein distance between the amplitudes.
-        """
-        try:
-            real_amplitudes = np.abs(np.fft.fft(real_data))[:len(real_data) // 2]
-            synth_amplitudes = np.abs(np.fft.fft(synth_data))[:len(synth_data) // 2]
-            return wasserstein_distance(real_amplitudes, synth_amplitudes)
-        except Exception as e:
-            print(f"[-] Error comparing amplitudes: {e}")
-            raise
-
+        
     def awd(self, output_awd_csv):
         """
         Executes the AWD algorithm for the real and synthetic datasets and saves results to a CSV file.
         """
+        print(f"[+] Calculating AWD")
+
         sequence_results = []
-    
+
         for synth_file in self.synth_data_files:
             print(f"[+] Processing file: {synth_file}")
             try:
+                # Read the synthetic data
                 synth_data = pd.read_csv(synth_file)
                 synth_data = synth_data.drop(columns=self.exclude_cols)
-    
+
                 file_wd_scores = []
+
+                # Loop through the real data in chunks of sequence_length
                 for i in range(0, len(self.real_data), self.sequence_length):
-                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
-                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
-    
+                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].drop(columns=self.exclude_cols).values
+                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].drop(columns=self.exclude_cols).values
+
+                    # Ensure sequences are of the correct length
                     if real_sequence.shape[0] == self.sequence_length and synth_sequence.shape[0] == self.sequence_length:
                         wd_scores = [
-                            self.compare_amplitudes(real_sequence[:, i], synth_sequence[:, i])
-                            for i in range(real_sequence.shape[1])
+                            wasserstein_distance(real_sequence[:, j], synth_sequence[:, j])
+                            for j in range(real_sequence.shape[1])
                         ]
                         avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan
                         file_wd_scores.append(avg_wd_score)
-    
+
+                # Calculate average AWD for the current file
                 if file_wd_scores:
                     file_avg_wd_score = np.mean(file_wd_scores)
                     epoch = self.extract_epoch_number(os.path.basename(synth_file))
@@ -223,16 +188,17 @@ class PopulationFidelity:
             except Exception as e:
                 print(f"[-] Error processing {synth_file}: {e}")
 
-        # Create DataFrame and sort by Epochs (convert 'Epochs' to numeric before sorting)
+        # Create DataFrame, sort by Epochs, and save to CSV
         awd_df = pd.DataFrame(sequence_results)
         awd_df['Epochs'] = pd.to_numeric(awd_df['Epochs'], errors='coerce')  # Convert 'Epochs' to numeric
         awd_df = awd_df.sort_values(by="Epochs").reset_index(drop=True)
-        
-        # Save the sorted DataFrame to CSV
+
+        # Save the results to the output CSV file
         awd_df.to_csv(output_awd_csv, index=False)
         print(f"[+] AWD results saved to {output_awd_csv}")
-        
+
         return awd_df
+    
 
     @staticmethod
     def plot_awd(wd_values_dict, synth_files):
