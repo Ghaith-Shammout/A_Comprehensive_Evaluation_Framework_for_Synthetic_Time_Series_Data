@@ -108,6 +108,8 @@ class PopulationFidelity:
         """
         Executes the MSAS algorithm for the real and synthetic datasets and saves results to a CSV file.
         """
+        print("[+] MSAS Calculation Started")
+        
         real_stats = self.compute_statistics(self.real_data, window_size=self.sequence_length)
         print(f"[+] Completed processing real dataset")
         
@@ -137,66 +139,9 @@ class PopulationFidelity:
 
         # Save the sorted DataFrame to CSV
         msas_df.to_csv(output_msas_csv, index=False)
-        print(f"[+] MSAS results saved to {output_msas_csv}")
+        print(f"[+] MSAS calculation completed & results saved to {output_msas_csv}")
         return msas_df
-        
-    def awd(self, output_awd_csv):
-        """
-        Executes the AWD algorithm for the real and synthetic datasets and saves results to a CSV file.
-        """
-        print(f"[+] Calculating AWD")
 
-        sequence_results = []
-
-        for synth_file in self.synth_data_files:
-            print(f"[+] Processing file: {synth_file}")
-            try:
-                # Read the synthetic data
-                synth_data = pd.read_csv(synth_file)
-
-                # Exclude specified columns if any
-                if self.exclude_cols:
-                    synth_data = synth_data.drop(columns=self.exclude_cols, errors='ignore')
-                    self.real_data = self.real_data.drop(columns=self.exclude_cols, errors='ignore')
-
-                file_wd_scores = []
-
-                # Loop through the real data in chunks of sequence_length
-                for i in range(0, len(self.real_data), self.sequence_length):
-                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
-                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
-
-                    # Handle cases where sequences are shorter than expected
-                    if real_sequence.shape[0] != self.sequence_length or synth_sequence.shape[0] != self.sequence_length:
-                        print(f"[-] Sequence at index {i} is too short (expected {self.sequence_length} rows). Skipping this sequence.")
-                        continue
-
-                    # Calculate the Wasserstein Distance for each feature (column)
-                    wd_scores = [
-                        wasserstein_distance(real_sequence[:, j], synth_sequence[:, j])
-                        for j in range(real_sequence.shape[1])
-                    ]
-                    avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan
-                    file_wd_scores.append(avg_wd_score)
-
-                # Calculate average AWD for the current file
-                if file_wd_scores:
-                    file_avg_wd_score = np.mean(file_wd_scores)
-                    epoch = self.extract_epoch_number(os.path.basename(synth_file))
-                    sequence_results.append({'Epochs': epoch, 'AWD': file_avg_wd_score})
-            except Exception as e:
-                print(f"[-] Error processing {synth_file}: {e}")
-
-        # Create DataFrame, sort by Epochs, and save to CSV
-        awd_df = pd.DataFrame(sequence_results)
-        awd_df['Epochs'] = pd.to_numeric(awd_df['Epochs'], errors='coerce')  # Convert 'Epochs' to numeric
-        awd_df = awd_df.sort_values(by="Epochs").reset_index(drop=True)
-
-        # Save the results to the output CSV file
-        awd_df.to_csv(output_awd_csv, index=False)
-        print(f"[+] AWD results saved to {output_awd_csv}")
-
-        return awd_df
 
     def extract_epoch_number(self, file_name):
         """
@@ -211,12 +156,93 @@ class PopulationFidelity:
         """
         try:
             # Attempt to extract epoch from the filename, assuming it's numeric before the extension
-            epoch = int(file_name.split('.')[0])
+            epoch = file_name.split('.')[0]
             return epoch
         except ValueError:
             print(f"[-] Failed to extract epoch from filename: {file_name}")
             return -1  # Return a default value (e.g., -1) when epoch cannot be extracted
 
+     
+    def awd(self, output_awd_csv):
+        """
+        Executes the AWD algorithm for the real and synthetic datasets and saves results to a CSV file.
+        """
+        print(f"[+] AWD calculation Started")
+    
+        # List to store the results for each file processed
+        sequence_results = []
+    
+        # Iterate over each synthetic data file
+        for synth_file in self.synth_data_files:
+            print(f"[+] Processing file: {synth_file}")
+            try:
+                # Step 1: Read the synthetic data CSV file into a pandas DataFrame
+                synth_data = pd.read_csv(synth_file)
+    
+                # Step 2: If there are columns to exclude, drop them from both synthetic and real data
+                if self.exclude_cols:
+                    synth_data = synth_data.drop(columns=self.exclude_cols, errors='ignore')
+                    self.real_data = self.real_data.drop(columns=self.exclude_cols, errors='ignore')
+    
+                # List to store the Wasserstein Distance (WD) scores for each sequence
+                file_wd_scores = []
+    
+                # Step 3: Loop through the real data in chunks of 'sequence_length'
+                for i in range(0, len(self.real_data), self.sequence_length):
+                    # Extract a sequence from the real and synthetic data
+                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
+                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
+    
+                    # Step 4: If the sequence is too short (less than 'sequence_length' rows), skip it
+                    if real_sequence.shape[0] != self.sequence_length or synth_sequence.shape[0] != self.sequence_length:
+                        print(f"[-] Sequence at index {i} is too short (expected {self.sequence_length} rows). Skipping this sequence.")
+                        continue
+    
+                    # Step 5: Calculate the Wasserstein Distance for each feature (column) of the sequence
+                    wd_scores = []
+                    for j in range(real_sequence.shape[1]):  # Iterate over columns
+                        # Calculate WD for each column and append the result
+                        wd_score = wasserstein_distance(real_sequence[:, j], synth_sequence[:, j])
+                        wd_scores.append(wd_score)
+                        #print(f"Calculating wd_score for seq:{i} & col:{j}")  # Debug print for each calculation
+    
+                    # Step 6: Calculate the average Wasserstein Distance for this sequence
+                    avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan  # Average WD score (or NaN if no scores)
+                    file_wd_scores.append(avg_wd_score)  # Store the average WD score for this sequence
+    
+                # Step 7: If there are WD scores for this file, calculate the average AWD score
+                if file_wd_scores:
+                    file_avg_wd_score = np.mean(file_wd_scores)  # Average AWD for the current synthetic file
+                    # Extract only the file name (not the full path) for epoch extraction
+                    file_name = os.path.basename(synth_file)  # Get only the file name, not the full path
+                    epoch = self.extract_epoch_number(file_name)  # Extract epoch number from the file name
+                    # Store the result (epoch and AWD score)
+                    sequence_results.append({'Epochs': epoch, 'AWD': file_avg_wd_score})
+    
+            except Exception as e:
+                # If an error occurs while processing the file, print the error message
+                print(f"[-] Error processing {synth_file}: {e}")
+    
+        # Step 8: Convert results into a pandas DataFrame
+        awd_df = pd.DataFrame(sequence_results)
+    
+        # Step 9: Convert the 'Epochs' column to numeric, coercing errors (invalid values become NaN)
+        awd_df['Epochs'] = pd.to_numeric(awd_df['Epochs'], errors='coerce')
+    
+        # Step 10: Sort the DataFrame by 'Epochs' and reset the index
+        awd_df = awd_df.sort_values(by="Epochs").reset_index(drop=True)
+    
+        # Step 11: Save the final DataFrame to a CSV file
+        awd_df.to_csv(output_awd_csv, index=False)
+    
+        # Step 12: Print confirmation that the process is complete
+        print(f"[+] AWD calculation completed & results saved to {output_awd_csv}")
+    
+        # Return the resulting DataFrame for further use
+        return awd_df
+
+
+    
     @staticmethod
     def plot_awd(wd_values_dict, synth_files):
         """

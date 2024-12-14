@@ -34,6 +34,7 @@ def main():
     logging.info("Pipeline execution started.")    
 
     try:
+        
         # Phase 1: Data Preprocessing
         logging.info("Phase 1: Data Preprocessing Started.")
         # Create an instance of the Preprocessing class
