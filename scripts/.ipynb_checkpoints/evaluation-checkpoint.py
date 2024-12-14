@@ -103,15 +103,6 @@ class PopulationFidelity:
             scores.append(1 - ks_stat)  # Convert KS statistic to a similarity score
         return np.mean(scores)
 
-    @staticmethod
-    def extract_epoch_number(filename):
-        """
-        Extracts the epoch number from the filename. Assumes the filename contains the word 'epoch' followed by a number.
-        Example: synthetic_data_epoch1.csv -> epoch1
-        """
-        base_name = os.path.splitext(filename)[0]
-        epoch_part = [part for part in base_name.split('_') if 'epoch' in part]
-        return epoch_part[0] if epoch_part else base_name
 
     def msas(self, output_msas_csv):
         """
@@ -162,23 +153,31 @@ class PopulationFidelity:
             try:
                 # Read the synthetic data
                 synth_data = pd.read_csv(synth_file)
-                synth_data = synth_data.drop(columns=self.exclude_cols)
+
+                # Exclude specified columns if any
+                if self.exclude_cols:
+                    synth_data = synth_data.drop(columns=self.exclude_cols, errors='ignore')
+                    self.real_data = self.real_data.drop(columns=self.exclude_cols, errors='ignore')
 
                 file_wd_scores = []
 
                 # Loop through the real data in chunks of sequence_length
                 for i in range(0, len(self.real_data), self.sequence_length):
-                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].drop(columns=self.exclude_cols).values
-                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].drop(columns=self.exclude_cols).values
+                    real_sequence = self.real_data.iloc[i:i + self.sequence_length].values
+                    synth_sequence = synth_data.iloc[i:i + self.sequence_length].values
 
-                    # Ensure sequences are of the correct length
-                    if real_sequence.shape[0] == self.sequence_length and synth_sequence.shape[0] == self.sequence_length:
-                        wd_scores = [
-                            wasserstein_distance(real_sequence[:, j], synth_sequence[:, j])
-                            for j in range(real_sequence.shape[1])
-                        ]
-                        avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan
-                        file_wd_scores.append(avg_wd_score)
+                    # Handle cases where sequences are shorter than expected
+                    if real_sequence.shape[0] != self.sequence_length or synth_sequence.shape[0] != self.sequence_length:
+                        print(f"[-] Sequence at index {i} is too short (expected {self.sequence_length} rows). Skipping this sequence.")
+                        continue
+
+                    # Calculate the Wasserstein Distance for each feature (column)
+                    wd_scores = [
+                        wasserstein_distance(real_sequence[:, j], synth_sequence[:, j])
+                        for j in range(real_sequence.shape[1])
+                    ]
+                    avg_wd_score = np.mean(wd_scores) if wd_scores else np.nan
+                    file_wd_scores.append(avg_wd_score)
 
                 # Calculate average AWD for the current file
                 if file_wd_scores:
@@ -198,7 +197,25 @@ class PopulationFidelity:
         print(f"[+] AWD results saved to {output_awd_csv}")
 
         return awd_df
-    
+
+    def extract_epoch_number(self, file_name):
+        """
+        Extracts the epoch number from the synthetic data file name.
+        This method assumes that the filename is in the format 'Epochs.csv', e.g., '1000.csv'.
+
+        Parameters:
+            file_name (str): The name of the synthetic data file.
+
+        Returns:
+            int: The extracted epoch number or a default value (-1) if extraction fails.
+        """
+        try:
+            # Attempt to extract epoch from the filename, assuming it's numeric before the extension
+            epoch = int(file_name.split('.')[0])
+            return epoch
+        except ValueError:
+            print(f"[-] Failed to extract epoch from filename: {file_name}")
+            return -1  # Return a default value (e.g., -1) when epoch cannot be extracted
 
     @staticmethod
     def plot_awd(wd_values_dict, synth_files):
@@ -229,7 +246,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run evaluation metrics for synthetic data.")
     parser.add_argument("--real_data_path", required=True, help="Path to the real data CSV file.")
     parser.add_argument("--synth_folder", required=True, help="Path to the folder containing synthetic data CSV files.")
-    parser.add_argument("--exclude_cols", required=False, help="List of columns to exclude in calculating evaluation measures")
-    parser.add_argument("--seq_len", required=False, help="Length of every sequence (default = 1)")
+    parser.add_argument("--exclude_cols", required=False, help="List of columns to exclude in calculating evaluation measures", default=[])
+    parser.add_argument("--seq_len", required=False, type=int, help="Length of every sequence (default = 1)", default=1)
+    parser.add_argument("--output_awd_csv", required=True, help="Path to save the AWD output CSV")
     args = parser.parse_args()
 
+    # Instantiate the PopulationFidelity class
+    pf = PopulationFidelity(
+        real_data_path=args.real_data_path,
+        synth_folder=args.synth_folder,
+        exclude_cols=args.exclude_cols.split(',') if args.exclude_cols else [],
+        sequence_length=args.seq_len
+    )
+    
+    # Run only the AWD method
+    awd_results = pf.awd(output_awd_csv=args.output_awd_csv)
+    print(f"[+] AWD results saved to {args.output_awd_csv}")
