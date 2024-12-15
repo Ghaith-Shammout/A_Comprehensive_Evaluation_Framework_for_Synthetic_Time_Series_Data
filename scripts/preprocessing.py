@@ -116,12 +116,14 @@ class Preprocessing:
                 label_encoder = LabelEncoder()
                 df[column] = label_encoder.fit_transform(df[column])
                 label_encoders[column] = label_encoder
+                '''
                 print(f"[+] Encoding mapping for '{column}': {dict(zip(label_encoder.classes_,
                                                                        label_encoder.transform(label_encoder.classes_)
                                                                       )
                                                                   )
                                                             }"
                      )
+                '''
             
             df.to_csv(self.output_file, index=False)
             print(f"[+] Updated DataFrame saved to {self.output_file}")

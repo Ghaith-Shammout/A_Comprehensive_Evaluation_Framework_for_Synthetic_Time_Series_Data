@@ -2,16 +2,18 @@ name: main
 channels:
   - defaults
   - conda-forge
+  - pytorch
+  - nvidia
 dependencies:
-  - cudatoolkit=11.3.1=h2bc3f7f_2   # Only keep if you're using CUDA
   - numpy
   - pandas
-  - python
-  - pytorch
+  - python=3.11.9
   - scikit-learn
   - scipy
-  - sdv
+  - sdv=1.17
   - matplotlib
   - aeon
   - seaborn
-  - cudatoolkit=12.1
+  - cudatoolkit
+  - pytorch-cuda
+  - pytorch
