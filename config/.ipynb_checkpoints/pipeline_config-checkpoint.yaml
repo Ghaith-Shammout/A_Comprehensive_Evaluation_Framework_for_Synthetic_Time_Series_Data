@@ -23,7 +23,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [500, 1000, 1500, 2000, 2500, 5000]
+  epochs: [3000, 3500, 4000, 4500]
   verbose: True
   cuda: True
   model_output: './outputs/Models/synthesizer.pkl'
@@ -38,10 +38,7 @@ evaluation:
   awd_output: './outputs/Evaluation/AWD.csv'
   msas_output: './outputs/Evaluation/MSAS.csv'  
   sid_col: 'SID'
-  exclude_cols: 
-      - 'date'
-      - 'Load_Type'
-      - 'SID'
+  exclude_cols: ['date','Load_Type', 'SID']
 
 classification:
     param_grid:
@@ -56,8 +53,8 @@ classification:
           distance:
             #- dtw # fast
             #- shape_dtw # Takes too much time 
-            - ddtw # fast & great result
-            - wdtw # fast & good result 
+            #- ddtw # fast & great result
+            #- wdtw # fast & good result 
             #- wddtw
             #- adtw
             #- erp
@@ -66,7 +63,7 @@ classification:
             #- twe
             #- lcss
             - euclidean 
-            - squared
+            #- squared
             #- manhattan
             #- minkowski
             #- sbd
