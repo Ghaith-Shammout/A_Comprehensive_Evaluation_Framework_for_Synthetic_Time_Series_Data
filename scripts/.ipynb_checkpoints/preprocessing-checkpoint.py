@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, LabelEncoder
 
 class Preprocessing:
@@ -16,9 +17,21 @@ class Preprocessing:
     def remove_unwanted_columns(self, unwanted_columns):
         """Remove unwanted columns from the dataset."""
         try:
+            # Check if the output directory exists
+            output_dir = os.path.dirname(self.output_file)
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)  # Create the directory if it doesn't exist
+            
+            # Read the CSV file
             df = pd.read_csv(self.input_file)
+            
+            # Drop the unwanted columns
             df.drop(columns=unwanted_columns, inplace=True)
+            
+            # Save the result to a new CSV file
             df.to_csv(self.output_file, index=False)
+            
+            # Print the result
             print(f"[+] Columns {unwanted_columns} removed. Output saved to {self.output_file}.")
         except FileNotFoundError:
             print(f"[-] The file {self.input_file} was not found.")

@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from sdv.metadata import Metadata
 from sdv.sequential import PARSynthesizer
 
@@ -34,6 +35,11 @@ class SyntheticDataGenerator:
             self.metadata.set_sequence_key(seq_key)
             self.metadata.set_sequence_index(seq_index)
             
+            # Check if the output directory exists
+            output_dir = os.path.dirname(metadata_path)
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)  # Create the directory if it doesn't exist
+                
             # Save metadata to a JSON file
             self.metadata.save_to_json(metadata_path)
             print(f"[+] Metadata successfully defined and saved to {metadata_path}")
