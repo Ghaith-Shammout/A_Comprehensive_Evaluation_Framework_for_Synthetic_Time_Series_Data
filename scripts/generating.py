@@ -34,11 +34,6 @@ class SyntheticDataGenerator:
             self.metadata.update_column(column_name=seq_index, sdtype='datetime', datetime_format=date_format)
             self.metadata.set_sequence_key(seq_key)
             self.metadata.set_sequence_index(seq_index)
-            
-            # Check if the output directory exists
-            output_dir = os.path.dirname(metadata_path)
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)  # Create the directory if it doesn't exist
                 
             # Save metadata to a JSON file
             self.metadata.save_to_json(metadata_path)

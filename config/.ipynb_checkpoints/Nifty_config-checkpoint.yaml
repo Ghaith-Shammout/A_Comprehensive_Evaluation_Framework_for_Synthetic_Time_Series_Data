@@ -1,0 +1,83 @@
+data:
+  source_file: "./data/Nifty.csv"
+  
+preprocessing:
+  unwanted_columns: [] 
+  date_column: "Date"  # The name of the date column
+  date_format: "%d-%m-%Y"
+  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
+  normalize_columns: ['Open', 'High', 'Low', 'Close']
+  categorical_columns: []
+  window_size: 50
+  step_size: 1
+  
+metadata:
+  seq_key: "SID"
+  seq_index: "Date"
+  date_format: "%d-%m-%Y"
+  metadata_path: "./outputs/Nifty/data/"
+
+synthesizer:
+  context_columns: []
+  epochs: [1, 2]
+  verbose: True
+  cuda: True
+  model_output: './outputs/Nifty/Models'
+
+generation:
+  num_sequences: 3808
+  sequence_length: 50
+  output_path: './outputs/Nifty/Synth_Data'
+
+evaluation:
+  eva_output: './outputs/Nifty/Evaluation'
+  sid_col: 'SID'
+  exclude_cols: ['Date','Next_Day', 'SID']
+
+classification:
+    param_grid:
+          n_neighbors:
+            - 1
+            - 3
+            - 5
+            #- 7
+          weights:
+            - uniform
+            - distance
+          distance:
+            #- dtw # fast
+            #- shape_dtw # Takes too much time 
+            #- ddtw # fast & great result
+            #- wdtw # fast & good result 
+            #- wddtw
+            #- adtw
+            #- erp
+            #- edr
+            #- msm
+            #- twe
+            #- lcss
+            - euclidean 
+            #- squared
+            #- manhattan
+            #- minkowski
+            #- sbd
+            #- shift_scale
+            #- soft_dtw
+            
+    test_size: 0.25
+    random_state: 0
+    seq_index_col: 'SID' 
+    target_col:  'Next_Day'
+    metric: 'f1'
+    metric_output_file: './outputs/Nifty/Evaluation'
+
+
+correlation_analysis:
+    plot_output_path: './outputs/Nifty/Plots/Correlation Analysis/'
+    correlation_output_path: './outputs/Nifty/Evaluation/correlation_results.csv'
+    metric_columns: ["MSAS", "AWD"]
+
+
+logging:
+  log_file: "logs/pipeline.log"
+  level: "INFO"

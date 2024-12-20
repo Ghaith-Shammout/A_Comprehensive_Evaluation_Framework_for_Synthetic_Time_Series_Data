@@ -130,7 +130,7 @@ class Classifier:
     
     def classify(self, real_dataset_path, synthetic_folder_path, 
                  seq_index_col, target_col, metric, param_grid,
-                 test_size, random_state):
+                 test_size, random_state, metric_output_file):
         """
         Evaluate the synthetic datasets and compute the F1-ratio compared to the real dataset.
 
@@ -196,7 +196,7 @@ class Classifier:
         f1_ratios_df = f1_ratios_df.sort_values(by='Epochs')
 
         # Save the output to a CSV file
-        f1_ratios_df.to_csv('./outputs/Evaluation/f1_ratios.csv', index=False)
+        f1_ratios_df.to_csv(f'{metric_output_file}/f1_ratios.csv', index=False)
         print("Results saved to f1_ratios.csv")
         
         return f1_ratios_df

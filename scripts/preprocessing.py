@@ -11,28 +11,41 @@ class Preprocessing:
         - input_file (str): Path to the input CSV file.
         - output_file (str): Path to save the preprocessed CSV file.
         """
-        self.input_file = input_file
-        self.output_file = output_file
+        try:
+            # Assign input and output file paths
+            self.input_file = input_file
+            self.output_file = output_file
+
+            # Check if the input file exists
+            if not os.path.isfile(self.input_file):
+                raise FileNotFoundError(f"The input file {self.input_file} does not exist.")
+
+        except FileNotFoundError as e:
+            print(f"[-] Error: {e}")
+        except Exception as e:
+            print(f"[-] Unexpected error during initialization: {e}")
+
+        
 
     def remove_unwanted_columns(self, unwanted_columns):
         """Remove unwanted columns from the dataset."""
         try:
-            # Check if the output directory exists
-            output_dir = os.path.dirname(self.output_file)
-            if not os.path.exists(output_dir):
-                os.makedirs(output_dir)  # Create the directory if it doesn't exist
+            
             
             # Read the CSV file
             df = pd.read_csv(self.input_file)
+
+            # Drop rows with null values
+            df.dropna(inplace=True)
             
             # Drop the unwanted columns
-            df.drop(columns=unwanted_columns, inplace=True)
+            df.drop(columns=unwanted_columns, inplace=True, errors='ignore')
             
             # Save the result to a new CSV file
             df.to_csv(self.output_file, index=False)
             
             # Print the result
-            print(f"[+] Columns {unwanted_columns} removed. Output saved to {self.output_file}.")
+            print(f"[+] Columns {unwanted_columns} removed and rows with null values dropped. Output saved to {self.output_file}.")
         except FileNotFoundError:
             print(f"[-] The file {self.input_file} was not found.")
         except KeyError:
@@ -149,7 +162,9 @@ class Preprocessing:
             print(f"[-] Error during label encoding: {e}")
 
     def sliding_window(self, window_size, step_size):
-        """Apply sliding window technique to the dataset."""
+        """Apply sliding window technique to the dataset.
+        return number of sequences
+        """
         try:
             df = pd.read_csv(self.output_file)
 
@@ -165,26 +180,20 @@ class Preprocessing:
                 window['SID'] = sid
                 windowed_data.append(window)
                 sid += 1
-
+                
             print(f"[+] Sliding window successfully performed, with number of windows {len(windowed_data)}")
             slided_data = pd.concat(windowed_data, axis=0)
             slided_data.to_csv(self.output_file, index=False)
             print(f"[+] Sliding window data saved to '{self.output_file}'.")
+            return len(windowed_data)
         except FileNotFoundError:
             print(f"[-] The file {self.output_file} was not found.")
+            return None
         except ValueError as e:
             print(f"[-] Error with window size: {e}")
+            return None
         except Exception as e:
             print(f"[-] Error while applying sliding window: {e}")
-
-    def preprocess(self, unwanted_columns, date_column, categorical_columns, window_size, step_size, normalization_method='minmax'):
-        """Run all preprocessing steps in sequence."""
-        try:
-            self.remove_unwanted_columns(unwanted_columns)
-            self.enforce_date_format(date_column)
-            self.normalize_data(method=normalization_method)
-            self.label_encode_and_save(categorical_columns)
-            self.sliding_window(window_size=window_size, step_size=step_size)
-            print(f"[+] Final preprocessed data saved to {self.output_file}.")
-        except Exception as e:
-            print(f"[-] Error during preprocessing: {e}")
+            return None
+            
+   

@@ -4,19 +4,19 @@ import numpy as np
 from scipy.stats import ks_2samp
 
 class MSAS:
-    def __init__(self, real_file, synth_dir, output_file, x_step, exclude_columns):
+    def __init__(self, real_file, synth_dir, output_folder, x_step, exclude_columns):
         """
         Initialize the MSAS class.
 
         Args:
             real_file (str): Path to the real data file.
             synth_dir (str): Path to the directory containing synthetic data files.
-            output_file (str): Path to save the results CSV file.
+            output_folder (str): Path to save the results CSV file.
             x_step (int): Step size for inter-row dependency calculation (default is 1).
         """
         self.real_file = real_file
         self.synth_dir = synth_dir
-        self.output_file = output_file
+        self.output_folder = output_folder
         self.x_step = x_step
         self.exclude_columns = exclude_columns
         self.real_data = pd.read_csv(real_file)
@@ -134,16 +134,16 @@ class MSAS:
         results_df = results_df.sort_values(by="Epochs").reset_index(drop=True)
 
         # Save the results to the output CSV file
-        results_df.to_csv(self.output_file, index=False)
+        results_df.to_csv(f"{self.output_folder}/MSAS.csv", index=False)
 
-        print(f"[+] MSAS Calculation Completed & Results Saved to {self.output_file}")
+        print(f"[+] MSAS Calculation Completed & Results Saved to {self.output_folder}/msas.csv")
 
 # Usage example
 if __name__ == "__main__":
     synth_directory = './Synth'  # Replace with the path to your directory containing synthetic CSVs
     real_data_file = './real_data.csv'   # Path to your real data file
-    output_csv_file = './msas_score.csv' # Path to save the results
+    output_csv_file = './MSAS.csv' # Path to save the results
 
     # Create an MSAS object and compute scores
-    msas_calculator = MSAS(real_file=real_data_file, synth_dir=synth_directory, output_file=output_csv_file)
+    msas_calculator = MSAS(real_file=real_data_file, synth_dir=synth_directory, output_folder=output_csv_file)
     msas_calculator.compute()

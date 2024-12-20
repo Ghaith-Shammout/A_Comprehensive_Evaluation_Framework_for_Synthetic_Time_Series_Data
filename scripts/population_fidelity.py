@@ -8,7 +8,7 @@ from msas import MSAS
 
 
 class PopulationFidelity:
-    def __init__(self, real_data_path, synth_folder, exclude_cols, sequence_length):
+    def __init__(self, real_data_path, synth_folder, exclude_cols):
         """
         Initializes the Evaluation class.
 
@@ -16,7 +16,6 @@ class PopulationFidelity:
         - real_data_path (str): Path to the real data CSV file.
         - synth_data_dir (str): Directory containing the synthetic data CSV files.
         - exclude_cols   (list): List excluded columns in calculating the evaluation measures.  
-        - sequence_length (int): Number of data points per sequence (default is 1).
         """
         try:
             self.exclude_cols = exclude_cols
@@ -37,18 +36,11 @@ class PopulationFidelity:
         except Exception as e:
             print(f"[-] Error reading synthetic data files from {synth_folder}: {e}")
             raise
-        
-
-        try:
-            self.sequence_length = sequence_length
-        except Exception as e:
-            print(f"[-] Error Identifying sequence length {sequence_length}: {e}")
-            raise
 
     def compute_msas(self, output_file, x_step):
         
         msas = MSAS(real_file=self.real_data, synth_dir=self.synth_folder,
-                    output_file=output_file, x_step=x_step, exclude_columns=self.exclude_cols)
+                    output_folder=output_file, x_step=x_step, exclude_columns=self.exclude_cols)
         msas.compute()
         
         
@@ -224,10 +216,10 @@ class PopulationFidelity:
         awd_df = awd_df.sort_values(by="Epochs").reset_index(drop=True)
     
         # Step 12: Save the final DataFrame to a CSV file
-        awd_df.to_csv(output_awd_csv, index=False)
+        awd_df.to_csv(f"{output_awd_csv}/AWD.csv", index=False)
     
         # Step 13: Print confirmation that the process is complete
-        print(f"[+] AWD calculation completed & results saved to {output_awd_csv}")
+        print(f"[+] AWD calculation completed & results saved to {output_awd_csv}/awd.csv")
     
         # Return the resulting DataFrame for further use
         return awd_df
