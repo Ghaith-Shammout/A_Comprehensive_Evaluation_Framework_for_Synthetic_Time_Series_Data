@@ -5,7 +5,7 @@ from scipy.fft import fft
 
 
 class TemporalCorrelation:
-    def __init__(self, real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_dir):
+    def __init__(self, real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_file):
         """
         Initialize the analyzer with file paths and dataset specifications.
 
@@ -14,13 +14,13 @@ class TemporalCorrelation:
             synthetic_dir_path (str): Path to the directory containing synthetic dataset CSV files.
             sequence_id_col (str): Column name identifying sequences in the dataset.
             channel_cols (list of str): Column names of the channels.
-            output_dir (str): Path to the output CSV file.
+            output_file (str): Path to the output CSV file.
         """
         self.real_csv_path = real_csv_path
         self.synthetic_dir_path = synthetic_dir_path
         self.sequence_id_col = sequence_id_col
         self.channel_cols = channel_cols
-        self.output_dir = output_dir
+        self.output_file = output_file
 
     def read_multisequence_csv(self, file_path):
         """
@@ -151,8 +151,8 @@ class TemporalCorrelation:
 
             # Save results to CSV
             results_df = pd.DataFrame(results)
-            results_df.to_csv(f"{self.output_dir}/TC.csv", index=False)
-            print(f"Results saved to {self.output_dir}")
+            results_df.to_csv(f"{self.output_file}/TC.csv", index=False)
+            print(f"Results saved to {self.output_file}")
 
         except Exception as e:
             raise RuntimeError(f"Error processing synthetic files: {e}")
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     # File paths
     real_csv_path = "real_data.csv"
     synthetic_dir_path = "Synth"
-    output_dir = "temporal_correlation_results.csv"
+    output_file = "temporal_correlation_results.csv"
 
     # Column specifications
     sequence_id_col = "SID"
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     # Initialize and run analysis
     analyzer = TemporalCorrelation(
-        real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_dir
+        real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_file
     )
     top_n_peaks = 5  # Number of peaks to consider
     try:

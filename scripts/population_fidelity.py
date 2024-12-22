@@ -46,12 +46,11 @@ class PopulationFidelity:
 
     def compute_temp_corr(self, seq_id, channel_cols, output_file, top_peaks):
         # Initialize and run analysis
-        analyzer = TemporalCorrelationAnalyzer(real_csv_path=self.real_data,
-                                               synthetic_dir_path=self.synth_folder,
-                                               sequence_id_col=seq_id, 
-                                               channel_cols=channel_cols,
-                                               output_file=output_file
-        )
+        analyzer = TemporalCorrelation(real_csv_path=self.real_data,
+                                       synthetic_dir_path=self.synth_folder,
+                                       sequence_id_col=seq_id, 
+                                       channel_cols=channel_cols,
+                                       output_file=output_file)
         top_n_peaks = top_peaks  # Number of peaks to consider
         try:
             analyzer.compute(top_n_peaks)

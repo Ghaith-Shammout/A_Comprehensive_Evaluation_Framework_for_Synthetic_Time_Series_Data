@@ -74,16 +74,20 @@ def main():
 
             try:
                 # Loading source_file from the configuration
-                source_file = config['data']['source_file']
+                source_file = config['folders']['source_file']
                 
                 # Extract the base name without the extension, e.g. Steal.csv -> Steal
                 base_name = os.path.splitext(os.path.basename(source_file))[0]
 
+                # Define Data folder 
+                data_folder = f"./outputs/{base_name}/data"
+                
                 # Ensure Directory Exists
-                ensure_directory_exists(f"./outputs/{base_name}/data/")
+                ensure_directory_exists(data_folder)
                 
                 # Add the prefix "Real_" and reattach the extension
-                real_file = f"./outputs/{base_name}/data/Real_{base_name}{os.path.splitext(source_file)[1]}"
+                real_file = f"{data_folder}/Real_{base_name}{os.path.splitext(source_file)[1]}"
+                
                 # Phase 1: Data Preprocessing
                 logging.info("Phase 1: Data Preprocessing Started.")
                 # Create an instance of the Preprocessing class
@@ -94,17 +98,16 @@ def main():
                 
                 # running preprocessing steps with their respective arguments
                 preprocessor.remove_unwanted_columns(unwanted_columns=config['preprocessing']['unwanted_columns'])
-                preprocessor.enforce_date_format(date_column=config['preprocessing']['date_column'],
-                                                 date_format=config['preprocessing']['date_format'])
+                preprocessor.enforce_date_format(date_column=config['dataset']['date_col'],
+                                                 date_format=config['dataset']['date_format'])
                 preprocessor.normalize_data(method=config['preprocessing']['normalization_method'], 
-                                           normalize_columns=config['preprocessing']['normalize_columns'])
+                                           normalize_columns=config['dataset']['numerical_col'])
                 preprocessor.label_encode_and_save(categorical_columns=config['preprocessing']['categorical_columns'])
                 num_seq = preprocessor.sliding_window(window_size=config['preprocessing']['window_size'],
                                                       step_size=config['preprocessing']['step_size'])
                 logging.info("Phase 1 Completed Successfully.")
 
-
-
+                """
                 # Phase 2: Synthetic Data Generation 
                 logging.info("Phase 2: Synthetic Data Generation Process Started.")
                 
@@ -127,16 +130,16 @@ def main():
                     dataset=real_file,
                     seq_key=config['metadata']['seq_key'],  # Sequence key
                     seq_index=config['metadata']['seq_index'],      # Sequence index
-                    date_format=config['metadata']['date_format'],
+                    date_format=config['dataset']['date_format'],
                     metadata_path=metadata_filename
                 )
                 logging.info("Phase 2.1: Metadata Definition Completed Successfully.")
 
+                
                 for epoch in config['synthesizer']['epochs']:
                     logging.info(f"Starting pipeline run with {epoch} epochs.")
         
                     # Update the number of epochs in the configuration dynamically
-                    #config['synthesizer']['epochs'] = epochs
                     logging.info(f"Phase 2.2: Synthesizer Initializing with {epoch} epochs Started.")
                     # Train the synthesizer
                     synthesizer = generator.initialize_synthesizer(
@@ -167,49 +170,58 @@ def main():
                     logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Started.")
                     logging.info("Phase 4: Synthetic Data Generation started.")
                     
-                    gen_folder_path = f"./outputs/{base_name}/Synth_Data"
+                    synth_folder_path = f"./outputs/{base_name}/Synth_Data"
 
                     # Ensure directory exists
-                    ensure_directory_exists(gen_folder_path)
+                    ensure_directory_exists(synth_folder_path)
                     
                     generator.generate_synthetic_data(
                         #synthesizer=synthesizer,
                         num_sequences=num_seq,
                         sequence_length=config['preprocessing']['window_size'],
-                        output_path=f"{gen_folder_path}/{epoch}.csv",
+                        output_path=f"{synth_folder_path}/{epoch}.csv",
                         seq_key=config['metadata']['seq_key'],          # Sequence key used to sort by
                         seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
                     )
                     logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
+                """
+                # TODO: Remove when uncommenting Phase 2
+                synth_folder_path = f"./outputs/{base_name}/Synth_Data"
                 
                 # Phase 3: Synthetic Data Evaluation
                 logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
                 
-                # Define an evaluator
-                real_data_path = real_file
-                synth_folder = gen_folder_path
+                # Define parameters for the evaluator
                 exclude_cols = config['evaluation']['exclude_cols']
-                evaluator = PopulationFidelity(real_data_path, synth_folder, exclude_cols)
 
+                # Initialize the evaluator 
+                evaluator = PopulationFidelity(real_file, synth_folder_path, exclude_cols)
+
+                # Define evaluation folder path
                 eva_folder_path = f"./outputs/{base_name}/Evaluation"
+                # Ensure the directory exists
                 ensure_directory_exists(eva_folder_path)
-        
-                evaluator.compute_msas(output_file=eva_folder_path, x_step=1)
-        
-                evaluator.awd(eva_folder_path)
 
-                evaluator.compute_temp_corr(sequence_id_col='SID', channel_cols, output_file, top_peaks):
+                # Compute MSAS
+                #evaluator.compute_msas(output_file=eva_folder_path, x_step=1)
+                # Compute AWD
+                #evaluator.awd(eva_folder_path)
+                # Compute TC
+                SID = config['dataset']['SID']
+                numerical_col = config['dataset']['numerical_col']
+                top_peaks = config['evaluation']['top_peaks']
+                evaluator.compute_temp_corr(seq_id=SID, channel_cols=numerical_col,
+                                            output_file=eva_folder_path, top_peaks=top_peaks)
                 
                 logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 
-                
                 # Phase 4: Classification Process
                 logging.info(f"Phase 4: Classification Process Started.")
                 classifier = Classifier()
         
                 real_dataset_path = real_file
-                synthetic_folder_path = gen_folder_path
-                seq_index_col = config['classification']['seq_index_col']
+                synthetic_folder_path = synth_folder_path
+                seq_index_col = config['dataset']['SID']
                 target_col = config['classification']['target_col']
                 metric = config['classification']['metric']
                 param_grid = config['classification']['param_grid']

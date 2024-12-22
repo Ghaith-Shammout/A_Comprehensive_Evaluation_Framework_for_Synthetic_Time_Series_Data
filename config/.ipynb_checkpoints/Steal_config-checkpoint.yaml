@@ -1,16 +1,19 @@
-data:
+folders:
   source_file: "./data/Steal.csv"
+
+dataset:
+  date_col: "date"
+  date_format: "%d/%m/%Y %H:%M"
+  numerical_col: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
+                    'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
+  SID: "SID"
   
 preprocessing:
   unwanted_columns:  # List of columns to drop
     - "NSM"
     - "WeekStatus"
     - "Day_of_week"
-  date_column: "date"  # The name of the date column
-  date_format: "%d/%m/%Y %H:%M"
   normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
-  normalize_columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
-                    'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
   categorical_columns: 
       - 'Load_Type'
   window_size: 96  # Size of the sliding window
@@ -19,17 +22,16 @@ preprocessing:
 metadata:
   seq_key: "SID"
   seq_index: "date"
-  date_format: "%d/%m/%Y %H:%M"
 
 synthesizer:
   context_columns: []
   epochs: [1]
   verbose: True
   cuda: True
-  model_output: 
 
 evaluation:
   exclude_cols: ['date','Load_Type', 'SID']
+  top_peaks: 5
 
 classification:
     param_grid:
@@ -63,13 +65,12 @@ classification:
             
     test_size: 0.25
     random_state: 0
-    seq_index_col: 'SID' 
     target_col:  'Load_Type'
     metric: 'f1'
 
 
 correlation_analysis:
-    metric_columns: ["MSAS", "AWD"]
+    metric_columns: ["MSAS", "AWD", "TC"]
 
 
 logging:
