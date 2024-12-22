@@ -19,7 +19,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [1, 2]
+  epochs: [500, 1000, 1500, 2000, 2500, 5000]
   verbose: True
   cuda: True
   model_output: './outputs/Nifty/Models'

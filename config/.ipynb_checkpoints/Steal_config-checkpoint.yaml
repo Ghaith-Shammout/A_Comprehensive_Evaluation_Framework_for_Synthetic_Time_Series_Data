@@ -1,0 +1,77 @@
+data:
+  source_file: "./data/Steal.csv"
+  
+preprocessing:
+  unwanted_columns:  # List of columns to drop
+    - "NSM"
+    - "WeekStatus"
+    - "Day_of_week"
+  date_column: "date"  # The name of the date column
+  date_format: "%d/%m/%Y %H:%M"
+  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
+  normalize_columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
+                    'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
+  categorical_columns: 
+      - 'Load_Type'
+  window_size: 96  # Size of the sliding window
+  step_size: 24    # Step size for the sliding window
+
+metadata:
+  seq_key: "SID"
+  seq_index: "date"
+  date_format: "%d/%m/%Y %H:%M"
+
+synthesizer:
+  context_columns: []
+  epochs: [1]
+  verbose: True
+  cuda: True
+  model_output: 
+
+evaluation:
+  exclude_cols: ['date','Load_Type', 'SID']
+
+classification:
+    param_grid:
+          n_neighbors:
+            - 1
+            - 3
+            - 5
+            #- 7
+          weights:
+            - uniform
+            - distance
+          distance:
+            #- dtw # fast
+            #- shape_dtw # Takes too much time 
+            #- ddtw # fast & great result
+            #- wdtw # fast & good result 
+            #- wddtw
+            #- adtw
+            #- erp
+            #- edr
+            #- msm
+            #- twe
+            #- lcss
+            - euclidean 
+            #- squared
+            #- manhattan
+            #- minkowski
+            #- sbd
+            #- shift_scale
+            #- soft_dtw
+            
+    test_size: 0.25
+    random_state: 0
+    seq_index_col: 'SID' 
+    target_col:  'Load_Type'
+    metric: 'f1'
+
+
+correlation_analysis:
+    metric_columns: ["MSAS", "AWD"]
+
+
+logging:
+  log_file: "logs/pipeline.log"
+  level: "INFO"

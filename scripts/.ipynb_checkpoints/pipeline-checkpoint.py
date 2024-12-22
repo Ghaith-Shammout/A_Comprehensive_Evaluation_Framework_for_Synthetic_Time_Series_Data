@@ -197,6 +197,8 @@ def main():
                 evaluator.compute_msas(output_file=eva_folder_path, x_step=1)
         
                 evaluator.awd(eva_folder_path)
+
+                evaluator.compute_temp_corr(sequence_id_col='SID', channel_cols, output_file, top_peaks):
                 
                 logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 

@@ -5,6 +5,7 @@ from scipy.stats import ks_2samp, wasserstein_distance
 import os
 import glob
 from msas import MSAS
+from temporal_correlation import TemporalCorrelation
 
 
 class PopulationFidelity:
@@ -42,6 +43,21 @@ class PopulationFidelity:
         msas = MSAS(real_file=self.real_data, synth_dir=self.synth_folder,
                     output_folder=output_file, x_step=x_step, exclude_columns=self.exclude_cols)
         msas.compute()
+
+    def compute_temp_corr(self, seq_id, channel_cols, output_file, top_peaks):
+        # Initialize and run analysis
+        analyzer = TemporalCorrelationAnalyzer(real_csv_path=self.real_data,
+                                               synthetic_dir_path=self.synth_folder,
+                                               sequence_id_col=seq_id, 
+                                               channel_cols=channel_cols,
+                                               output_file=output_file
+        )
+        top_n_peaks = top_peaks  # Number of peaks to consider
+        try:
+            analyzer.compute(top_n_peaks)
+        except Exception as e:
+            print(f"Analysis failed: {e}")
+        
         
         
     def extract_epoch_number(self, file_name):
