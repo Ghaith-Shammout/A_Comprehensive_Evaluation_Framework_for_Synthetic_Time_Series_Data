@@ -122,6 +122,7 @@ class TemporalCorrelation:
             top_n_peaks (int): Number of top peaks to consider.
         """
         try:
+            print("[+] Temporal Correlation Computation Started")
             # Read the real dataset
             real_dataset = self.read_multisequence_csv(self.real_csv_path)
 
@@ -133,6 +134,7 @@ class TemporalCorrelation:
                 if synthetic_file.endswith(".csv"):
                     epoch = os.path.splitext(synthetic_file)[0]  # Extract epoch from filename
                     synthetic_file_path = os.path.join(self.synthetic_dir_path, synthetic_file)
+                    print(f"[+] Processing synthetic file: {synthetic_file_path}")
 
                     # Read the synthetic dataset
                     synthetic_dataset = self.read_multisequence_csv(synthetic_file_path)
@@ -151,6 +153,12 @@ class TemporalCorrelation:
 
             # Save results to CSV
             results_df = pd.DataFrame(results)
+            
+            # Step 9: Convert the 'Epochs' column to numeric, coercing errors (invalid values become NaN)
+            results_df['Epochs'] = pd.to_numeric(results_df['Epochs'], errors='coerce')
+            # Step 10: Sort the DataFrame by 'Epochs' and reset the index
+            results_df = results_df.sort_values(by="Epochs").reset_index(drop=True)
+        
             results_df.to_csv(f"{self.output_file}/TC.csv", index=False)
             print(f"Results saved to {self.output_file}")
 

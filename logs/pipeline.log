@@ -8214,3 +8214,167 @@ Metadata Save:
 2024-12-22 18:12:38,252 - INFO - Correlation results saved to ./outputs/Nifty/Evaluation
 2024-12-22 18:12:38,252 - INFO - Phase 5: Correlation Analysis Completed.
 2024-12-22 18:12:38,252 - INFO - Pipeline execution completed successfully.
+2024-12-23 12:13:08,103 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 12:13:08,103 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-23 12:13:09,894 - INFO - Phase 1 Completed Successfully.
+2024-12-23 12:13:42,819 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 12:13:42,819 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-23 12:13:44,553 - INFO - Phase 1 Completed Successfully.
+2024-12-23 12:13:44,556 - INFO - Pipeline execution for Nifty_config.yaml started.
+2024-12-23 12:13:44,556 - INFO - Phase 1: Data Preprocessing Started.
+2024-12-23 12:13:46,273 - INFO - Phase 1 Completed Successfully.
+2024-12-23 13:33:24,489 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:33:24,489 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:33:24,489 - ERROR - Pipeline execution failed: PopulationFidelity.compute_msas() got an unexpected keyword argument 'output_file'
+2024-12-23 13:34:34,313 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:34:34,313 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:34:34,313 - ERROR - Pipeline execution failed: PopulationFidelity.compute_msas() missing 1 required positional argument: 'exclude_columns'
+2024-12-23 13:36:10,358 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:36:10,358 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:36:10,358 - ERROR - Pipeline execution failed: PopulationFidelity.__init__() takes 4 positional arguments but 5 were given
+2024-12-23 13:36:28,542 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:36:28,542 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:36:28,542 - ERROR - Pipeline execution failed: PopulationFidelity.compute_msas() missing 1 required positional argument: 'exclude_columns'
+2024-12-23 13:37:11,352 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:37:11,352 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:37:17,912 - ERROR - Pipeline execution failed: PopulationFidelity.compute_awd() missing 1 required positional argument: 'exclude_columns'
+2024-12-23 13:39:04,572 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:39:04,572 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:39:18,082 - ERROR - Pipeline execution failed: name 'awd_calculator' is not defined
+2024-12-23 13:45:03,058 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:45:03,058 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:45:16,380 - ERROR - Pipeline execution failed: name 'synth_data_folder' is not defined
+2024-12-23 13:46:04,129 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 13:46:04,130 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:46:34,349 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 13:46:34,350 - INFO - Phase 4: Classification Process Started.
+2024-12-23 13:47:08,508 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 13:47:08,508 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 13:47:08,508 - INFO - Processing correlation for MSAS...
+2024-12-23 13:47:08,513 - INFO - Spearman correlation for MSAS: -0.299, p-value: 0.213
+2024-12-23 13:47:08,737 - INFO - Plot for MSAS saved as './outputs/Steal/Plots/MSAS.png'
+2024-12-23 13:47:08,737 - INFO - Processing correlation for AWD...
+2024-12-23 13:47:08,741 - INFO - Spearman correlation for AWD: 0.062, p-value: 0.800
+2024-12-23 13:47:08,924 - INFO - Plot for AWD saved as './outputs/Steal/Plots/AWD.png'
+2024-12-23 13:47:08,924 - INFO - Processing correlation for TC...
+2024-12-23 13:47:08,928 - INFO - Spearman correlation for TC: 0.092, p-value: 0.708
+2024-12-23 13:47:09,108 - INFO - Plot for TC saved as './outputs/Steal/Plots/TC.png'
+2024-12-23 13:47:09,109 - INFO - Correlation results saved to ./outputs/Steal/Evaluation
+2024-12-23 13:47:09,109 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 13:47:09,109 - INFO - Pipeline execution completed successfully.
+2024-12-23 13:47:09,112 - INFO - Pipeline execution for Nifty_config.yaml started.
+2024-12-23 13:47:09,112 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 13:47:23,748 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 13:47:23,750 - INFO - Phase 4: Classification Process Started.
+2024-12-23 13:48:00,415 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 13:48:00,415 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 13:48:00,415 - INFO - Processing correlation for MSAS...
+2024-12-23 13:48:00,420 - INFO - Spearman correlation for MSAS: -0.029, p-value: 0.957
+2024-12-23 13:48:00,600 - INFO - Plot for MSAS saved as './outputs/Nifty/Plots/MSAS.png'
+2024-12-23 13:48:00,600 - INFO - Processing correlation for AWD...
+2024-12-23 13:48:00,604 - INFO - Spearman correlation for AWD: -0.257, p-value: 0.623
+2024-12-23 13:48:00,793 - INFO - Plot for AWD saved as './outputs/Nifty/Plots/AWD.png'
+2024-12-23 13:48:00,793 - INFO - Processing correlation for TC...
+2024-12-23 13:48:00,797 - INFO - Spearman correlation for TC: 0.143, p-value: 0.787
+2024-12-23 13:48:00,975 - INFO - Plot for TC saved as './outputs/Nifty/Plots/TC.png'
+2024-12-23 13:48:00,976 - INFO - Correlation results saved to ./outputs/Nifty/Evaluation
+2024-12-23 13:48:00,976 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 13:48:00,976 - INFO - Pipeline execution completed successfully.
+2024-12-23 14:07:33,709 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 14:07:33,710 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 14:08:03,707 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 14:08:03,707 - INFO - Phase 4: Classification Process Started.
+2024-12-23 14:08:37,747 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 14:08:37,747 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 14:08:37,748 - INFO - Processing correlation for MSAS...
+2024-12-23 14:08:37,752 - INFO - Spearman correlation for MSAS: -0.299, p-value: 0.213
+2024-12-23 14:08:37,993 - INFO - Plot for MSAS saved as './outputs/Steal/Plots/MSAS.png'
+2024-12-23 14:08:37,993 - INFO - Processing correlation for AWD...
+2024-12-23 14:08:37,997 - INFO - Spearman correlation for AWD: 0.062, p-value: 0.800
+2024-12-23 14:08:38,176 - INFO - Plot for AWD saved as './outputs/Steal/Plots/AWD.png'
+2024-12-23 14:08:38,176 - INFO - Processing correlation for TC...
+2024-12-23 14:08:38,180 - INFO - Spearman correlation for TC: 0.092, p-value: 0.708
+2024-12-23 14:08:38,357 - INFO - Plot for TC saved as './outputs/Steal/Plots/TC.png'
+2024-12-23 14:08:38,358 - INFO - Correlation results saved to ./outputs/Steal/Evaluation
+2024-12-23 14:08:38,358 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 14:08:38,358 - INFO - Pipeline execution completed successfully.
+2024-12-23 14:08:38,361 - INFO - Pipeline execution for Nifty_config.yaml started.
+2024-12-23 14:08:38,361 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 14:08:53,138 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 14:08:53,138 - INFO - Phase 4: Classification Process Started.
+2024-12-23 14:09:29,641 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 14:09:29,641 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 14:09:29,641 - INFO - Processing correlation for MSAS...
+2024-12-23 14:09:29,646 - INFO - Spearman correlation for MSAS: -0.029, p-value: 0.957
+2024-12-23 14:09:29,825 - INFO - Plot for MSAS saved as './outputs/Nifty/Plots/MSAS.png'
+2024-12-23 14:09:29,825 - INFO - Processing correlation for AWD...
+2024-12-23 14:09:29,829 - INFO - Spearman correlation for AWD: -0.257, p-value: 0.623
+2024-12-23 14:09:30,010 - INFO - Plot for AWD saved as './outputs/Nifty/Plots/AWD.png'
+2024-12-23 14:09:30,010 - INFO - Processing correlation for TC...
+2024-12-23 14:09:30,014 - INFO - Spearman correlation for TC: 0.143, p-value: 0.787
+2024-12-23 14:09:30,190 - INFO - Plot for TC saved as './outputs/Nifty/Plots/TC.png'
+2024-12-23 14:09:30,191 - INFO - Correlation results saved to ./outputs/Nifty/Evaluation
+2024-12-23 14:09:30,191 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 14:09:30,191 - INFO - Pipeline execution completed successfully.
+2024-12-23 14:11:55,272 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 14:11:55,272 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 14:12:25,348 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 14:12:25,349 - INFO - Phase 4: Classification Process Started.
+2024-12-23 14:57:44,452 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 14:57:44,452 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 14:58:14,933 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 14:58:14,934 - INFO - Phase 4: Classification Process Started.
+2024-12-23 16:21:52,984 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 16:21:52,985 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 16:21:52,985 - INFO - Processing correlation for MSAS...
+2024-12-23 16:21:52,990 - INFO - Spearman correlation for MSAS: -0.161, p-value: 0.509
+2024-12-23 16:21:53,217 - INFO - Plot for MSAS saved as './outputs/Steal/Plots/MSAS.png'
+2024-12-23 16:21:53,217 - INFO - Processing correlation for AWD...
+2024-12-23 16:21:53,222 - INFO - Spearman correlation for AWD: 0.118, p-value: 0.632
+2024-12-23 16:21:53,419 - INFO - Plot for AWD saved as './outputs/Steal/Plots/AWD.png'
+2024-12-23 16:21:53,419 - INFO - Processing correlation for TC...
+2024-12-23 16:21:53,423 - INFO - Spearman correlation for TC: 0.156, p-value: 0.523
+2024-12-23 16:21:53,604 - INFO - Plot for TC saved as './outputs/Steal/Plots/TC.png'
+2024-12-23 16:21:53,605 - INFO - Correlation results saved to ./outputs/Steal/Evaluation
+2024-12-23 16:21:53,605 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 16:21:53,605 - INFO - Pipeline execution completed successfully.
+2024-12-23 16:21:53,608 - INFO - Pipeline execution for Nifty_config.yaml started.
+2024-12-23 16:21:53,608 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 16:22:08,633 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 16:22:08,634 - INFO - Phase 4: Classification Process Started.
+2024-12-23 18:38:40,058 - INFO - Phase 4: Classification Process Completed.
+2024-12-23 18:38:40,058 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-23 18:38:40,058 - INFO - Processing correlation for MSAS...
+2024-12-23 18:38:40,062 - INFO - Spearman correlation for MSAS: 0.600, p-value: 0.208
+2024-12-23 18:38:40,244 - INFO - Plot for MSAS saved as './outputs/Nifty/Plots/MSAS.png'
+2024-12-23 18:38:40,244 - INFO - Processing correlation for AWD...
+2024-12-23 18:38:40,248 - INFO - Spearman correlation for AWD: -0.771, p-value: 0.072
+2024-12-23 18:38:40,419 - INFO - Plot for AWD saved as './outputs/Nifty/Plots/AWD.png'
+2024-12-23 18:38:40,419 - INFO - Processing correlation for TC...
+2024-12-23 18:38:40,423 - INFO - Spearman correlation for TC: -0.314, p-value: 0.544
+2024-12-23 18:38:40,610 - INFO - Plot for TC saved as './outputs/Nifty/Plots/TC.png'
+2024-12-23 18:38:40,610 - INFO - Correlation results saved to ./outputs/Nifty/Evaluation
+2024-12-23 18:38:40,610 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-23 18:38:40,610 - INFO - Pipeline execution completed successfully.
+2024-12-23 19:18:30,753 - INFO - Pipeline execution for Steal_config.yaml started.
+2024-12-23 19:18:30,753 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-23 19:18:45,297 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-23 19:18:45,298 - INFO - Phase 4: Classification Process Started.
+2024-12-24 09:22:19,239 - INFO - Phase 4: Classification Process Completed.
+2024-12-24 09:22:19,239 - INFO - Phase 5: Correlation Analysis Started.
+2024-12-24 09:22:19,240 - INFO - Processing correlation for MSAS...
+2024-12-24 09:22:19,245 - INFO - Spearman correlation for MSAS: 0.517, p-value: 0.154
+2024-12-24 09:22:19,603 - INFO - Plot for MSAS saved as './outputs/Steal/Plots/MSAS.png'
+2024-12-24 09:22:19,604 - INFO - Processing correlation for AWD...
+2024-12-24 09:22:19,608 - INFO - Spearman correlation for AWD: -0.350, p-value: 0.356
+2024-12-24 09:22:19,798 - INFO - Plot for AWD saved as './outputs/Steal/Plots/AWD.png'
+2024-12-24 09:22:19,798 - INFO - Processing correlation for TC...
+2024-12-24 09:22:19,802 - INFO - Spearman correlation for TC: -0.433, p-value: 0.244
+2024-12-24 09:22:19,983 - INFO - Plot for TC saved as './outputs/Steal/Plots/TC.png'
+2024-12-24 09:22:19,984 - INFO - Correlation results saved to ./outputs/Steal/Evaluation
+2024-12-24 09:22:19,984 - INFO - Phase 5: Correlation Analysis Completed.
+2024-12-24 09:22:19,984 - INFO - Pipeline execution completed successfully.
+2024-12-24 09:22:19,987 - INFO - Pipeline execution for Nifty_config.yaml started.
+2024-12-24 09:22:19,987 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2024-12-24 09:22:34,241 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2024-12-24 09:22:34,243 - INFO - Phase 4: Classification Process Started.

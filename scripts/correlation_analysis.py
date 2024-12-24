@@ -25,16 +25,19 @@ class CorrelationAnalysis:
         :param output_dir: Directory where correlation plots will be saved.
         :param correlation_output_path: Path to save the CSV file with correlation results.
         """
+        print("[+] Correlation Analysis Started")
         correlation_results = []  # List to store the results for each metric
 
         for metric_column in metric_columns:
             # Get the file path for the current metric
             metric_path = f"./outputs/{base_name}/Evaluation/{metric_column}.csv"
+            
 
             if not os.path.exists(metric_path):
                 logging.warning(f"Metric file path for {metric_column} not found. Skipping.")
                 continue  # Skip to the next metric if path is missing
 
+            print(f"[+] Processing {metric_path}")
             logging.info(f"Processing correlation for {metric_column}...")
 
             # Read the specific metric file and perform correlation analysis
@@ -92,6 +95,7 @@ class CorrelationAnalysis:
             # Perform Spearman correlation test
             correlation, p_value = spearmanr(merged_df['F1-ratio'], merged_df[metric_column])
 
+            print(f"Spearman correlation for {metric_column}: {correlation:.3f}, p-value: {p_value:.3f}")
             logging.info(f"Spearman correlation for {metric_column}: {correlation:.3f}, p-value: {p_value:.3f}")
 
             return correlation, p_value, merged_df

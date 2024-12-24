@@ -70,6 +70,7 @@ class MSAS:
 
     def compute(self):
         """Compute MSAS scores for synthetic data and save results."""
+        print("[+] MSAS Computation Started")
         # Initialize an empty list to store results for each synthetic file
         results = []
 
@@ -136,7 +137,7 @@ class MSAS:
         # Save the results to the output CSV file
         results_df.to_csv(f"{self.output_folder}/MSAS.csv", index=False)
 
-        print(f"[+] MSAS Calculation Completed & Results Saved to {self.output_folder}/msas.csv")
+        print(f"[+] MSAS Computation Completed & Results Saved to {self.output_folder}/MSAS.csv")
 
 # Usage example
 if __name__ == "__main__":

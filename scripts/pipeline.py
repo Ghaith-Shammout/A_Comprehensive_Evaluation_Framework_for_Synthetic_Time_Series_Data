@@ -87,7 +87,7 @@ def main():
                 
                 # Add the prefix "Real_" and reattach the extension
                 real_file = f"{data_folder}/Real_{base_name}{os.path.splitext(source_file)[1]}"
-                
+                """
                 # Phase 1: Data Preprocessing
                 logging.info("Phase 1: Data Preprocessing Started.")
                 # Create an instance of the Preprocessing class
@@ -107,7 +107,6 @@ def main():
                                                       step_size=config['preprocessing']['step_size'])
                 logging.info("Phase 1 Completed Successfully.")
 
-                """
                 # Phase 2: Synthetic Data Generation 
                 logging.info("Phase 2: Synthetic Data Generation Process Started.")
                 
@@ -185,6 +184,7 @@ def main():
                     )
                     logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
                 """
+
                 # TODO: Remove when uncommenting Phase 2
                 synth_folder_path = f"./outputs/{base_name}/Synth_Data"
                 
@@ -194,24 +194,28 @@ def main():
                 # Define parameters for the evaluator
                 exclude_cols = config['evaluation']['exclude_cols']
 
-                # Initialize the evaluator 
-                evaluator = PopulationFidelity(real_file, synth_folder_path, exclude_cols)
-
                 # Define evaluation folder path
                 eva_folder_path = f"./outputs/{base_name}/Evaluation"
                 # Ensure the directory exists
                 ensure_directory_exists(eva_folder_path)
 
+                plot_output_path = f"./outputs/{base_name}/Plots/"
+                ensure_directory_exists(plot_output_path)
+
+                # Initialize the evaluator 
+                evaluator = PopulationFidelity(real_file, synth_folder_path, eva_folder_path)
+                
                 # Compute MSAS
-                #evaluator.compute_msas(output_file=eva_folder_path, x_step=1)
+                evaluator.compute_msas(x_step=1, exclude_columns=exclude_cols)
                 # Compute AWD
-                #evaluator.awd(eva_folder_path)
+                evaluator.compute_awd(exclude_columns=exclude_cols, plot_output_path=plot_output_path)
                 # Compute TC
                 SID = config['dataset']['SID']
                 numerical_col = config['dataset']['numerical_col']
                 top_peaks = config['evaluation']['top_peaks']
-                evaluator.compute_temp_corr(seq_id=SID, channel_cols=numerical_col,
-                                            output_file=eva_folder_path, top_peaks=top_peaks)
+                evaluator.compute_temp_corr(seq_id=SID,
+                                            channel_cols=numerical_col,
+                                            top_peaks=top_peaks)
                 
                 logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
 
@@ -246,7 +250,7 @@ def main():
                 # Load paths from config
                 f1_ratios_path =  f"./outputs/{base_name}/Evaluation/f1_ratios.csv"
                 metric_columns = config['correlation_analysis']['metric_columns']  # List of metrics like ["MSAS", "AWD"]
-                plot_output_path = f"./outputs/{base_name}/Plots/"
+               
                 correlation_output_path = eva_folder_path
                 
                 # Check if the directory exists, and if not, create it
@@ -265,7 +269,6 @@ def main():
                 )
         
                 logging.info(f"Phase 5: Correlation Analysis Completed.")
-        
                 
                 logging.info("Pipeline execution completed successfully.")
         

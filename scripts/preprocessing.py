@@ -53,7 +53,7 @@ class Preprocessing:
         except Exception as e:
             print(f"[-] Error while removing unwanted columns: {e}")
 
-    def enforce_date_format(self, date_column, date_format="%d/%m/%Y %H:%M"):
+    def enforce_date_format(self, date_column, date_format):
         """Ensure all values in the date column follow the specified format and sort by date."""
         try:
             # Read the dataset from the file
@@ -83,7 +83,7 @@ class Preprocessing:
         except Exception as e:
             print(f"[-] Error while enforcing date format: {e}")
 
-    def normalize_data(self, method='minmax', normalize_columns=None):
+    def normalize_data(self, method, normalize_columns):
         """Normalize specified numerical columns using the specified method."""
         try:
             # Read the dataset from the file
