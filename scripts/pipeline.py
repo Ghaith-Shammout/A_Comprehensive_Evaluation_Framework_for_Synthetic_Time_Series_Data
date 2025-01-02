@@ -183,7 +183,7 @@ def main():
                         seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
                     )
                     logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
-                """
+                
 
                 # TODO: Remove when uncommenting Phase 2
                 synth_folder_path = f"./outputs/{base_name}/Synth_Data"
@@ -218,7 +218,12 @@ def main():
                                             top_peaks=top_peaks)
                 
                 logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-
+                """
+                # TODO: Remove when uncommenting Phase 2
+                synth_folder_path = f"./outputs/{base_name}/Synth_Data"
+                eva_folder_path = f"./outputs/{base_name}/Evaluation"
+                plot_output_path = f"./outputs/{base_name}/Plots/"
+                
                 # Phase 4: Classification Process
                 logging.info(f"Phase 4: Classification Process Started.")
                 classifier = Classifier()
@@ -227,7 +232,6 @@ def main():
                 synthetic_folder_path = synth_folder_path
                 seq_index_col = config['dataset']['SID']
                 target_col = config['classification']['target_col']
-                metric = config['classification']['metric']
                 param_grid = config['classification']['param_grid']
                 test_size = config['classification']['test_size']
                 random_state = config['classification']['random_state']
@@ -238,9 +242,12 @@ def main():
         
                 classifier.classify(real_dataset_path=real_dataset_path, 
                                     synthetic_folder_path=synthetic_folder_path,
-                                    seq_index_col=seq_index_col, target_col=target_col,
-                                    metric=metric, param_grid=param_grid, test_size=test_size,
-                                    random_state=random_state, metric_output_file=metric_output_file)
+                                    seq_index_col=seq_index_col,
+                                    target_col=target_col,
+                                    param_grid=param_grid,
+                                    test_size=test_size,
+                                    random_state=random_state,
+                                    metric_output_file=metric_output_file)
                 
                 logging.info(f"Phase 4: Classification Process Completed.")
         

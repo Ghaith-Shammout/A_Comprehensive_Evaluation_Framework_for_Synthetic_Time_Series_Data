@@ -25,7 +25,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [1]
+  epochs: [4500]
   verbose: True
   cuda: True
 
@@ -46,7 +46,7 @@ classification:
             - distance
           distance:
             - dtw 
-            - shape_dtw 
+            - shape_dtw  
             - ddtw 
             - wdtw 
             - wddtw
@@ -67,7 +67,6 @@ classification:
     test_size: 0.25
     random_state: 0
     target_col:  'Load_Type'
-    metric: 'f1'
 
 
 correlation_analysis:

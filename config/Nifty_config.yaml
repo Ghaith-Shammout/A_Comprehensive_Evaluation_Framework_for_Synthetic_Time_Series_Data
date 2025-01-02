@@ -21,7 +21,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [1]
+  epochs: [3000, 3500, 4000, 4500]
   verbose: True
   cuda: True
 
@@ -63,7 +63,6 @@ classification:
     test_size: 0.25
     random_state: 0
     target_col:  'Next_Day'
-    metric: 'f1'
 
 
 correlation_analysis:
