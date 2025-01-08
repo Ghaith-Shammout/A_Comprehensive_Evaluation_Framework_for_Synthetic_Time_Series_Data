@@ -104,7 +104,7 @@ class Classifier:
             classifier = KNeighborsTimeSeriesClassifier()
 
             # Define the scoring metrics for grid search
-            scores = ["f1_micro", "f1_macro", "f1_weighted"]
+            #scores = ["f1_micro", "f1_macro", "f1_weighted"]
 
             # Set up GridSearchCV with the specified parameter grid and metrics
             grid_search = GridSearchCV(estimator=classifier,

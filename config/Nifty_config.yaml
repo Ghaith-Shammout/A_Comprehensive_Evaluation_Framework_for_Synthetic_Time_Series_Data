@@ -21,7 +21,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [3000, 3500, 4000, 4500]
+  epochs: [100, 10000]
   verbose: True
   cuda: True
 
@@ -60,7 +60,7 @@ classification:
             - shift_scale
             - soft_dtw
             
-    test_size: 0.25
+    test_size: 0.2
     random_state: 0
     target_col:  'Next_Day'
 

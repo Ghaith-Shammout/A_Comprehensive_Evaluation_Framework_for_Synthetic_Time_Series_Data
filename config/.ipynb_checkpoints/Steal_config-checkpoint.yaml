@@ -16,8 +16,8 @@ preprocessing:
   normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
   categorical_columns: 
       - 'Load_Type'
-  window_size: 96  # Size of the sliding window
-  step_size: 24    # Step size for the sliding window
+  window_size: 48  # Size of the sliding window
+  step_size: 12    # Step size for the sliding window
 
 metadata:
   seq_key: "SID"
@@ -25,7 +25,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [4500]
+  epochs: [100, 10000]
   verbose: True
   cuda: True
 
@@ -64,7 +64,7 @@ classification:
             - shift_scale
             - soft_dtw
             
-    test_size: 0.25
+    test_size: 0.2
     random_state: 0
     target_col:  'Load_Type'
 

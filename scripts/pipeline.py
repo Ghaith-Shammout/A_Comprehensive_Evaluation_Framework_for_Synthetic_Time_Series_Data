@@ -87,7 +87,7 @@ def main():
                 
                 # Add the prefix "Real_" and reattach the extension
                 real_file = f"{data_folder}/Real_{base_name}{os.path.splitext(source_file)[1]}"
-                """
+
                 # Phase 1: Data Preprocessing
                 logging.info("Phase 1: Data Preprocessing Started.")
                 # Create an instance of the Preprocessing class
@@ -218,11 +218,11 @@ def main():
                                             top_peaks=top_peaks)
                 
                 logging.info(f"Phase 3: Synthetic Data Evaluation Completed.")
-                """
+
                 # TODO: Remove when uncommenting Phase 2
-                synth_folder_path = f"./outputs/{base_name}/Synth_Data"
-                eva_folder_path = f"./outputs/{base_name}/Evaluation"
-                plot_output_path = f"./outputs/{base_name}/Plots/"
+                #synth_folder_path = f"./outputs/{base_name}/Synth_Data"
+                #eva_folder_path = f"./outputs/{base_name}/Evaluation"
+                #plot_output_path = f"./outputs/{base_name}/Plots/"
                 
                 # Phase 4: Classification Process
                 logging.info(f"Phase 4: Classification Process Started.")
@@ -276,7 +276,7 @@ def main():
                 )
         
                 logging.info(f"Phase 5: Correlation Analysis Completed.")
-                
+
                 logging.info("Pipeline execution completed successfully.")
         
             except Exception as e:
