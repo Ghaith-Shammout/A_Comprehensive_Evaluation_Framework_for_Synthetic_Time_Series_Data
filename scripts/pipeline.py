@@ -9,9 +9,7 @@ from correlation_analysis import CorrelationAnalysis
 
 
 def setup_logging(log_file, level):
-    """
-    Configures logging for the pipeline.
-    """
+    """ Configures logging for the pipeline. """
     logging.basicConfig(
         filename=log_file,
         level=level,
@@ -19,9 +17,7 @@ def setup_logging(log_file, level):
     )
 
 def load_config(config_path):
-    """
-    Loads the pipeline configuration from a YAML file.
-    """
+    """ Loads the pipeline configuration from a YAML file. """
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
 
@@ -48,15 +44,12 @@ def ensure_directory_exists(directory_path):
 
 
 def main():
-    """
-    Main pipeline integrating all phases.
-    """
+    """ Main pipeline integrating all phases. """
     # Path to the config directory
     config_dir = "config/"
     
     # Loop through all files in the directory
     for filename in os.listdir(config_dir):
-        # Check if the file has a .yaml extension
         if filename.endswith(".yaml"):
             print(f"[+] Processing the configuration file: {filename}")
             

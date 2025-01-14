@@ -98,6 +98,12 @@ class CorrelationAnalysis:
             print(f"Spearman correlation for {metric_column}: {correlation:.3f}, p-value: {p_value:.3f}")
             logging.info(f"Spearman correlation for {metric_column}: {correlation:.3f}, p-value: {p_value:.3f}")
 
+            print("Merged DataFrame:")
+            print(merged_df.head())
+            print(f"Number of data points: {len(merged_df)}")
+            print(f"F1-ratio statistics:\n{merged_df['F1-ratio'].describe()}")
+            print(f"{metric_column} statistics:\n{merged_df[metric_column].describe()}")
+
             return correlation, p_value, merged_df
         except Exception as e:
             logging.error(f"Error in correlation analysis for {metric_column}: {e}")

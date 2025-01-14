@@ -1,0 +1,34 @@
+{
+    "tables": {
+        "table": {
+            "sequence_index": "Date",
+            "sequence_key": "SID",
+            "columns": {
+                "Date": {
+                    "sdtype": "datetime",
+                    "datetime_format": "%d-%m-%Y"
+                },
+                "Open": {
+                    "sdtype": "numerical"
+                },
+                "High": {
+                    "sdtype": "numerical"
+                },
+                "Low": {
+                    "sdtype": "numerical"
+                },
+                "Close": {
+                    "sdtype": "numerical"
+                },
+                "Next_Day": {
+                    "sdtype": "categorical"
+                },
+                "SID": {
+                    "sdtype": "id"
+                }
+            }
+        }
+    },
+    "relationships": [],
+    "METADATA_SPEC_VERSION": "V1"
+}
