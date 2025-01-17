@@ -81,6 +81,7 @@ def main():
                 # Add the prefix "Real_" and reattach the extension
                 real_file = f"{data_folder}/Real_{base_name}{os.path.splitext(source_file)[1]}"
 
+
                 # Phase 1: Data Preprocessing
                 logging.info("Phase 1: Data Preprocessing Started.")
                 # Create an instance of the Preprocessing class
@@ -99,6 +100,8 @@ def main():
                 num_seq = preprocessor.sliding_window(window_size=config['preprocessing']['window_size'],
                                                       step_size=config['preprocessing']['step_size'])
                 logging.info("Phase 1 Completed Successfully.")
+
+                """
 
                 # Phase 2: Synthetic Data Generation 
                 logging.info("Phase 2: Synthetic Data Generation Process Started.")
@@ -176,10 +179,11 @@ def main():
                         seq_index=config['metadata']['seq_index'],      # Sequence index used to sort by
                     )
                     logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
-                
+                """
 
                 # TODO: Remove when uncommenting Phase 2
-                synth_folder_path = f"./outputs/{base_name}/Synth_Data"
+                # synth_folder_path = f"./outputs/{base_name}/Synth_Data"
+                synth_folder_path = "./outputs/2500"
                 
                 # Phase 3: Synthetic Data Evaluation
                 logging.info(f"Phase 3: Synthetic Data Evaluation Started.")
@@ -187,12 +191,15 @@ def main():
                 # Define parameters for the evaluator
                 exclude_cols = config['evaluation']['exclude_cols']
 
-                # Define evaluation folder path
-                eva_folder_path = f"./outputs/{base_name}/Evaluation"
+                # Define evaluation folder path TODO: remove comment
+                # eva_folder_path = f"./outputs/{base_name}/Evaluation"
+                eva_folder_path = "./outputs/2500/eva"
                 # Ensure the directory exists
                 ensure_directory_exists(eva_folder_path)
 
-                plot_output_path = f"./outputs/{base_name}/Plots/"
+                # TODO: remove comment
+                # plot_output_path = f"./outputs/{base_name}/Plots/"
+                plot_output_path = "./outputs/2500/plot"
                 ensure_directory_exists(plot_output_path)
 
                 # Initialize the evaluator 
@@ -247,8 +254,9 @@ def main():
                 # Phase 5: Correlation Analysis
                 logging.info(f"Phase 5: Correlation Analysis Started.")
                 
-                # Load paths from config
-                f1_ratios_path =  f"./outputs/{base_name}/Evaluation/f1_ratios.csv"
+                # Load paths from config TODO: remove comment
+                # f1_ratios_path =  f"./outputs/{base_name}/Evaluation/f1_ratios.csv"
+                f1_ratios_path = "./outputs/2500/eva/f1_ratios.csv"
                 metric_columns = config['correlation_analysis']['metric_columns']  # List of metrics like ["MSAS", "AWD"]
                
                 correlation_output_path = eva_folder_path

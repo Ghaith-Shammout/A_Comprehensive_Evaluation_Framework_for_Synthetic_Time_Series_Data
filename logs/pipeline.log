@@ -10114,3 +10114,28 @@ Metadata Save:
 2025-01-14 09:29:56,822 - INFO - Correlation results saved to ./outputs/Nifty/Evaluation
 2025-01-14 09:29:56,822 - INFO - Phase 5: Correlation Analysis Completed.
 2025-01-14 09:29:56,822 - INFO - Pipeline execution completed successfully.
+2025-01-15 21:18:45,879 - INFO - Pipeline execution for Steal_config.yaml started.
+2025-01-15 21:18:45,879 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2025-01-15 21:19:00,354 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2025-01-15 21:19:00,356 - INFO - Phase 4: Classification Process Started.
+2025-01-15 21:21:08,086 - INFO - Pipeline execution for Steal_config.yaml started.
+2025-01-15 21:21:08,086 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2025-01-15 21:21:22,491 - INFO - Phase 3: Synthetic Data Evaluation Completed.
+2025-01-15 21:21:22,492 - INFO - Phase 4: Classification Process Started.
+2025-01-17 07:05:08,945 - INFO - Phase 4: Classification Process Completed.
+2025-01-17 07:05:08,945 - INFO - Phase 5: Correlation Analysis Started.
+2025-01-17 07:05:08,945 - INFO - Processing correlation for MSAS...
+2025-01-17 07:05:08,950 - INFO - Spearman correlation for MSAS: nan, p-value: nan
+2025-01-17 07:05:09,094 - INFO - Plot for MSAS saved as './outputs/2500/plot/MSAS.png'
+2025-01-17 07:05:09,094 - INFO - Processing correlation for AWD...
+2025-01-17 07:05:09,097 - INFO - Spearman correlation for AWD: nan, p-value: nan
+2025-01-17 07:05:09,194 - INFO - Plot for AWD saved as './outputs/2500/plot/AWD.png'
+2025-01-17 07:05:09,194 - INFO - Processing correlation for TC...
+2025-01-17 07:05:09,198 - INFO - Spearman correlation for TC: nan, p-value: nan
+2025-01-17 07:05:09,293 - INFO - Plot for TC saved as './outputs/2500/plot/TC.png'
+2025-01-17 07:05:09,293 - INFO - Correlation results saved to ./outputs/2500/eva
+2025-01-17 07:05:09,293 - INFO - Phase 5: Correlation Analysis Completed.
+2025-01-17 07:05:09,294 - INFO - Pipeline execution completed successfully.
+2025-01-17 07:05:09,297 - INFO - Pipeline execution for Nifty_config.yaml started.
+2025-01-17 07:05:09,297 - INFO - Phase 3: Synthetic Data Evaluation Started.
+2025-01-17 07:05:12,826 - ERROR - Pipeline execution failed: 'Epochs'
