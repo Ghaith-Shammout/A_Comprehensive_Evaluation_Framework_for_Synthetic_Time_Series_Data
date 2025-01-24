@@ -4,7 +4,7 @@ folders:
 dataset:
   date_col: "date"
   date_format: "%d/%m/%Y %H:%M"
-  numerical_col: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
+  normalize_columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
                     'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
   SID: "SID"
   
@@ -25,7 +25,7 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [100, 10000]
+  epochs: [1]
   verbose: True
   cuda: True
 

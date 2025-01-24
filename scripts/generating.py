@@ -1,61 +1,87 @@
-import pandas as pd
 import os
+import pandas as pd
 from sdv.metadata import Metadata
 from sdv.sequential import PARSynthesizer
 
+
 class SyntheticDataGenerator:
+    """
+    A class for generating synthetic data using the SDV framework, including 
+    metadata definition, model initialization, training, and synthetic data generation.
+    """
+
     def __init__(self):
         self.metadata = None
         self.synthesizer = None
 
-    def define_metadata(self, dataset, seq_key, seq_index, date_format, metadata_path):
+    def define_metadata(self, dataset_path: str, sequence_key: str, sequence_index: str, 
+                        date_format: str, metadata_path: str):
         """
-        Defines and saves metadata for a given dataset.
+        Define and save metadata for a given dataset.
 
         Args:
-            dataset (str): File path to the dataset (CSV format).
-            seq_key (str): Column identifying a sequence in the dataset.
-            seq_index (str): Column determining the spacing between rows in a sequence.
-            date_format (str): Date format stored in the file (e.g., %d%m%Y).
+            dataset_path (str): Path to the input dataset (CSV format).
+            sequence_key (str): Column identifying sequences in the dataset.
+            sequence_index (str): Column representing sequence order or datetime.
+            date_format (str): Format of datetime values in the dataset.
             metadata_path (str): Path to save the metadata JSON file.
-
-        Returns:
-            None
         """
         try:
-            # Load dataset
-            df = pd.read_csv(dataset)
-            
-            # Detect metadata from DataFrame
+            df = pd.read_csv(dataset_path)
             self.metadata = Metadata.detect_from_dataframe(df)
-            
-            # Update metadata for sequence key and index
-            self.metadata.update_column(column_name=seq_key, sdtype='id')
-            self.metadata.update_column(column_name=seq_index, sdtype='datetime', datetime_format=date_format)
-            self.metadata.set_sequence_key(seq_key)
-            self.metadata.set_sequence_index(seq_index)
-                
-            # Save metadata to a JSON file
+            self.metadata.update_column(column_name=sequence_key, sdtype='id')
+            self.metadata.update_column(column_name=sequence_index, sdtype='datetime', datetime_format=date_format)
+            self.metadata.set_sequence_key(sequence_key)
+            self.metadata.set_sequence_index(sequence_index)
             self.metadata.save_to_json(metadata_path)
-            print(f"[+] Metadata successfully defined and saved to {metadata_path}")
-        
+            print(f"[+] Metadata defined and saved to '{metadata_path}'.")
         except Exception as e:
-            print(f"[-] Error defining metadata: {str(e)}")
+            print(f"[-] Error defining metadata: {e}")
             raise
 
-    def initialize_synthesizer(self, metadata_path, context_columns, epochs, verbose, cuda):
+
+    def load_synthesizer(self, models_dir: str, epochs: int = 300):
         """
-        Initializes the PARSynthesizer.
+        Load an existing synthesizer model for a specific epoch if it exists.
+    
+        Args:
+            models_dir (str): Path to the directory containing model files.
+            epochs (int, optional): Epoch number of the model to load. Default is 300.
+    
+        Returns:
+            PARSynthesizer or None: Loaded synthesizer if the model exists; otherwise, None.
+        """
+        try:
+            # Construct the expected model file name based on the epoch
+            model_filename = f"{epochs}.pkl"
+            model_path = os.path.join(models_dir, model_filename)
+    
+            if os.path.exists(model_path):
+                print(f"[+] Found model for epoch {epochs} at '{model_path}'. Loading...")
+                self.synthesizer = PARSynthesizer.load(model_path)
+                print("[+] Synthesizer loaded successfully.")
+                return self.synthesizer
+            else:
+                print(f"[-] No model found for epoch {epochs} at '{model_path}'.")
+                return None
+        except Exception as e:
+            print(f"[-] Error in loading synthesizer: {e}")
+            raise
+
+
+
+
+    def initialize_synthesizer(self, metadata_path: str, context_columns: list[str], 
+                               epochs: int = 300, verbose: bool = True, cuda: bool = False):
+        """
+        Initialize the PARSynthesizer with specified settings.
 
         Args:
             metadata_path (str): Path to the metadata JSON file.
-            context_columns (list): Columns to be used as context for the synthesizer.
-            epochs (int): Number of training epochs.
-            verbose (bool): Whether to display training progress.
-            cuda (bool): Whether to use GPU for training.
-
-        Returns:
-            None
+            context_columns (list[str]): Columns used as context for the synthesizer.
+            epochs (int, optional): Number of training epochs. Default is 300.
+            verbose (bool, optional): Display training progress. Default is True.
+            cuda (bool, optional): Use GPU for training. Default is False.
         """
         try:
             self.metadata = Metadata.load_from_json(metadata_path)
@@ -66,70 +92,59 @@ class SyntheticDataGenerator:
                 verbose=verbose,
                 cuda=cuda
             )
-            print("[+] Synthesizer initialized successfully")
-            return self.synthesizer
-
+            print("[+] Synthesizer initialized successfully.")
         except Exception as e:
-            print(f"[-] Error initializing synthesizer: {str(e)}")
+            print(f"[-] Error initializing synthesizer: {e}")
             raise
 
-    def train_synthesizer(self, train_dataset, save_path):
+    def train_synthesizer(self, train_dataset_path: str, model_save_path: str):
         """
-        Trains the synthesizer on the given dataset and saves the model.
+        Train the synthesizer on the provided dataset and save the trained model.
 
         Args:
-            train_dataset (str): Path to the training dataset (CSV format).
-            save_path (str): Path to save the trained synthesizer model.
-
-        Returns:
-            None
+            train_dataset_path (str): Path to the training dataset (CSV format).
+            model_save_path (str): Path to save the trained synthesizer model.
         """
         try:
-            dataset = pd.read_csv(train_dataset)
-            print("[+] Preparing the model for training")
+            dataset = pd.read_csv(train_dataset_path)
+            print("[+] Training the synthesizer...")
             self.synthesizer.fit(dataset)
-            self.synthesizer.save(save_path)
-            print(f"[+] Synthesizer model saved to {save_path}")
+            self.synthesizer.save(model_save_path)
+            print(f"[+] Trained synthesizer saved to '{model_save_path}'.")
         except Exception as e:
-            print(f"[-] Error training synthesizer: {str(e)}")
+            print(f"[-] Error training synthesizer: {e}")
             raise
 
-    def generate_synthetic_data(self, num_sequences, sequence_length, output_dir, seq_key, seq_index, num_files=1):
+    def generate_synthetic_data(self, num_sequences: int, sequence_length: int, output_dir: str, 
+                                sequence_key: str, sequence_index: str, num_files: int = 1):
         """
-        Generates multiple synthetic data files and saves them with incremental names like v1.csv, v2.csv, etc.
-        
+        Generate synthetic data and save it as CSV files.
+
         Args:
-            num_sequences (int): Number of synthetic sequences to generate per file.
-            sequence_length (int): Length of each synthetic sequence.
-            output_dir (str): Directory to save the generated synthetic data files.
-            seq_key (str): The primary column to sort by.
-            seq_index (str): The secondary column to sort by.
-            num_files (int): Number of synthetic files to generate. Default is 1.
-        
-        Returns:
-            None
+            num_sequences (int): Number of sequences to generate per file.
+            sequence_length (int): Length of each sequence.
+            output_dir (str): Directory to save the generated data files.
+            sequence_key (str): Primary column for sorting the data.
+            sequence_index (str): Secondary column for sorting the data.
+            num_files (int, optional): Number of files to generate. Default is 1.
         """
         try:
+            unique_id = 1  # Initialize a unique ID counter
+
+            # used to get rid of error messgae
+            # UserWarning: RNN module weights are not part of single contiguous chunk of memory
+            self.synthesizer._model._model.rnn.flatten_parameters() 
             for i in range(1, num_files + 1):
-                # Generate synthetic data
                 synthetic_data = self.synthesizer.sample(num_sequences=num_sequences, sequence_length=sequence_length)
-        
-                # Sort the data by the provided columns
-                synthetic_data = synthetic_data.sort_values(by=[seq_key, seq_index], ascending=True)
-        
-                # Generate dynamic file name (e.g., v1.csv, v2.csv, etc.)
-                output_path = f"{output_dir}/v{i}.csv"
-        
-                # Save the sorted data to a CSV file
+                synthetic_data.sort_values(by=[sequence_key, sequence_index], ascending=True, inplace=True)
+
+                # Assign auto-incrementing unique IDs based on sequence length
+                synthetic_data['SID'] = [(unique_id + j // sequence_length) for j in range(len(synthetic_data))]
+                unique_id += len(synthetic_data) // sequence_length
+
+                output_path = f"{output_dir}/{i}.csv"
                 synthetic_data.to_csv(output_path, index=False)
-                
-                # Print a message with the column names used for sorting
-                print(f"[+] Synthetic data sorted by {seq_key} and {seq_index} saved to {output_path}")
-                
+                print(f"[+] Synthetic data saved to '{output_path}'. Sorted by '{sequence_key}' and '{sequence_index}'.")
         except Exception as e:
-            print(f"[-] Error generating synthetic data: {str(e)}")
+            print(f"[-] Error generating synthetic data: {e}")
             raise
-
-
-
-        

@@ -5,70 +5,88 @@ from scipy.fft import fft
 
 
 class TemporalCorrelation:
-    def __init__(self, real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_file):
+    """
+    A class to analyze temporal correlation between real and synthetic datasets using FFT.
+    """
+
+    def __init__(self, real_csv_path: str, synthetic_dir_path: str, sequence_id_col: str, 
+                 channel_cols: list[str], output_dir: str):
         """
-        Initialize the analyzer with file paths and dataset specifications.
+        Initialize the TemporalCorrelation class.
 
         Args:
             real_csv_path (str): Path to the real dataset CSV file.
             synthetic_dir_path (str): Path to the directory containing synthetic dataset CSV files.
             sequence_id_col (str): Column name identifying sequences in the dataset.
-            channel_cols (list of str): Column names of the channels.
-            output_file (str): Path to the output CSV file.
+            channel_cols (list[str]): Column names of the channels.
+            output_dir (str): Directory to save output results.
         """
-        self.real_csv_path = real_csv_path
-        self.synthetic_dir_path = synthetic_dir_path
+        self.real_csv_path = self._validate_file(real_csv_path)
+        self.synthetic_dir_path = self._validate_directory(synthetic_dir_path)
         self.sequence_id_col = sequence_id_col
         self.channel_cols = channel_cols
-        self.output_file = output_file
+        self.output_dir = self._create_output_directory(output_dir)
 
-    def read_multisequence_csv(self, file_path):
+    @staticmethod
+    def _validate_file(file_path: str) -> str:
+        """Validate that the file exists."""
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"File '{file_path}' does not exist.")
+        return file_path
+
+    @staticmethod
+    def _validate_directory(directory_path: str) -> str:
+        """Validate that the directory exists."""
+        if not os.path.isdir(directory_path):
+            raise FileNotFoundError(f"Directory '{directory_path}' does not exist.")
+        return directory_path
+
+    @staticmethod
+    def _create_output_directory(output_folder: str) -> str:
+        """Create the output directory if it does not exist."""
+        os.makedirs(output_folder, exist_ok=True)
+        return output_folder
+
+    def read_multisequence_csv(self, file_path: str) -> list[np.ndarray]:
         """
-        Reads a multivariate time series dataset with multiple sequences from a CSV file.
+        Read a multivariate time series dataset with multiple sequences from a CSV file.
 
         Args:
             file_path (str): Path to the CSV file.
 
         Returns:
-            list of numpy.ndarray: List of sequences, each as a 2D array (num_samples, num_channels).
+            list[np.ndarray]: List of sequences, each as a 2D array (num_samples, num_channels).
         """
         try:
             df = pd.read_csv(file_path)
-            sequences = []
-            for _, group in df.groupby(self.sequence_id_col):
-                sequence_data = group[self.channel_cols].to_numpy()
-                sequences.append(sequence_data)
+            sequences = [
+                group[self.channel_cols].to_numpy()
+                for _, group in df.groupby(self.sequence_id_col)
+            ]
             return sequences
-        except FileNotFoundError:
-            raise FileNotFoundError(f"File not found: {file_path}")
-        except KeyError as e:
-            raise KeyError(f"Column error: {e}")
         except Exception as e:
             raise RuntimeError(f"Error reading file {file_path}: {e}")
 
-    def temporal_correlation_analysis(self, dataset, top_n_peaks):
+    def temporal_correlation_analysis(self, dataset: list[np.ndarray], top_n_peaks: int) -> list[list[dict]]:
         """
         Perform temporal correlation analysis on a dataset with multiple sequences.
 
         Args:
-            dataset (list of numpy.ndarray): List of sequences, each of shape (num_samples, num_channels).
+            dataset (list[np.ndarray]): List of sequences, each of shape (num_samples, num_channels).
             top_n_peaks (int): Number of top peaks to consider.
 
         Returns:
-            list of list of dict: Frequency components and normalized amplitudes for each sequence and channel.
+            list[list[dict]]: Frequency components and normalized amplitudes for each sequence and channel.
         """
         all_results = []
         for sequence in dataset:
             sequence_results = []
             for channel in range(sequence.shape[1]):
                 time_series = sequence[:, channel]
-
-                # Perform FFT
                 fft_result = fft(time_series)
                 amplitudes = np.abs(fft_result)
                 frequencies = np.fft.fftfreq(len(time_series))
 
-                # Normalize amplitudes
                 total_amplitude = np.sum(amplitudes)
                 normalized_amplitudes = (
                     amplitudes / total_amplitude if total_amplitude > 0 else np.zeros_like(amplitudes)
@@ -80,116 +98,61 @@ class TemporalCorrelation:
 
                 # Identify top N peaks
                 peak_indices = np.argsort(normalized_amplitudes)[-top_n_peaks:]
-                top_frequencies = frequencies[peak_indices]
-                top_amplitudes = normalized_amplitudes[peak_indices]
-
-                sequence_results.append({"frequencies": top_frequencies, "amplitudes": top_amplitudes})
+                sequence_results.append({
+                    "frequencies": frequencies[peak_indices],
+                    "amplitudes": normalized_amplitudes[peak_indices]
+                })
             all_results.append(sequence_results)
-
         return all_results
 
-    def squared_difference(self, real_peaks, synthetic_peaks):
+    @staticmethod
+    def squared_difference(real_peaks: list[list[dict]], synthetic_peaks: list[list[dict]]) -> float:
         """
         Compute squared differences between real and synthetic datasets.
 
         Args:
-            real_peaks (list of list of dict): Frequencies and amplitudes of real data.
-            synthetic_peaks (list of list of dict): Frequencies and amplitudes of synthetic data.
+            real_peaks (list[list[dict]]): Frequencies and amplitudes of real data.
+            synthetic_peaks (list[list[dict]]): Frequencies and amplitudes of synthetic data.
 
         Returns:
             float: Average squared difference.
         """
         total_squared_diff = 0
         count = 0
-
-        for real_sequence, synthetic_sequence in zip(real_peaks, synthetic_peaks):
-            for real, synthetic in zip(real_sequence, synthetic_sequence):
-                real_amplitudes = real["amplitudes"]
-                synthetic_amplitudes = synthetic["amplitudes"]
-
-                assert len(real_amplitudes) == len(synthetic_amplitudes), "Mismatch in peak counts."
-                squared_diff = np.sum((real_amplitudes - synthetic_amplitudes) ** 2)
-                total_squared_diff += squared_diff
+        for real_seq, synth_seq in zip(real_peaks, synthetic_peaks):
+            for real, synth in zip(real_seq, synth_seq):
+                assert len(real["amplitudes"]) == len(synth["amplitudes"]), "Mismatch in peak counts."
+                total_squared_diff += np.sum((real["amplitudes"] - synth["amplitudes"]) ** 2)
                 count += 1
-
         return total_squared_diff / count if count > 0 else 0
 
-    def compute(self, top_n_peaks):
+    def compute(self, top_n_peaks: int):
         """
-        Process all synthetic files in the directory and compute Temporal Correlation scores.
+        Process all synthetic files and compute Temporal Correlation scores.
 
         Args:
             top_n_peaks (int): Number of top peaks to consider.
         """
-        try:
-            print("[+] Temporal Correlation Computation Started")
-            # Read the real dataset
-            real_dataset = self.read_multisequence_csv(self.real_csv_path)
+        print("[*] Starting Temporal Correlation computation...")
+        real_dataset = self.read_multisequence_csv(self.real_csv_path)
+        results = []
 
-            # Prepare results storage
-            results = []
+        for synthetic_file in sorted(f for f in os.listdir(self.synthetic_dir_path) if f.endswith('.csv')):
+            synthetic_file_path = os.path.join(self.synthetic_dir_path, synthetic_file)
+            print(f"[+] Processing {synthetic_file_path}...")
+            synthetic_dataset = self.read_multisequence_csv(synthetic_file_path)
 
-            # Process each synthetic file
-            for synthetic_file in sorted(os.listdir(self.synthetic_dir_path)):
-                if synthetic_file.endswith(".csv"):
-                    epoch = os.path.splitext(synthetic_file)[0]  # Extract epoch from filename
-                    synthetic_file_path = os.path.join(self.synthetic_dir_path, synthetic_file)
-                    print(f"[+] Processing synthetic file: {synthetic_file_path}")
+            if len(real_dataset) != len(synthetic_dataset):
+                raise ValueError(f"Mismatch in sequence counts for file: {synthetic_file}")
 
-                    # Read the synthetic dataset
-                    synthetic_dataset = self.read_multisequence_csv(synthetic_file_path)
+            real_peaks = self.temporal_correlation_analysis(real_dataset, top_n_peaks)
+            synthetic_peaks = self.temporal_correlation_analysis(synthetic_dataset, top_n_peaks)
+            avg_diff = self.squared_difference(real_peaks, synthetic_peaks)
 
-                    # Ensure sequences are aligned
-                    if len(real_dataset) != len(synthetic_dataset):
-                        raise ValueError(f"Mismatch in number of sequences for file: {synthetic_file}")
+            epoch = os.path.splitext(synthetic_file)[0]
+            results.append({"Epochs": int(epoch), "TC": avg_diff})
 
-                    # Perform temporal correlation analysis
-                    real_peaks = self.temporal_correlation_analysis(real_dataset, top_n_peaks)
-                    synthetic_peaks = self.temporal_correlation_analysis(synthetic_dataset, top_n_peaks)
-
-                    # Compute squared difference (Temporal Correlation score)
-                    avg_diff = self.squared_difference(real_peaks, synthetic_peaks)
-                    results.append({"Epochs": epoch, "TC": avg_diff})
-
-            # Save results to CSV
-            results_df = pd.DataFrame(results)
-            
-            # Step 9: Convert the 'Epochs' column to numeric, coercing errors (invalid values become NaN)
-            results_df['Epochs'] = pd.to_numeric(results_df['Epochs'], errors='coerce')
-            # Step 10: Sort the DataFrame by 'Epochs' and reset the index
-            results_df = results_df.sort_values(by="Epochs").reset_index(drop=True)
-        
-            results_df.to_csv(f"{self.output_file}/TC.csv", index=False)
-            print(f"Results saved to {self.output_file}")
-
-        except Exception as e:
-            raise RuntimeError(f"Error processing synthetic files: {e}")
-
-
-# Example usage
-if __name__ == "__main__":
-    # File paths
-    real_csv_path = "real_data.csv"
-    synthetic_dir_path = "Synth"
-    output_file = "temporal_correlation_results.csv"
-
-    # Column specifications
-    sequence_id_col = "SID"
-    channel_cols = [
-        "Usage_kWh",
-        "Lagging_Current_Reactive.Power_kVarh",
-        "Leading_Current_Reactive_Power_kVarh",
-        "CO2(tCO2)",
-        "Lagging_Current_Power_Factor",
-        "Leading_Current_Power_Factor",
-    ]
-
-    # Initialize and run analysis
-    analyzer = TemporalCorrelation(
-        real_csv_path, synthetic_dir_path, sequence_id_col, channel_cols, output_file
-    )
-    top_n_peaks = 5  # Number of peaks to consider
-    try:
-        analyzer.compute(top_n_peaks)
-    except Exception as e:
-        print(f"Analysis failed: {e}")
+        results_df = pd.DataFrame(results).sort_values(by="Epochs").reset_index(drop=True)
+        output_csv = os.path.join(self.output_dir, "TC.csv")
+        results_df.to_csv(output_csv, index=False)
+        print(f"[+] Temporal Correlation results saved to '{output_csv}'.")

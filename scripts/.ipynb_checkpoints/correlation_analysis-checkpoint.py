@@ -126,7 +126,6 @@ class CorrelationAnalysis:
             plt.text(0.1, 0.9, f'Spearman Correlation: {corr:.2f}', 
                      transform=plt.gca().transAxes, fontsize=14, color='red')
 
-            # Optional: Fit a regression line (if you'd like a trendline)
             sns.regplot(x=X, y=Y, scatter=False, color='green', line_kws={'lw': 2, 'ls': '--'})
 
             # Add labels and title
