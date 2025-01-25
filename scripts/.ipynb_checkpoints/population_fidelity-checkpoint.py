@@ -100,25 +100,7 @@ class PopulationFidelity:
             awd_df = awd.compute()
             if awd_df is not None:
                 wd_values_dict = {col: awd_df['AWD'].values for col in awd_df.columns}
-                awd.plot_awd(wd_values_dict, os.listdir(self.synth_folder), plot_output_path, awd_df)
+                #awd.plot_awd(wd_values_dict, os.listdir(self.synth_folder), plot_output_path, awd_df)
         except Exception as e:
             print(f"[-] Error in AWD computation: {e}")
 
-    def compute(self, x_step: int, exclude_columns: list[str], sequence_id: str, 
-                channel_columns: list[str], top_peaks: int, plot_output_path: str):
-        """
-        Execute all evaluation processes: MSAS, Temporal Correlation, and AWD.
-
-        Parameters:
-        - x_step (int): Step size for MSAS plots.
-        - exclude_columns (list[str]): Columns to exclude from computations.
-        - sequence_id (str): Column identifying the sequence in the dataset.
-        - channel_columns (list[str]): List of channel columns for Temporal Correlation.
-        - top_peaks (int): Number of top peaks to consider in correlation analysis.
-        - plot_output_path (str): Path to save AWD plots.
-        """
-        print("[*] Starting population fidelity evaluation...")
-        self.compute_msas(x_step, exclude_columns)
-        self.compute_temporal_correlation(sequence_id, channel_columns, top_peaks)
-        self.compute_awd(exclude_columns, plot_output_path)
-        print("[*] Population fidelity evaluation completed.")

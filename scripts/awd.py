@@ -99,18 +99,18 @@ class AWD:
                 avg_wd_score = np.mean(wd_scores)
 
                 # Extract epoch and append results
-                epoch = self.extract_epoch_number(synth_file)
-                results.append({'Epochs': epoch, 'AWD': avg_wd_score})
-                print(f"[+] Processed {synth_file} (Epoch {epoch}): AWD={avg_wd_score}")
+                copy = self.extract_epoch_number(synth_file)
+                results.append({'Copy': copy, 'AWD': avg_wd_score})
+                print(f"[+] Processed {synth_file} (Copy) {copy}): AWD={avg_wd_score}")
 
             except Exception as e:
                 print(f"[-] Error processing {synth_file}: {e}")
 
         # Create results DataFrame
-        awd_df = pd.DataFrame(results).sort_values(by="Epochs").reset_index(drop=True)
+        awd_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
 
         # Save results
-        output_csv = os.path.join(self.output_path, 'AWD.csv')
+        output_csv = os.path.join(self.output_path, "AWD", f"{os.path.basename(self.synth_folder)}.csv")
         try:
             awd_df.to_csv(output_csv, index=False)
             print(f"[+] AWD results saved to '{output_csv}'.")

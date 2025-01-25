@@ -2,7 +2,6 @@
     "tables": {
         "table": {
             "sequence_index": "Date",
-            "sequence_key": "SID",
             "columns": {
                 "Date": {
                     "sdtype": "datetime",
@@ -26,7 +25,8 @@
                 "SID": {
                     "sdtype": "id"
                 }
-            }
+            },
+            "sequence_key": "SID"
         }
     },
     "relationships": [],

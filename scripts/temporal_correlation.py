@@ -149,10 +149,10 @@ class TemporalCorrelation:
             synthetic_peaks = self.temporal_correlation_analysis(synthetic_dataset, top_n_peaks)
             avg_diff = self.squared_difference(real_peaks, synthetic_peaks)
 
-            epoch = os.path.splitext(synthetic_file)[0]
-            results.append({"Epochs": int(epoch), "TC": avg_diff})
+            copy = os.path.splitext(synthetic_file)[0]
+            results.append({"Copy": int(copy), "TC": avg_diff})
 
-        results_df = pd.DataFrame(results).sort_values(by="Epochs").reset_index(drop=True)
-        output_csv = os.path.join(self.output_dir, "TC.csv")
+        results_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
+        output_csv = os.path.join(self.output_dir, "TC", f"{os.path.basename(self.synthetic_dir_path)}.csv")
         results_df.to_csv(output_csv, index=False)
         print(f"[+] Temporal Correlation results saved to '{output_csv}'.")

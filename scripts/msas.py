@@ -119,20 +119,23 @@ class MSAS:
         """
         print("[*] Starting MSAS computation...")
         results = []
-
+    
+        # Filter and process only CSV files in the synthetic directory
         for synth_file in filter(lambda f: f.endswith('.csv'), os.listdir(self.synth_dir)):
             synth_path = os.path.join(self.synth_dir, synth_file)
             print(f"[+] Processing {synth_file}...")
-
+    
+            # Read synthetic data
             synth_data = pd.read_csv(synth_path)
             average_scores = {}
-
+    
+            # Calculate scores for each statistic
             for stat in self.statistics:
                 scores = []
                 for column in self.real_data.columns:
                     if column in self.exclude_columns:
                         continue
-
+    
                     try:
                         score = self.msas(
                             real_data=(self.real_data['SID'], self.real_data[column]),
@@ -140,23 +143,27 @@ class MSAS:
                             statistic=stat
                         )
                         scores.append(score)
-                    except Exception as e:
-                        print(f"[-] Error processing {column} with {stat}: {e}")
+                    except KeyError as e:
+                        print(f"[-] KeyError: Column {column} not found in data: {e}")
                         scores.append(np.nan)
-
+                    except ValueError as e:
+                        print(f"[-] ValueError: Error processing {column} with {stat}: {e}")
+                        scores.append(np.nan)
+                    except Exception as e:
+                        print(f"[-] Unexpected error processing {column} with {stat}: {e}")
+                        scores.append(np.nan)
+    
+                # Calculate the average score for the current statistic
                 average_scores[stat] = np.nanmean(scores)
-
+    
+            # Calculate the overall average score for the current synthetic file
             overall_average = np.nanmean(list(average_scores.values()))
-            epoch = int(synth_file.split('.')[0])
-            results.append({'Epochs': epoch, 'MSAS': overall_average})
-
-        results_df = pd.DataFrame(results).sort_values(by="Epochs").reset_index(drop=True)
-        output_file = os.path.join(self.output_folder, "MSAS.csv")
+            copy = int(synth_file.split('.')[0])
+            results.append({'Copy': copy, 'MSAS': overall_average})
+    
+        # Save results to a CSV file
+        results_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
+        output_file = os.path.join(self.output_folder, "MSAS", f"{os.path.basename(self.synth_dir)}.csv")
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)  # Ensure the directory exists
         results_df.to_csv(output_file, index=False)
         print(f"[+] MSAS results saved to '{output_file}'.")
-
-    def compute_all(self):
-        """
-        Execute the full MSAS process.
-        """
-        self.compute()
