@@ -28,51 +28,40 @@ class CorrelationAnalysis:
         """
         for folder in folders:
             folder_path = os.path.join(evaluation_path, folder)
-
             # Check if the folder exists
             if not os.path.exists(folder_path):
                 print(f"[-] Folder {folder_path} does not exist. Skipping...")
                 continue
-
             # Initialize a list to store the results
             results = []
-
             # Iterate through each CSV file in the folder
             for file_name in os.listdir(folder_path):
                 if file_name.endswith('.csv'):
                     file_path = os.path.join(folder_path, file_name)
-
                     try:
                         # Read the CSV file
                         df = pd.read_csv(file_path)
-
                         # Check if the CSV has at least two columns
                         if len(df.columns) < 2:
                             print(f"[-] File {file_name} in folder {folder} does not have enough columns. Skipping...")
                             continue
-
                         # Calculate the average of the second column
                         average_value = df.iloc[:, 1].mean()
-
                         # Extract the number from the file name (e.g., "100.csv" -> 100)
                         try:
                             file_name_number = int(file_name.split('.')[0])
                         except ValueError:
                             print(f"[-] File {file_name} in folder {folder} does not have a valid numeric prefix. Skipping...")
                             continue
-
                         # Append the result to the list
                         results.append({'Epochs': file_name_number, f'{folder}': average_value})
                     except Exception as e:
                         print(f"[-] Error processing file {file_name} in folder {folder}: {e}")
                         continue
-
             # Convert the results to a DataFrame
             results_df = pd.DataFrame(results)
-
             # Sort the DataFrame by 'Epochs' before saving
             results_df = results_df.sort_values(by='Epochs')
-
             # Save the results to a new CSV file named after the folder
             output_file_path = os.path.join(evaluation_path, f"{folder}.csv")
             try:
@@ -107,7 +96,7 @@ class CorrelationAnalysis:
 
             if correlation is not None and p_value is not None:
                 # Calculate confidence interval
-                ci_lower, ci_upper = self.calculate_spearman_ci(correlation, len(f1_ratios))
+                ci_lower, ci_upper = self.calculate_spearman_ci(correlation, len(f1_ratios), confidence_level=0.99)
                 logging.info(f"95% Confidence Interval for {metric_column}: ({ci_lower:.3f}, {ci_upper:.3f})")
 
                 correlation_results.append({

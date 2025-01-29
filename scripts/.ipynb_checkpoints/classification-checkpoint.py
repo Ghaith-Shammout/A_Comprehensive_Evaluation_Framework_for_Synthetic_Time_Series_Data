@@ -95,25 +95,10 @@ class Classifier:
         # Load the dataset
         df = pd.read_csv(file_path)
 
-        # Check if the target column is provided
-        if target_col is None:
-            raise ValueError("Target column must be specified.")
-
-        # Validate that the sequence index and target columns exist in the dataset
-        if seq_index_col not in df.columns:
-            raise ValueError(f"Sequence index column '{seq_index_col}' not found in the dataset.")
-        if target_col not in df.columns:
-            raise ValueError(f"Target column '{target_col}' not found in the dataset.")
-
         # Drop the date column (if it exists)
         if 'date' in df.columns:
             df = df.drop(columns=['date'])
 
-        # Convert feature columns to numeric, coercing errors to NaN
-        feature_columns = [col for col in df.columns if col not in [seq_index_col, target_col]]
-        for col in feature_columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-          
         # Group the data by the sequence index column
         grouped = df.groupby(seq_index_col)
 
@@ -137,12 +122,9 @@ class Classifier:
         # Validate the shapes of X and y
         if X.shape[0] != y.shape[0]:
             raise ValueError(f"Mismatch in the number of samples: X has {X.shape[0]} samples, y has {y.shape[0]} samples.")
-        if X.shape[2] != len(feature_columns):
-            raise ValueError(f"Mismatch in the number of features: Expected {len(feature_columns)}, got {X.shape[1]}.")
-
+        
         # Log the shapes for debugging
         #print(f"[+] Processed dataset: X shape = {X.shape}, y shape = {y.shape}")
-        #print(f"[+] Feature columns used: {feature_columns}")
         #print(f"[+] Target column used: {target_col}")
 
         return X, y

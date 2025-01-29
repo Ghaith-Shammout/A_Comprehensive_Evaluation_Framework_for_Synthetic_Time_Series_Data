@@ -27,14 +27,18 @@ class SyntheticDataGenerator:
             metadata_path (str): Path to save the metadata JSON file.
         """
         try:
-            df = pd.read_csv(dataset_path)
-            self.metadata = Metadata.detect_from_dataframe(df)
-            self.metadata.update_column(column_name=sequence_key, sdtype='id')
-            self.metadata.update_column(column_name=sequence_index, sdtype='datetime', datetime_format=date_format)
-            self.metadata.set_sequence_key(sequence_key)
-            self.metadata.set_sequence_index(sequence_index)
-            self.metadata.save_to_json(metadata_path)
-            print(f"[+] Metadata defined and saved to '{metadata_path}'.")
+            if os.path.exists(metadata_path):
+              self.metadata = Metadata.load_from_json(metadata_path)
+              return
+            else:
+              df = pd.read_csv(dataset_path)
+              self.metadata = Metadata.detect_from_dataframe(df)
+              self.metadata.update_column(column_name=sequence_key, sdtype='id')
+              self.metadata.update_column(column_name=sequence_index, sdtype='datetime', datetime_format=date_format)
+              self.metadata.set_sequence_key(sequence_key)
+              self.metadata.set_sequence_index(sequence_index)
+              self.metadata.save_to_json(metadata_path)
+              print(f"[+] Metadata defined and saved to '{metadata_path}'.")
         except Exception as e:
             print(f"[-] Error defining metadata: {e}")
             raise

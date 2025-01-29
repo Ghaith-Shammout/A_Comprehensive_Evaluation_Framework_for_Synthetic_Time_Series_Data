@@ -1,8 +1,9 @@
 import os
-import pandas as pd
 import numpy as np
-from scipy.stats import wasserstein_distance
+import pandas as pd
+from pathlib import Path
 import matplotlib.pyplot as plt
+from scipy.stats import wasserstein_distance
 
 
 class AWD:
@@ -10,20 +11,21 @@ class AWD:
     A class to compute and analyze Average Wasserstein Distance (AWD) between real and synthetic datasets.
     """
 
-    def __init__(self, real_data: str, synth_folder: str, output_path: str, exclude_cols: list[str] = None):
+    def __init__(self, real_file: str, synth_dir: str, synth_dir_names: list[str], output_folder: str, exclude_columns: list[str] = None):
         """
         Initialize the AWD class.
 
         Parameters:
-        - real_data (str): Path to the real data CSV file.
-        - synth_folder (str): Path to the folder containing synthetic data CSV files.
-        - output_path (str): Directory to save AWD results and plots.
-        - exclude_cols (list[str], optional): Columns to exclude from AWD computation. Default is None.
+        - real_file (str): Path to the real data CSV file.
+        - synth_dir (str): Path to the folder containing synthetic data CSV files.
+        - output_folder (str): Directory to save AWD results and plots.
+        - exclude_columns (list[str], optional): Columns to exclude from AWD computation. Default is None.
         """
-        self.real_data = self._validate_file(real_data)
-        self.synth_folder = self._validate_directory(synth_folder)
-        self.output_path = self._create_output_directory(output_path)
-        self.exclude_cols = exclude_cols or []
+        self.real_file = self._validate_file(real_file)
+        self.synth_dir = self._validate_directory(synth_dir)
+        self.synth_dir_names = synth_dir_names
+        self.output_folder = self._create_output_directory(output_folder)
+        self.exclude_columns = exclude_columns or []
 
     
     @staticmethod
@@ -66,73 +68,53 @@ class AWD:
     def compute(self) -> pd.DataFrame:
         """
         Compute AWD between the real data and synthetic datasets.
-
+    
         Returns:
         - pd.DataFrame: DataFrame containing Epochs and AWD scores.
         """
-        print("[*] Starting AWD computation...")
-        results = []
-
-        # Load the real data
-        try:
-            real_data = pd.read_csv(self.real_data).drop(columns=self.exclude_cols, errors='ignore')
-        except Exception as e:
-            print(f"[-] Error loading real data: {e}")
-            return None
-
-        # Process each synthetic file
-        for synth_file in filter(lambda f: f.endswith('.csv'), os.listdir(self.synth_folder)):
-            synth_path = os.path.join(self.synth_folder, synth_file)
-            try:
-                synth_data = pd.read_csv(synth_path).drop(columns=self.exclude_cols, errors='ignore')
-
-                # Check column alignment
-                if real_data.shape[1] != synth_data.shape[1]:
-                    print(f"[-] Column mismatch with {synth_file}. Skipping.")
-                    continue
-
+        print("[+] Starting AWD computation...")
+        real_df = pd.read_csv(self.real_file).drop(columns=self.exclude_columns, errors='ignore')
+        
+        for folder in self.synth_dir_names:
+            results = []
+            folder = str(folder)
+            synth_folder = os.path.join(self.synth_dir, folder)
+            print(f"[+] Processing synthetic folder: {synth_folder}")
+            for synth_file in filter(lambda f: f.endswith('.csv'), os.listdir(synth_folder)):
+                synth_path = os.path.join(synth_folder, synth_file)
+                print(f"[+] Processing {synth_file}...")
+                synth_data = pd.read_csv(synth_path).drop(columns=self.exclude_columns, errors='ignore')
                 # Compute Wasserstein distances
                 wd_scores = [
-                    wasserstein_distance(real_data.iloc[:, j], synth_data.iloc[:, j])
-                    for j in range(real_data.shape[1])
+                    wasserstein_distance(real_df.iloc[:, j], synth_data.iloc[:, j])
+                    for j in range(real_df.shape[1])
                 ]
                 avg_wd_score = np.mean(wd_scores)
-
-                # Extract epoch and append results
-                copy = self.extract_epoch_number(synth_file)
+                copy = int(synth_file.split('.')[0])
+                print(f"[+] Copy {copy}, AVG(AWD) score: {avg_wd_score:.4f}")
                 results.append({'Copy': copy, 'AWD': avg_wd_score})
-                print(f"[+] Processed {synth_file} (Copy) {copy}): AWD={avg_wd_score}")
+            # Save results to a CSV file
+            results_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
+            output_file = os.path.join(self.output_folder, "AWD", f"{folder}.csv")
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)  # Ensure the directory exists
+            results_df.to_csv(output_file, index=False)
+            print(f"[+] AWD results saved to '{output_file}'.")
+        return results_df
 
-            except Exception as e:
-                print(f"[-] Error processing {synth_file}: {e}")
-
-        # Create results DataFrame
-        awd_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
-
-        # Save results
-        output_csv = os.path.join(self.output_path, "AWD", f"{os.path.basename(self.synth_folder)}.csv")
-        try:
-            awd_df.to_csv(output_csv, index=False)
-            print(f"[+] AWD results saved to '{output_csv}'.")
-        except Exception as e:
-            print(f"[-] Error saving AWD results: {e}")
-
-        return awd_df
-
+    
     @staticmethod
-    def plot_awd(wd_values_dict: dict, synth_files: list, output_dir: str, awd_df: pd.DataFrame):
+    def plot_awd(wd_values_dict: dict, output_dir: str, awd_df: pd.DataFrame):
         """
         Plot AWD scores across epochs.
 
         Parameters:
         - wd_values_dict (dict): Dictionary with column names as keys and WD scores as values.
-        - synth_files (list): List of synthetic file names.
         - output_dir (str): Directory to save the plot.
         - awd_df (pd.DataFrame): DataFrame with epochs and AWD scores.
         """
         try:
-            sorted_df = awd_df.sort_values(by="Epochs")
-            sorted_epochs = sorted_df['Epochs'].values
+            sorted_df = awd_df.sort_values(by="Epoch")
+            sorted_epochs = sorted_df['Epoch'].values
 
             plt.figure(figsize=(14, 8))
             colors = plt.cm.viridis(np.linspace(0, 1, len(wd_values_dict)))

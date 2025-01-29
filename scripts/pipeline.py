@@ -17,16 +17,15 @@ def setup_logging(log_file: str, level: str) -> None:
         format="%(asctime)s - %(levelname)s - %(message)s",
     )
 
-
 def load_config(config_path: str) -> dict:
     """Loads the pipeline configuration from a YAML file."""
     with open(config_path, "r") as file:
         return yaml.safe_load(file)
 
-
-def ensure_directory_exists(directory_path: str) -> None:
+def ensure_directory_exists(directory_path: str) -> Path:
     """
     Ensures that a directory exists. Creates the directory tree if it doesn't exist.
+    Returns the Path object representing the directory.
     """
     path = Path(directory_path)
     if not path.exists():
@@ -34,7 +33,7 @@ def ensure_directory_exists(directory_path: str) -> None:
         logging.info(f"Created directory: {directory_path}")
     else:
         logging.info(f"Directory already exists: {directory_path}")
-
+    return path  
 
 def process_config_file(config_file: Path) -> None:
     """Processes a single configuration file."""
@@ -46,22 +45,25 @@ def process_config_file(config_file: Path) -> None:
         # Call phase functions
         source_file = config["folders"]["source_file"]
         source_name = Path(source_file).stem
-        data_folder = f"./outputs/{source_name}/data"
-        ensure_directory_exists(data_folder)
-        real_file = f"{data_folder}/Real_{source_name}{Path(source_file).suffix}"
+        data_folder = ensure_directory_exists(f"./outputs/{source_name}/data")
+        real_file = ensure_directory_exists(f"{data_folder}/Real_{source_name}{Path(source_file).suffix}")
+        metadata_dir = ensure_directory_exists(f"./outputs/{source_name}/data/metadata_{source_name}.json")
+        models_dir = ensure_directory_exists(f"./outputs/{source_name}/Models/")
+        synth_dir = ensure_directory_exists(f"./outputs/{source_name}/Synth_Data/")
+        eva_dir = ensure_directory_exists(f"./outputs/{source_name}/Evaluation")
+        plot_dir = ensure_directory_exists(f"./outputs/{source_name}/Plots")
 
         # Execute pipeline phases
         #seq_num = preprocessing(config, source_file, real_file)
-        #synthetic_data_generation(config, real_file, source_name, seq_num)
-        #evaluation(config, real_file, source_name)
-        #classification(config, real_file, source_name)
-        correlation_analysis(config, source_name)
+        #synthetic_data_generation(config, real_file, metadata_dir, models_dir, synth_dir, seq_num)
+        evaluation(config, real_file, eva_dir, plot_dir, synth_dir)
+        classification(config, real_file, eva_dir, synth_dir)
+        correlation_analysis(config, eva_dir, plot_dir)
 
         logging.info(f"Pipeline execution for {config_file.name} completed successfully.")
     except Exception as e:
         logging.error(f"Pipeline execution failed for {config_file.name}: {e}")
         raise
-
 
 def preprocessing(config: dict, source_file: str, real_file: str) -> int:
     """Executes the data preprocessing phase."""
@@ -86,11 +88,10 @@ def preprocessing(config: dict, source_file: str, real_file: str) -> int:
     logging.info("Phase 1 Completed Successfully.")
     return seq_num
 
-def synthetic_data_generation(config: dict, real_file: str, source_name: str, seq_num: int) -> None:
+def synthetic_data_generation(config: dict, real_file: str, metadata_dir: str, models_dir: str, synth_dir: str, seq_num: int) -> None:
     """Executes the synthetic data generation phase."""
     logging.info("Phase 2: Synthetic Data Generation Started.")
     generator = SyntheticDataGenerator()
-    metadata_dir = f"./outputs/{source_name}/data/metadata_{source_name}.json"
     generator.define_metadata(
         dataset_path=real_file,
         sequence_key=config["metadata"]["seq_key"],
@@ -102,7 +103,6 @@ def synthetic_data_generation(config: dict, real_file: str, source_name: str, se
     
     for epoch in config['synthesizer']['epochs']:
         logging.info(f"Phase 2.2: Synthesizer Initializing with {epoch} epochs Started.")
-        models_dir = f"./outputs/{source_name}/Models/"
         synthesizer = generator.load_synthesizer(models_dir, epoch)
         if not synthesizer:
             synthesizer = generator.initialize_synthesizer(
@@ -115,126 +115,71 @@ def synthetic_data_generation(config: dict, real_file: str, source_name: str, se
             logging.info(f"Phase 2.2: Synthesizer Initializing with {epoch} epochs Successfully Completed.")
             
             logging.info(f"Phase 2.3: Synthesizer Training with {epoch} epochs Started.")
-            train_folder_path = f"./outputs/{source_name}/Models"
-            ensure_directory_exists(train_folder_path)
             generator.train_synthesizer(
                 train_dataset_path=real_file,          
-                model_save_path = f"{train_folder_path}/{epoch}.pkl"
+                model_save_path = f"{models_dir}/{epoch}.pkl"
             )
             logging.info(f"Phase 2.3: Synthesizer Training with {epoch} epochs Completed.")
             
         # Phase 2.4: Synthetic Data Generation
         logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Started.")
-        synth_folder_path = f"./outputs/{source_name}/Synth_Data/{epoch}"
-        ensure_directory_exists(synth_folder_path)
-       
         generator.generate_synthetic_data(
             num_sequences = seq_num,
             sequence_length = config['preprocessing']['window_size'],
-            output_dir = synth_folder_path,
+            output_dir = f"{synth_dir}/{epoch}.pkl",
             sequence_key = config['metadata']['seq_key'],
             sequence_index = config['metadata']['seq_index'],
             num_files = 5
         )
         logging.info(f"Phase 2.4: Synthetic Data Generation with {epoch} epochs Completed.")
 
-def evaluation(config: dict, real_file: str, source_name: str) -> None:
+def evaluation(config: dict, real_file: str, eva_dir: str, plot_dir: str, synth_dir: str) -> None:
     """Executes the synthetic data evaluation phase."""
     logging.info("Phase 3: Synthetic Data Evaluation Started.")
-    
-    # Define paths
-    synth_folder_path = Path(f"./outputs/{source_name}/Synth_Data")
-    eva_folder_path = Path(f"./outputs/{source_name}/Evaluation")
-    plot_output_path = Path(f"./outputs/{source_name}/Plots")
-    
-    # Ensure directories exist
-    ensure_directory_exists(eva_folder_path)
-    ensure_directory_exists(plot_output_path)
-    
-    # Check if the synthetic data folder exists
-    if not synth_folder_path.exists():
-        logging.error(f"Synthetic data folder not found: {synth_folder_path}")
-        return
-    
-    # Iterate through every folder inside synth_folder_path
-    for folder in synth_folder_path.iterdir():
-        if folder.is_dir():
-            logging.info(f"[+] Evaluating folder: {folder}")
-            try:
-                # Initialize the evaluator
-                evaluator = PopulationFidelity(real_file, folder, eva_folder_path)
-
-                # Compute MSAS
-                exclude_cols = config['evaluation']['exclude_cols']
-                evaluator.compute_msas(x_step=1, exclude_columns=exclude_cols)
-            
-                # Compute AWD
-                evaluator.compute_awd(exclude_columns=exclude_cols, plot_output_path=plot_output_path)
-            
-                # Compute TC
-                SID = config['dataset']['SID']
-                numerical_col = config['dataset']['normalize_columns']
-                top_peaks = config['evaluation']['top_peaks']
-                evaluator.compute_temporal_correlation(sequence_id=SID, channel_columns=numerical_col, top_peaks=top_peaks)
-            
-            except Exception as e:
-                logging.error(f"Error evaluating folder {folder}: {e}")
-    
+    synth_dir_names = config['synthesizer']['epochs']
+    try:
+        # Initialize the evaluator
+        evaluator = PopulationFidelity(real_file, synth_dir, synth_dir_names, eva_dir)
+        exclude_cols = config['evaluation']['exclude_cols']
+        evaluator.compute_msas(exclude_columns=exclude_cols)
+        evaluator.compute_awd(exclude_columns=exclude_cols, plot_output_path=plot_dir)
+        evaluator.compute_temporal_correlation(channel_columns=config['dataset']['normalize_columns'])
+    except Exception as e:
+        logging.error(f"Error evaluating folder {synth_dir}: {e}")
     logging.info("Phase 3: Synthetic Data Evaluation Completed.")
 
 
-def classification(config: dict, real_file: str, source_name: str) -> None:
-  """Executes the classification phase."""
-  logging.info("Phase 4: Classification Process Started.")
-  classifier = Classifier()
-
-  synth_folder_path = Path(f"./outputs/{source_name}/Synth_Data")
-  seq_index_col = config['dataset']['SID']
-  target_col = config['classification']['target_col']
-  param_grid = config['classification']['param_grid']
-  test_size = config['classification']['test_size']
-  random_state = config['classification']['random_state']
-  metric_output_file = f"./outputs/{source_name}/Evaluation"
-
-  # Ensure directory exists
-  ensure_directory_exists(metric_output_file)
-  ensure_directory_exists(metric_output_file)
-
-  # Iterate through every folder inside synth_folder_path
-  for folder in synth_folder_path.iterdir():
-    if folder.is_dir():
-      logging.info(f"[+] Evaluating folder: {folder}")
-      try:
-        classifier.compute(real_dataset_path=real_file, synthetic_folder_path=folder, seq_index_col=seq_index_col,
-                           target_col=target_col, param_grid=param_grid, test_size=test_size, random_state=random_state,
-                           output_dir=metric_output_file)
-      except Exception as e:
-        logging.error(f"Error evaluating folder {folder}: {e}")
-            
-  logging.info("Phase 4: Classification Process Completed.")
+def classification(config: dict, real_file: str, eva_dir: str, synth_dir: str) -> None:
+    """Executes the classification phase."""
+    logging.info("Phase 4: Classification Process Started.")
+    classifier = Classifier()
+    synth_dir_names = config['synthesizer']['epochs']
+    for folder in synth_dir_names:
+        synth_folder =  Path(f"./{synth_dir}/{folder}")
+        if synth_folder.is_dir():
+            logging.info(f"[+] Classifying folder: {synth_folder}")
+            try:
+                classifier.compute(real_dataset_path=real_file,
+                                   synthetic_folder_path=synth_folder,
+                                   seq_index_col="SID",
+                                   target_col=config['classification']['target_col'], 
+                                   param_grid=config['classification']['param_grid'],
+                                   test_size=config['classification']['test_size'],
+                                   random_state=config['classification']['random_state'],
+                                   output_dir=eva_dir)
+            except Exception as e:
+              logging.error(f"Error evaluating folder {folder}: {e}")
+    logging.info("Phase 4: Classification Process Completed.")
         
-def correlation_analysis(config: dict, source_name: str) -> None:
-  """Executes the correlation analysis phase."""
-  logging.info("Phase 5: Correlation Analysis Started.")
-  evaluation_path = f"./outputs/{source_name}/Evaluation"
-  metric_columns = ["MSAS", "AWD", "TC"]
-  plot_output_path = f"./outputs/{source_name}/Plots"
-  
-  analysis = CorrelationAnalysis()
-  
-  # Example usage
-  folders = ['MSAS', 'AWD', 'TC', 'f1']
-  
-  # Call the method
-  analysis.calculate_averages_and_save(evaluation_path, folders)
-  
-  analysis.compute_correlation( 
-    evaluation_path = evaluation_path, 
-    metric_columns = metric_columns, 
-    plot_path=plot_output_path)
-
-  logging.info("Phase 5: Correlation Analysis Completed.")
-
+def correlation_analysis(config: dict, eva_dir: str, plot_dir: str) -> None:
+    """Executes the correlation analysis phase."""
+    logging.info("Phase 5: Correlation Analysis Started.")
+    metric_columns = ["MSAS", "AWD", "TC"]
+    analysis = CorrelationAnalysis()
+    corr_folders = ['MSAS', 'AWD', 'TC', 'f1']
+    analysis.calculate_averages_and_save(eva_dir, corr_folders)
+    analysis.compute_correlation(evaluation_path = eva_dir, metric_columns = metric_columns, plot_path=plot_dir)
+    logging.info("Phase 5: Correlation Analysis Completed.")
 
 
 def main() -> None:

@@ -6,18 +6,14 @@ dataset:
   date_format: "%d/%m/%Y %H:%M"
   normalize_columns: ['Usage_kWh', 'Lagging_Current_Reactive.Power_kVarh', 'Leading_Current_Reactive_Power_kVarh', 
                     'CO2(tCO2)', 'Lagging_Current_Power_Factor', 'Leading_Current_Power_Factor']
-  SID: "SID"
   
 preprocessing:
-  unwanted_columns:  # List of columns to drop
-    - "NSM"
-    - "WeekStatus"
-    - "Day_of_week"
-  normalization_method: "minmax"  # Normalization method (e.g., minmax or z-score)
+  unwanted_columns: ["NSM", "WeekStatus", "Day_of_week"]
+  normalization_method: "minmax" 
   categorical_columns: 
-      - 'Load_Type'
-  window_size: 48  # Size of the sliding window
-  step_size: 12    # Step size for the sliding window
+    - 'Load_Type'
+  window_size: 48
+  step_size: 12
 
 metadata:
   seq_key: "SID"
@@ -31,7 +27,6 @@ synthesizer:
 
 evaluation:
   exclude_cols: ['date','Load_Type', 'SID']
-  top_peaks: 5
 
 classification:
     param_grid:
@@ -46,15 +41,9 @@ classification:
         - euclidean
         - squared
         - dtw
-     
     test_size: 0.25
     random_state: 0
     target_col:  'Load_Type'
-
-
-correlation_analysis:
-    metric_columns: ["MSAS", "AWD", "TC"]
-
 
 logging:
   log_file: "logs/pipeline.log"

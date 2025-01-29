@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from scipy.fft import fft
 
 
@@ -9,23 +10,22 @@ class TemporalCorrelation:
     A class to analyze temporal correlation between real and synthetic datasets using FFT.
     """
 
-    def __init__(self, real_csv_path: str, synthetic_dir_path: str, sequence_id_col: str, 
-                 channel_cols: list[str], output_dir: str):
+    def __init__(self, real_file: str, synth_dir: str, synth_dir_names: list[str], output_folder: str, channel_cols: list[str]):
         """
         Initialize the TemporalCorrelation class.
 
         Args:
-            real_csv_path (str): Path to the real dataset CSV file.
-            synthetic_dir_path (str): Path to the directory containing synthetic dataset CSV files.
-            sequence_id_col (str): Column name identifying sequences in the dataset.
+            real_file (str): Path to the real dataset CSV file.
+            synth_dir (str): Path to the directory containing synthetic dataset CSV files.
+            synth_dir_names : list of synthetic directory names
+            output_folde (str) : Directory to save output results.
             channel_cols (list[str]): Column names of the channels.
-            output_dir (str): Directory to save output results.
         """
-        self.real_csv_path = self._validate_file(real_csv_path)
-        self.synthetic_dir_path = self._validate_directory(synthetic_dir_path)
-        self.sequence_id_col = sequence_id_col
+        self.real_file = self._validate_file(real_file)
+        self.synth_dir = self._validate_directory(synth_dir)
+        self.synth_dir_names = synth_dir_names
+        self.output_folder = self._create_output_directory(output_folder)
         self.channel_cols = channel_cols
-        self.output_dir = self._create_output_directory(output_dir)
 
     @staticmethod
     def _validate_file(file_path: str) -> str:
@@ -61,7 +61,7 @@ class TemporalCorrelation:
             df = pd.read_csv(file_path)
             sequences = [
                 group[self.channel_cols].to_numpy()
-                for _, group in df.groupby(self.sequence_id_col)
+                for _, group in df.groupby("SID")
             ]
             return sequences
         except Exception as e:
@@ -126,33 +126,37 @@ class TemporalCorrelation:
                 count += 1
         return total_squared_diff / count if count > 0 else 0
 
-    def compute(self, top_n_peaks: int):
+    def compute(self):
         """
         Process all synthetic files and compute Temporal Correlation scores.
 
         Args:
             top_n_peaks (int): Number of top peaks to consider.
         """
-        print("[*] Starting Temporal Correlation computation...")
-        real_dataset = self.read_multisequence_csv(self.real_csv_path)
-        results = []
-
-        for synthetic_file in sorted(f for f in os.listdir(self.synthetic_dir_path) if f.endswith('.csv')):
-            synthetic_file_path = os.path.join(self.synthetic_dir_path, synthetic_file)
-            print(f"[+] Processing {synthetic_file_path}...")
-            synthetic_dataset = self.read_multisequence_csv(synthetic_file_path)
-
-            if len(real_dataset) != len(synthetic_dataset):
-                raise ValueError(f"Mismatch in sequence counts for file: {synthetic_file}")
-
-            real_peaks = self.temporal_correlation_analysis(real_dataset, top_n_peaks)
-            synthetic_peaks = self.temporal_correlation_analysis(synthetic_dataset, top_n_peaks)
-            avg_diff = self.squared_difference(real_peaks, synthetic_peaks)
-
-            copy = os.path.splitext(synthetic_file)[0]
-            results.append({"Copy": int(copy), "TC": avg_diff})
-
-        results_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
-        output_csv = os.path.join(self.output_dir, "TC", f"{os.path.basename(self.synthetic_dir_path)}.csv")
-        results_df.to_csv(output_csv, index=False)
-        print(f"[+] Temporal Correlation results saved to '{output_csv}'.")
+        top_n_peaks = 5 
+        print("[+] Starting Temporal Correlation computation...")
+        real_dataset = self.read_multisequence_csv(self.real_file)
+        for folder in self.synth_dir_names:
+            synth_folder = Path(f"./{self.synth_dir}/{folder}")
+            results = []
+            for synth_file in filter(lambda f: f.endswith('.csv'), os.listdir(synth_folder)):
+                synth_path = os.path.join(synth_folder, synth_file)
+                print(f"[+] Processing {synth_file}...")
+                synthetic_dataset = self.read_multisequence_csv(synth_path)
+                if len(real_dataset) != len(synthetic_dataset):
+                    raise ValueError(f"Mismatch in sequence counts for file: {synthetic_file}")
+                real_peaks = self.temporal_correlation_analysis(real_dataset, top_n_peaks)
+                synthetic_peaks = self.temporal_correlation_analysis(synthetic_dataset, top_n_peaks)
+                avg_diff = self.squared_difference(real_peaks, synthetic_peaks)
+                copy = int(synth_file.split('.')[0])
+                print(f"[+] Copy {copy}, TC score: {avg_diff:.4f}")
+                results.append({'Copy': copy, 'TC': avg_diff})
+            # Save results to a CSV file
+            results_df = pd.DataFrame(results).sort_values(by="Copy").reset_index(drop=True)
+            output_file = os.path.join(self.output_folder, "TC", f"{folder}.csv")
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)  # Ensure the directory exists
+            results_df.to_csv(output_file, index=False)
+            print(f"[+] TC results saved to '{output_file}'.")
+            
+                
+                

@@ -5,8 +5,6 @@ dataset:
   date_col: "Date"
   date_format: "%d-%m-%Y"
   normalize_columns: ['Open', 'High', 'Low', 'Close']
-  SID: "SID"
-  
   
 preprocessing:
   unwanted_columns: [] 
@@ -27,7 +25,6 @@ synthesizer:
 
 evaluation:
   exclude_cols: ['Date','Next_Day', 'SID']
-  top_peaks: 5
 
 classification:
     param_grid:
@@ -42,15 +39,9 @@ classification:
         - euclidean
         - squared
         - dtw
-        
     test_size: 0.2
     random_state: 0
     target_col:  'Next_Day'
-
-
-correlation_analysis:
-    metric_columns: ["MSAS", "AWD", "TC"]
-
 
 logging:
   log_file: "logs/pipeline.log"
