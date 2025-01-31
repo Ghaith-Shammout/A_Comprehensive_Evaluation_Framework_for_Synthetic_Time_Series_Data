@@ -48,22 +48,6 @@ class AWD:
         os.makedirs(output_folder, exist_ok=True)
         return output_folder
 
-    @staticmethod
-    def extract_epoch_number(file_name: str) -> int:
-        """
-        Extract the epoch number from the synthetic file name.
-
-        Parameters:
-        - file_name (str): Name of the synthetic file.
-
-        Returns:
-        - int: Extracted epoch number or -1 if extraction fails.
-        """
-        try:
-            return int(file_name.split('.')[0])
-        except ValueError:
-            print(f"[-] Failed to extract epoch from filename: {file_name}")
-            return -1
 
     def compute(self) -> pd.DataFrame:
         """

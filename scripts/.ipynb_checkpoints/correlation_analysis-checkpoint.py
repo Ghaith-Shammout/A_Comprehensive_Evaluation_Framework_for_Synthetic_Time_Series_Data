@@ -96,7 +96,7 @@ class CorrelationAnalysis:
 
             if correlation is not None and p_value is not None:
                 # Calculate confidence interval
-                ci_lower, ci_upper = self.calculate_spearman_ci(correlation, len(f1_ratios), confidence_level=0.99)
+                ci_lower, ci_upper = self.calculate_spearman_ci(correlation, len(f1_ratios), confidence_level=0.95)
                 logging.info(f"95% Confidence Interval for {metric_column}: ({ci_lower:.3f}, {ci_upper:.3f})")
 
                 correlation_results.append({

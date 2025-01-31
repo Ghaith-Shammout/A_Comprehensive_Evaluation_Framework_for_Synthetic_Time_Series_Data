@@ -54,8 +54,8 @@ def process_config_file(config_file: Path) -> None:
         plot_dir = ensure_directory_exists(f"./outputs/{source_name}/Plots")
 
         # Execute pipeline phases
-        #seq_num = preprocessing(config, source_file, real_file)
-        #synthetic_data_generation(config, real_file, metadata_dir, models_dir, synth_dir, seq_num)
+        seq_num = preprocessing(config, source_file, real_file)
+        synthetic_data_generation(config, real_file, metadata_dir, models_dir, synth_dir, seq_num)
         evaluation(config, real_file, eva_dir, plot_dir, synth_dir)
         classification(config, real_file, eva_dir, synth_dir)
         correlation_analysis(config, eva_dir, plot_dir)

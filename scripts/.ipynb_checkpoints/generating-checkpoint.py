@@ -120,10 +120,10 @@ class SyntheticDataGenerator:
             raise
 
     def generate_synthetic_data(self, num_sequences: int, sequence_length: int, output_dir: str, 
-                                sequence_key: str, sequence_index: str, num_files: int = 1):
+                            sequence_key: str, sequence_index: str, num_files: int = 1):
         """
         Generate synthetic data and save it as CSV files.
-
+    
         Args:
             num_sequences (int): Number of sequences to generate per file.
             sequence_length (int): Length of each sequence.
@@ -133,19 +133,20 @@ class SyntheticDataGenerator:
             num_files (int, optional): Number of files to generate. Default is 1.
         """
         try:
-            unique_id = 1  # Initialize a unique ID counter
-
-            # used to get rid of error messgae
+            # used to get rid of error message
             # UserWarning: RNN module weights are not part of single contiguous chunk of memory
             self.synthesizer._model._model.rnn.flatten_parameters() 
+    
             for i in range(1, num_files + 1):
+                unique_id = 1  # Reset unique ID for each file
+    
                 synthetic_data = self.synthesizer.sample(num_sequences=num_sequences, sequence_length=sequence_length)
                 synthetic_data.sort_values(by=[sequence_key, sequence_index], ascending=True, inplace=True)
-
+    
                 # Assign auto-incrementing unique IDs based on sequence length
                 synthetic_data['SID'] = [(unique_id + j // sequence_length) for j in range(len(synthetic_data))]
                 unique_id += len(synthetic_data) // sequence_length
-
+    
                 output_path = f"{output_dir}/{i}.csv"
                 synthetic_data.to_csv(output_path, index=False)
                 print(f"[+] Synthetic data saved to '{output_path}'. Sorted by '{sequence_key}' and '{sequence_index}'.")

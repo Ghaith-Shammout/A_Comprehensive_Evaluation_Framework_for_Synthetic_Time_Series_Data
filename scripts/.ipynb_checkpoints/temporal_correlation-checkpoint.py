@@ -126,6 +126,8 @@ class TemporalCorrelation:
                 count += 1
         return total_squared_diff / count if count > 0 else 0
 
+    
+
     def compute(self):
         """
         Process all synthetic files and compute Temporal Correlation scores.
