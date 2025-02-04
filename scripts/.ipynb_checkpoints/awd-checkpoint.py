@@ -67,10 +67,10 @@ class AWD:
             for synth_file in filter(lambda f: f.endswith('.csv'), os.listdir(synth_folder)):
                 synth_path = os.path.join(synth_folder, synth_file)
                 print(f"[+] Processing {synth_file}...")
-                synth_data = pd.read_csv(synth_path).drop(columns=self.exclude_columns, errors='ignore')
+                synth_df = pd.read_csv(synth_path).drop(columns=self.exclude_columns, errors='ignore')
                 # Compute Wasserstein distances
                 wd_scores = [
-                    wasserstein_distance(real_df.iloc[:, j], synth_data.iloc[:, j])
+                    wasserstein_distance(real_df.iloc[:, j], synth_df.iloc[:, j])
                     for j in range(real_df.shape[1])
                 ]
                 avg_wd_score = np.mean(wd_scores)
