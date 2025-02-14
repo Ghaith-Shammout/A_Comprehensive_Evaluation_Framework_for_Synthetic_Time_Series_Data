@@ -13,6 +13,20 @@
 |- requirements.yaml    # Project dependencies
 ```
 
+
+## Outputs Folder Structure
+
+The `outputs` folder contains a subdirectory for each input dataset, named according to the dataset's name by convention. Each dataset-specific folder follows this structured format:
+
+```
+./  
+|- data/              # Contains the preprocessed dataset along with its metadata file  
+|- Evaluation/        # Contains subfolders for each population fidelity metric and F1 score per epoch. Additionally, this folder includes CSV files with aggregated metric results.  
+|- models/            # Stores the trained synthesizer models for each epoch  
+|- Plots/             # Includes visualizations for each metric  
+|- Synth_Data/        # Contains generated data organized by epoch  
+```
+
 ## Prerequisites
 
 - Anaconda3 / Miniconda3
@@ -50,3 +64,5 @@ nvidia-smi
 This command will display GPU usage and resource allocation.
 
 ---
+
+
