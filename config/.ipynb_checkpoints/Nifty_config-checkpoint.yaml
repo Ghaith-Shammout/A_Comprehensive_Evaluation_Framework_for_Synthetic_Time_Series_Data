@@ -19,7 +19,8 @@ metadata:
 
 synthesizer:
   context_columns: []
-  epochs: [100, 500, 1000, 1500, 2000, 2500, 5000, 10000]
+  # 16 Epochs [1, 2, 4, 8, 16, 32, 64, 100, 250, 500, 1000, 1500, 2000, 2500, 5000, 10000]
+  epochs: [1, 2, 4, 8, 16, 32, 64, 250]
   verbose: True
   cuda: True
 

@@ -54,11 +54,11 @@ def process_config_file(config_file: Path) -> None:
         plot_dir = ensure_directory_exists(f"./outputs/{source_name}/Plots")
 
         # Execute pipeline phases
-        #seq_num = preprocessing(config, source_file, real_file)
-        #synthetic_data_generation(config, real_file, metadata_dir, models_dir, synth_dir, seq_num)
-        evaluation(config, real_file, eva_dir, plot_dir, synth_dir)
-        classification(config, real_file, eva_dir, synth_dir)
-        correlation_analysis(config, eva_dir, plot_dir)
+        seq_num = preprocessing(config, source_file, real_file)
+        synthetic_data_generation(config, real_file, metadata_dir, models_dir, synth_dir, seq_num)
+        #evaluation(config, real_file, eva_dir, plot_dir, synth_dir)
+        #classification(config, real_file, eva_dir, synth_dir)
+        #correlation_analysis(config, eva_dir, plot_dir)
 
         logging.info(f"Pipeline execution for {config_file.name} completed successfully.")
     except Exception as e:
@@ -126,7 +126,7 @@ def synthetic_data_generation(config: dict, real_file: str, metadata_dir: str, m
         generator.generate_synthetic_data(
             num_sequences = seq_num,
             sequence_length = config['preprocessing']['window_size'],
-            output_dir = f"{synth_dir}/{epoch}.pkl",
+            output_dir = ensure_directory_exists(f"{synth_dir}/{epoch}"),
             sequence_key = config['metadata']['seq_key'],
             sequence_index = config['metadata']['seq_index'],
             num_files = 5

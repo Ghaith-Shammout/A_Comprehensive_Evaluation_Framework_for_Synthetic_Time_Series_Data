@@ -17,3 +17,5 @@ dependencies:
   - cudatoolkit
   - pytorch-cuda
   - pytorch
+  - tensorflow-gpu  # Enables GPU support for TensorFlow
+  - cudnn=8.6  # TensorFlow GPU acceleration
