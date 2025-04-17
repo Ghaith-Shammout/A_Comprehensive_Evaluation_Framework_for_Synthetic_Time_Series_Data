@@ -1,4 +1,4 @@
-# Project Title
+# A Comprehensive Evaluation Framework for Synthetic Time Series Data
 
 ## Project Structure
 
