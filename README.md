@@ -1,5 +1,8 @@
 # A Comprehensive Evaluation Framework for Synthetic Time Series Data
 
+[Link to the Paper](https://www.diva-portal.org/smash/record.jsf?aq2=%5B%5B%5D%5D&c=1&af=%5B%5D&searchType=SIMPLE&sortOrder2=title_sort_asc&query=ghaith+shammout&language=en&pid=diva2%3A1954330&aq=%5B%5B%5D%5D&sf=all&aqe=%5B%5D&sortOrder=author_sort_asc&onlyFullText=false&noOfRows=50&dswid=-4729)
+
+
 ## Project Structure
 
 ```
